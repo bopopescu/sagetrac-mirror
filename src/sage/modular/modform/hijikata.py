@@ -19,13 +19,25 @@ AUTHORS:
 
 """
 
-from sage.rings.all import ZZ, QQ, QuadraticField, euler_phi
+from sage.rings.all import Integer, QQ, QuadraticField, euler_phi
 from sage.functions.all import ceil, sign
-from sage.misc.all import round, prod
+from sage.misc.all import prod
 from sage.libs.pari.all import pari
 from sage.matrix.all import zero_matrix
 
+
 def w(d):
+    r"""
+    Return the w factor for the lattice of discriminant d
+
+    This is always 1 except when d is -3 or -4.
+
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import w
+        sage: [w(d) for d in range(-7, -2)]
+        [1, 1, 1, 2, 3]
+    """
     if d == -4:
         return 2
     elif d == -3:
@@ -33,84 +45,209 @@ def w(d):
     else:
         return 1
 
+
 def tof(a):
-    t = prod(p**((e-(e%2))//2) for p,e in a.factor())
-    if ZZ(a/t**2) % 4 == 1:
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import tof
+        sage: [tof(u) for u in [45, 49, 693]]
+        [3, 7, 3]
+    """
+    a = Integer(a)
+    t = prod(p**((e-(e % 2))//2) for p, e in a.factor())
+    if Integer(a/t**2) % 4 == 1:
         return t
     else:
-        return ZZ(t/2)
+        return Integer(t/2)
+
 
 def mu(N):
-    return N * prod(1+1/p for p in N.prime_divisors())
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import mu
+        sage: [mu(d) for d in range(1, 12)]
+        [1, 3, 4, 6, 6, 12, 8, 12, 12, 18, 12]
+    """
+    N = Integer(N)
+    return N * prod(1 + 1/p for p in N.prime_divisors())
+
 
 def sig(n, N):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import sig
+        sage: [sig(d, 6) for d in range(1, 12)]
+        [1, 2, 3, 7, 6, 6, 8, 15, 13, 18, 12]
+    """
+    N = Integer(N)
+    n = Integer(n)
     if N % n == 0:
         return n
     else:
-        return prod( (1 - p**(e+1)) / (1-p) for p,e in n.factor())
+        return prod((1 - p**(e+1)) / (1 - p) for p, e in n.factor())
+
 
 def quadpoints(s, n, p, v):
-    # WARNING: This is a very very stupid algorithm!
+    r"""
+    .. WARNING::
+
+        This is a very very stupid algorithm!
+
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import quadpoints
+        sage: quadpoints(8121,4471,691,1)
+        [184, 336]
+        sage: quadpoints(8121,4471,691,2)
+        [219922, 265680]
+    """
     pv = p**v
-    return [x for x in range(pv) if (x**2 - s*x + n)%pv == 0]
+    return [x for x in range(pv) if (x**2 - s*x + n) % pv == 0]
+
 
 def A(s, f, n, p, v):
-    rho = ZZ(f).valuation(p)
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import A
+        sage: A(433,56,4,2833,1)
+        2
+    """
+    rho = Integer(f).valuation(p)
     sr = set([x % p**(v+rho) for x in quadpoints(s, n, p, v+2*rho)])
     return len([x for x in sr if
-                (2*x - s)%(p**rho) == 0 \
-                and ((n != p) or ((n == p) and x%p != 0))])
+                (2*x - s) % (p**rho) == 0
+                and ((n != p) or ((n == p) and x % p != 0))])
+
 
 def B(s, f, n, p, v):
-    rho = ZZ(f).valuation(p)
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import B
+        sage: B(433,56,4,191,1)
+        2
+    """
+    rho = Integer(f).valuation(p)
     return len(set([x % p**(v+rho) for x in quadpoints(s, n, p, v+2*rho+1)]))
 
+
 def cp(s, f, n, p, v):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import cp
+        sage: cp(434,2,4,79,1)
+        2
+    """
     ans = A(s, f, n, p, v)
-    if ZZ((s**2 - 4*n)/f**2) % p == 0:
+    if Integer((s**2 - 4*n)/f**2) % p == 0:
         ans += B(s, f, n, p, v)
     return ans
 
+
 def c(s, f, n, N):
-    return prod(cp(s, f, n, p, e) for p,e in N.factor())
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import c
+        sage: c(434,2,4,79*23)
+        4
+    """
+    return prod(cp(s, f, n, p, e) for p, e in N.factor())
+
 
 def type_p(n, k, N):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import type_p
+        sage: type_p(471**2,4,191)
+        104487111
+    """
     if n.is_square():
-        s = ZZ(int((4*n).sqrt()))
-        return ZZ(1)/4 * (s/2) * n**((k//2) - 1) * (c(s,1,n,N) + (-1)**k * c(-s,1,n,N))
+        s = Integer(int((4*n).sqrt()))
+        return (Integer(1)/4 * (s/2) * n**((k//2) - 1)
+                * (c(s, 1, n, N) + (-1)**k * c(-s, 1, n, N)))
     else:
         return 0
 
+
 def absxy(s, n, k, N):
-    t = ZZ(int((s**2 - 4*n).sqrt()))
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import absxy
+    """
+    t = Integer(int((s**2 - 4*n).sqrt()))
     x = (s - t)/2
     y = (s + t)/2
-    return (min(abs(x), abs(y))**(k-1) / abs(x-y)) * sign(x)**k * \
-           sum([ZZ(1)/2*euler_phi(ZZ(t/f))*c(s, f, n, N) for f in t.divisors()])
+    product = (min(abs(x), abs(y))**(k-1) / abs(x-y)) * sign(x)**k
+    return product * sum([Integer(1)/2*euler_phi(Integer(t/f))*c(s, f, n, N)
+                          for f in t.divisors()])
+
 
 def type_h(n, k, N):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import type_h
+        sage: type_h(471**2,4,191)
+        7741300
+    """
     start = int(ceil(2*n.sqrt()))
     if n.is_square():
         start += 1
     return sum([QQ(absxy(s, n, k, N) + absxy(-s, n, k, N)) for
                 s in range(start, 4*n+1) if (s**2 - 4*n).is_square()])
 
+
 def classno(d, proof=True):
-    """Return the class number of the order of discriminant d."""
+    r"""
+    Return the class number of the order of discriminant d.
+
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import classno
+        sage: classno(-163)
+        1
+    """
     # There is currently no qfbclassno method in gen.pyx, hence the string.
-    return ZZ(pari('qfbclassno(%s,%s)'%(d, 1 if proof else 0)))
+    return Integer(pari('qfbclassno(%s,%s)' % (d, 1 if proof else 0)))
+
 
 def xy(s, n, k, N):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import xy
+        sage: xy(4,59,6,7)
+        7240
+        sage: xy(81,14,3,7)
+        162
+    """
     K = QuadraticField(s**2 - 4*n)
     a = K.gen()
     # x and y are the solutions to X^2 - s*X + n = 0.
-    x = (s + a)/2; y = (s - a)/2
-    return QQ(
-        ZZ(1)/2 * (x**(k-1) - y**(k-1)) / (x - y)
-          * sum(classno(ZZ((s**2 - 4*n)/f**2)) / w((s**2 - 4*n)/f**2) * c(s,f,n,N)
-                for f in tof(s**2 - 4*n).divisors()))
+    x = (s + a)/2
+    y = (s - a)/2
+    product = Integer(1)/2 * (x**(k-1) - y**(k-1)) / (x - y)
+    return QQ(product * sum(classno(Integer((s**2 - 4*n)/f**2))
+                            / w((s**2 - 4*n)/f**2) * c(s, f, n, N)
+                            for f in tof(s**2 - 4*n).divisors()))
+
 
 def type_e(n, k, N):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import type_e
+        sage: type_e(47**2,4,19)
+        227310
+    """
     r = int(2*n.sqrt())
     if n.is_square():
         r -= 1
@@ -119,11 +256,20 @@ def type_e(n, k, N):
     # that I commented out above.
     return xy(0, n, k, N) + 2*sum(xy(s, n, k, N) for s in range(1, r+1))
 
+
 def sum_s(n, k, N):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import sum_s
+        sage: sum_s(47**2,4,19)
+        331135
+    """
     return type_p(n, k, N) + type_h(n, k, N) + type_e(n, k, N)
 
+
 def test_trace_hecke_operator(n_range, k_range, N_range, verbose=True):
-    """
+    r"""
     Verify that the trace_hecke_operator command gives the same output
     as the trace computed using modular symbols.  If not, a RuntimeError
     exception is raised.
@@ -137,29 +283,33 @@ def test_trace_hecke_operator(n_range, k_range, N_range, verbose=True):
     - ``N_range`` -- list levels
     - ``verbose`` -- bool (default: True); if True print level and weight
 
-    EXAMPLES::
+    EXAMPLES:
 
     Test that level 1 traces are correct::
-    
-        sage: hijikata.test_trace_hecke_operator([1..20], [2, 4, .., 50], [1], verbose=False)
 
-    Test levels up to 32 and weights 2,4::
-    
-        sage: hijikata.test_trace_hecke_operator([1..20], [2, 4], [1..32], verbose=False)
+        sage: hijikata.test_trace_hecke_operator([1..20], [2, 4, .., 50],
+        ....: [1], verbose=False)
+
+    Test levels up to 32 and weights 2, 4::
+
+        sage: hijikata.test_trace_hecke_operator([1..20], [2, 4], [1..32],
+        ....: verbose=False)
     """
     from sage.modular.modsym.all import ModularSymbols
     for N in N_range:
         for k in k_range:
             if k % 2 == 0:
                 if verbose:
-                    print "(N, k) =", (N,k),
-                S = ModularSymbols(N,k,sign=1).cuspidal_submodule()
+                    print "(N, k) =", (N, k),
+                S = ModularSymbols(N, k, sign=1).cuspidal_submodule()
                 for n in n_range:
-                    n = ZZ(n)
+                    n = Integer(n)
                     if n.gcd(N) == 1 or n.is_prime():
                         if S.hecke_operator(n).trace() != trace_hecke_operator(n, k, N):
-                            raise RuntimeError("trace_hecke_operator(n=%s,k=%s,N=%s) disagrees with modular symbols trace"%(n,k,N))
-                if verbose: print " (good)"
+                            raise RuntimeError("trace_hecke_operator(n=%s,k=%s,N=%s) disagrees with modular symbols trace" % (n, k, N))
+                if verbose:
+                    print " (good)"
+
 
 def trace_hecke_operator(n, k, N=1):
     r"""
@@ -177,7 +327,7 @@ def trace_hecke_operator(n, k, N=1):
 
     - rational number
 
-    EXAMPLES::
+    EXAMPLES:
 
     We compute the trace of the first few Hecke operators on level 1
     weight 12::
@@ -195,26 +345,28 @@ def trace_hecke_operator(n, k, N=1):
         sage: hijikata.trace_hecke_operator(1, 20000)
         1666
         sage: dimension_cusp_forms(1, 20000)
-        1666    
+        1666
         sage: hijikata.trace_hecke_operator(1, 2000, 11)
         1998
         sage: dimension_cusp_forms(11, 2000)
         1998
 
     An advantage of the trace formula is that can quickly compute
-    traces of operators that one couldn't do using other techniques
+    traces of operators that one could not do using other techniques
     like modular symbols.  For example, here we instantly compute the
     trace of `T_2` on `S_{20000}(\Gamma_0(19))`::
-    
+
         sage: t = hijikata.trace_hecke_operator(2, 20000, 19)
         sage: t.valuation(2)
-        1    
+        1
     """
-    n = ZZ(n); k=ZZ(k); N=ZZ(N)
+    n = Integer(n)
+    k = Integer(k)
+    N = Integer(N)
     if n.gcd(N) != 1 and not n.is_prime():
-        raise ValueError, "n must be prime when n and N are not coprime"
+        raise ValueError("n must be prime when n and N are not coprime")
 
-    if k%2 != 0:
+    if k % 2 != 0:
         return 0
     if k == 2:
         t = sig(n, N)
@@ -225,12 +377,15 @@ def trace_hecke_operator(n, k, N=1):
         t += (k-1)*mu(N) / 12 * n**((k//2) - 1)
     return t
 
+
 def trace_modular_form(k, prec):
     r"""
     Return the trace modular form sum `Tr(T_n) q^n` to absolute
     precision prec, where `T_n` is the `n`th Hecke operator on
-    `S_k(SL_2(Z))`.  The complexity is almost entirely a function of
-    prec, but not of `k`.
+    `S_k(SL_2(Z))`.
+
+    The complexity is almost entirely a function of prec, but not of
+    `k`.
 
     INPUT:
 
@@ -242,56 +397,91 @@ def trace_modular_form(k, prec):
         sage: hijikata.trace_modular_form(12, 6)
         q - 24*q^2 + 252*q^3 - 1472*q^4 + 4830*q^5 + O(q^6)
         sage: hijikata.trace_modular_form(24, 6)
-        2*q + 1080*q^2 + 339480*q^3 + 25326656*q^4 + 73069020*q^5 + O(q^6)    
+        2*q + 1080*q^2 + 339480*q^3 + 25326656*q^4 + 73069020*q^5 + O(q^6)
     """
     R = QQ[['q']]
-    return R([0] + [trace_hecke_operator(n, k, 1) for n in range(1, prec)], prec)
+    return R([0] + [trace_hecke_operator(n, k, 1) for n in range(1, prec)],
+             prec)
+
 
 def Tp(p, r, k, f):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import Tp
+        sage: q = PowerSeriesRing(QQ,'q').gen()
+        sage: hijikata.Tp(3, 2, 4, 1+q+q**3+q**7+O(q**266))
+        -27 + 27*q^3 + 729*q^9 + 729*q^27 + O(q^30)
+        sage: hijikata.Tp(1,2,4,1+q+q**3+q**7+O(q**266))
+        -1 + 3*q + 3*q^3 + 3*q^7 + O(q^266)
+    """
     if r > 1:
         return Tp(p, 1, k, Tp(p, r-1, k, f)) - p**(k-1)*Tp(p, r-2, k, f)
     if r == 1:
         R = QQ[['q']]
         q = R.gen()
         prec = int(((f.prec()-1)/p) + 1)
-        return R(sum(f[n*p]*q**n + p**(k-1)*f[n]*q**(n*p) for n in range(1, prec)), prec)
+        return R(sum(f[n*p]*q**n + p**(k-1)*f[n]*q**(n*p)
+                     for n in range(1, prec)), prec)
     if r == 0:
         return f
 
+
 def hecke_operator(n, k, f):
-    n = ZZ(n)
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import hecke_operator
+        sage: q = PowerSeriesRing(QQ,'q').gen()
+        sage: hecke_operator(8, 12, q+q**2+O(q**100))
+        4194304*q^4 + 8589934592*q^8 + O(q^13)
+    """
+    n = Integer(n)
     for p, e in n.factor():
         f = Tp(p, e, k, f)
     return f
 
+
 def trace_formula_basis(k, prec):
-    """
+    r"""
     EXAMPLES::
 
         sage: hijikata.trace_formula_basis(24, 6)
-        [2*q + 1080*q^2 + 339480*q^3 + 25326656*q^4 + 73069020*q^5 + O(q^6), 1080*q + 42103872*q^2 + O(q^3)]    
+        [2*q + 1080*q^2 + 339480*q^3 + 25326656*q^4 + 73069020*q^5 + O(q^6),
+        1080*q + 42103872*q^2 + O(q^3)]
 
     Double check the claimed result above to higher precision::
-    
+
         sage: B = [vector(QQ,f.qexp(10)) for f in CuspForms(1, 24).basis()]
-        sage: C = [vector(QQ, f.padded_list(10)) for f in hijikata.trace_formula_basis(24, 21)]
+        sage: C = [vector(QQ, f.padded_list(10)) for f
+        ....: in hijikata.trace_formula_basis(24, 21)]
         sage: span(B) == span(C)
-        True    
+        True
     """
     f = trace_modular_form(k, prec)
-    d = ZZ(f[1])  # the dimension
+    d = Integer(f[1])  # the dimension
     return [hecke_operator(n, k, f) for n in range(1, d+1)]
 
+
 def basis_matrix(B):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import basis_matrix
+        sage: basis_matrix([[4,5,6],[6,7,8]])
+        [5 6]
+        [7 8]
+    """
     d = len(B)
     I = zero_matrix(QQ, d)
     for r in range(d):
         for c in range(d):
-            I[r,c] = B[r][c+1]
+            I[r, c] = B[r][c+1]
     return I
 
+
 def hecke_operator_matrix(k, n):
-    """
+    r"""
     EXAMPLES::
 
         sage: hijikata.hecke_operator_matrix(24, 2)
@@ -307,7 +497,13 @@ def hecke_operator_matrix(k, n):
     B = trace_formula_basis(k, n*d**2 + 1)
     return hecke_operator_matrix_wrt_basis(k, n, B)
 
+
 def hecke_operator_matrix_wrt_basis(k, n, B):
+    r"""
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import hecke_operator_matrix_wrt_basis
+    """
     d = len(B)
     I = basis_matrix(B)**(-1)
     A = []
@@ -316,6 +512,3 @@ def hecke_operator_matrix_wrt_basis(k, n, B):
         A.append([g[i] for i in range(1, d+1)])
     A = I.parent()(A)
     return I*A
-
-
-                   
