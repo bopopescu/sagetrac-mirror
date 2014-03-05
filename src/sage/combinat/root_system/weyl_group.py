@@ -884,8 +884,6 @@ class WeylGroupElement(MatrixGroupElement_gap):
 #        else:
 #            return s < 0
         L = self.domain()
-        positive = False
-        side = 'right'
         # Choose the method depending on the side and the availability
         # of rho and is_positive_root
         if not hasattr(L.element_class, "is_positive_root"):
