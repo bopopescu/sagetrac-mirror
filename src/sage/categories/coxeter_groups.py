@@ -684,7 +684,7 @@ class CoxeterGroups(Category_singleton):
                     tester.assertEquals((s[i]*s[j]).has_descent(i, side = 'right'), u == v)
 
     class ElementMethods:
-        def has_descent(self, i, side = 'right', positive=False):
+        def has_descent(self, i, side='right', positive=False):
             """
             Returns whether i is a (left/right) descent of self.
 
@@ -706,19 +706,30 @@ class CoxeterGroups(Category_singleton):
 
             This default implementation delegates the work to
             :meth:`.has_left_descent` and :meth:`.has_right_descent`.
+
+            .. WARNING::
+
+                This method should not be overridden. Please implement
+                either `has_left_descent` or `has_right_descent` or both.
             """
             if not isinstance(positive, bool):
-                raise TypeError, "%s is not a boolean"%(bool)
+                raise TypeError("%s is not a boolean" % bool)
             if side == 'right':
                 return self.has_right_descent(i) != positive
-            if side != 'left':
-                raise ValueError, "%s is neither 'right' nor 'left'"%(side)
-            return self.has_left_descent(i)  != positive
+            if side == 'left':
+                return self.has_left_descent(i) != positive
+            raise ValueError("%s is neither 'right' nor 'left'" % side)
 
-#        @abstract_method(optional = True)
         def has_right_descent(self, i):
             """
-            Returns whether ``i`` is a right descent of self.
+            Returns whether ``i`` is a right descent of ``self``.
+
+            Either this method or :meth:`.has_left_descent`: has to be
+            implemented by every instance of Coxeter
+            groups. Otherwise, there will be an infinite loop.
+
+            This default implementation uses that a right descent of
+            `w` is a left descent of `w^{-1}`.
 
             EXAMPLES::
 
@@ -737,7 +748,11 @@ class CoxeterGroups(Category_singleton):
 
         def has_left_descent(self, i):
             """
-            Returns whether `i` is a left descent of self.
+            Returns whether ``i`` is a left descent of ``self``.
+
+            Either this method or :meth:`.has_right_descent`: has to be
+            implemented by every instance of Coxeter
+            groups. Otherwise, there will be an infinite loop.
 
             This default implementation uses that a left descent of
             `w` is a right descent of `w^{-1}`.

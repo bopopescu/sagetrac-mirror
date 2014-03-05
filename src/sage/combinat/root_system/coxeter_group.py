@@ -273,7 +273,7 @@ class CoxeterGroupAsPermutationGroup(UniqueRepresentation, PermutationGroup_gene
 
     class Element(PermutationGroupElement):
 
-        def has_descent(self, i, side = 'right', positive=False):
+        def has_descent(self, i, side='right', positive=False):
             """
             Returns whether `i` is a (left/right) descent of ``self``.
 
@@ -300,12 +300,13 @@ class CoxeterGroupAsPermutationGroup(UniqueRepresentation, PermutationGroup_gene
             :meth:`has_descent` as if the group was the full symmetric
             group.
             """
-            assert isinstance(positive, bool)
+            if not isinstance(positive, bool):
+                raise TypeError("%s is not a boolean" % bool)
             if side == 'right':
                 return self.has_right_descent(i) != positive
-            else:
-                assert side == 'left'
-                return self.has_left_descent(i)  != positive
+            if side == 'left':
+                return self.has_left_descent(i) != positive
+            raise ValueError("%s is neither 'right' nor 'left'" % side)
 
         def has_left_descent(self, i):
             r"""

@@ -834,14 +834,11 @@ class WeylGroupElement(MatrixGroupElement_gap):
     # Descents
     ##########################################################################
 
-    def has_descent(self, i, positive=False, side = "right"):
+    def has_right_descent(self, i):
         """
-        Tests if self has a descent at position `i`, that is if self is
-        on the strict negative side of the `i^{th}` simple reflection
-        hyperplane.
-
-        If positive is True, tests if it is on the strict positive
-        side instead.
+        Tests if ``self`` has a right descent at position `i`, that is if
+        ``self`` is on the strict negative side of the `i^{th}` simple
+        reflection hyperplane.
 
         EXAMPLES::
 
@@ -855,7 +852,8 @@ class WeylGroupElement(MatrixGroupElement_gap):
             [False, True, False]
             sage: [s[3].has_descent(i) for i in W.domain().index_set()]
             [False, False, True]
-            sage: [s[3].has_descent(i, True) for i in W.domain().index_set()]
+            sage: [s[3].has_descent(i, positive=True)
+            ....: for i in W.domain().index_set()]
             [True, True, False]
             sage: W = WeylGroup(['A',3,1])
             sage: s = W.simple_reflections()
@@ -886,26 +884,26 @@ class WeylGroupElement(MatrixGroupElement_gap):
 #        else:
 #            return s < 0
         L = self.domain()
-        # Choose the method depending on the side and the availability of rho and is_positive_root
+        positive = False
+        side = 'right'
+        # Choose the method depending on the side and the availability
+        # of rho and is_positive_root
         if not hasattr(L.element_class, "is_positive_root"):
             use_rho = True
         elif not hasattr(L, "rho"):
             use_rho = False
         else:
-            use_rho = side == "left"
+            use_rho = False
 
-        if use_rho is not (side == "left"):
+        if use_rho:
             self = ~self
 
         if use_rho:
-            s = self.action(L.rho()   ).scalar(L.alphacheck()[i]) >= 0
+            s = self.action(L.rho()).scalar(L.alphacheck()[i]) >= 0
         else:
             s = self.action(L.alpha()[i]).is_positive_root()
 
-        return s is positive
-
-    # this is needed for trac #15456
-    has_right_descent = has_descent
+        return not s
 
     def apply_simple_reflection(self, i, side = "right"):
         s = self.parent().simple_reflections()
