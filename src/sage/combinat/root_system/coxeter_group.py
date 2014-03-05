@@ -320,6 +320,18 @@ class CoxeterGroupAsPermutationGroup(UniqueRepresentation, PermutationGroup_gene
                 True
                 sage: (s[1]*s[2]).has_left_descent(2) # optional - chevie
                 False
+
+            With the matrix implementation (:trac:`15456`)::
+
+                sage: W = WeylGroup(['A',4])
+                sage: w = W.from_reduced_word([3,4,2])
+                sage: w.has_left_descent(3)
+                True
+
+                sage: W = CoxeterGroup(['A',3], implementation='matrix')
+                sage: w = W.an_element()
+                sage: w.has_left_descent(0)
+                False
             """
             return not self.parent()._is_positive_root[self(i)]
 

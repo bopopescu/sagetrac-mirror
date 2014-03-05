@@ -904,6 +904,9 @@ class WeylGroupElement(MatrixGroupElement_gap):
 
         return s is positive
 
+    # this is needed for trac #15456
+    has_right_descent = has_descent
+
     def apply_simple_reflection(self, i, side = "right"):
         s = self.parent().simple_reflections()
         if side == "right":
