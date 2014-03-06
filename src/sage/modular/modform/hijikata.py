@@ -190,7 +190,7 @@ def absxy(s, n, k, N):
     t = Integer(int((s ** 2 - 4 * n).sqrt()))
     x = (s - t) / 2
     y = (s + t) / 2
-    product = (min(abs(x), abs(y)) ** (k - 1) / abs(x - y)) * sign(x) * *k
+    product = (min(abs(x), abs(y)) ** (k - 1) / abs(x - y)) * sign(x) ** k
     return product * sum([euler_phi(Integer(t / f)) * c(s, f, n, N) / 2
                           for f in t.divisors()])
 
@@ -508,8 +508,7 @@ def hecke_operator_matrix_wrt_basis(k, n, B):
     r"""
     EXAMPLES::
 
-        sage: from sage.modular.modform.hijikata import
-        ....: hecke_operator_matrix_wrt_basis
+        sage: from sage.modular.modform.hijikata import hecke_operator_matrix_wrt_basis
     """
     d = len(B)
     I = basis_matrix(B) ** (-1)
