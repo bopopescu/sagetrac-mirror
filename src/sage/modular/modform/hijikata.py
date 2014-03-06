@@ -16,9 +16,7 @@ except if `n|N`,  in which case `n` must be prime.
 AUTHORS:
 
 - William A. Stein (February 5, 2012)
-
 """
-
 from sage.rings.all import Integer, QQ, QuadraticField, euler_phi
 from sage.functions.all import ceil, sign
 from sage.misc.all import prod
@@ -42,8 +40,7 @@ def w(d):
         return 2
     elif d == -3:
         return 3
-    else:
-        return 1
+    return 1
 
 
 def tof(a):
@@ -55,15 +52,24 @@ def tof(a):
         [3, 7, 3]
     """
     a = Integer(a)
-    t = prod(p**((e-(e % 2))//2) for p, e in a.factor())
-    if Integer(a/t**2) % 4 == 1:
+    t = prod(p ** ((e - (e % 2)) // 2) for p, e in a.factor())
+    if Integer(a / t ** 2) % 4 == 1:
         return t
-    else:
-        return Integer(t/2)
+    return Integer(t / 2)
 
 
 def mu(N):
     r"""
+    Return Dedekind psi function
+
+    .. MATH::
+
+        `n \prod_{p|n, p prime} (1 + 1/p)`
+
+    REFERENCES:
+
+    .. :oeis:`A001615`
+
     EXAMPLES::
 
         sage: from sage.modular.modform.hijikata import mu
@@ -71,7 +77,7 @@ def mu(N):
         [1, 3, 4, 6, 6, 12, 8, 12, 12, 18, 12]
     """
     N = Integer(N)
-    return N * prod(1 + 1/p for p in N.prime_divisors())
+    return N * prod(1 + 1 / p for p in N.prime_divisors())
 
 
 def sig(n, N):
@@ -86,8 +92,7 @@ def sig(n, N):
     n = Integer(n)
     if N % n == 0:
         return n
-    else:
-        return prod((1 - p**(e+1)) / (1 - p) for p, e in n.factor())
+    return prod((1 - p ** (e + 1)) / (1 - p) for p, e in n.factor())
 
 
 def quadpoints(s, n, p, v):
@@ -104,8 +109,8 @@ def quadpoints(s, n, p, v):
         sage: quadpoints(8121,4471,691,2)
         [219922, 265680]
     """
-    pv = p**v
-    return [x for x in range(pv) if (x**2 - s*x + n) % pv == 0]
+    pv = p ** v
+    return [x for x in range(pv) if (x ** 2 - s * x + n) % pv == 0]
 
 
 def A(s, f, n, p, v):
@@ -117,9 +122,9 @@ def A(s, f, n, p, v):
         2
     """
     rho = Integer(f).valuation(p)
-    sr = set([x % p**(v+rho) for x in quadpoints(s, n, p, v+2*rho)])
+    sr = set([x % p ** (v + rho) for x in quadpoints(s, n, p, v + 2 * rho)])
     return len([x for x in sr if
-                (2*x - s) % (p**rho) == 0
+                (2 * x - s) % (p ** rho) == 0
                 and ((n != p) or ((n == p) and x % p != 0))])
 
 
@@ -132,7 +137,8 @@ def B(s, f, n, p, v):
         2
     """
     rho = Integer(f).valuation(p)
-    return len(set([x % p**(v+rho) for x in quadpoints(s, n, p, v+2*rho+1)]))
+    return len(set([x % p ** (v + rho)
+                    for x in quadpoints(s, n, p, v + 2 * rho + 1)]))
 
 
 def cp(s, f, n, p, v):
@@ -144,7 +150,7 @@ def cp(s, f, n, p, v):
         2
     """
     ans = A(s, f, n, p, v)
-    if Integer((s**2 - 4*n)/f**2) % p == 0:
+    if Integer((s ** 2 - 4 * n) / f ** 2) % p == 0:
         ans += B(s, f, n, p, v)
     return ans
 
@@ -169,11 +175,10 @@ def type_p(n, k, N):
         104487111
     """
     if n.is_square():
-        s = Integer(int((4*n).sqrt()))
-        return (Integer(1)/4 * (s/2) * n**((k//2) - 1)
-                * (c(s, 1, n, N) + (-1)**k * c(-s, 1, n, N)))
-    else:
-        return 0
+        s = Integer(int((4 * n).sqrt()))
+        return (Integer(1) / 4 * (s / 2) * n ** ((k // 2) - 1)
+                * (c(s, 1, n, N) + (-1) ** k * c(-s, 1, n, N)))
+    return 0
 
 
 def absxy(s, n, k, N):
@@ -182,11 +187,11 @@ def absxy(s, n, k, N):
 
         sage: from sage.modular.modform.hijikata import absxy
     """
-    t = Integer(int((s**2 - 4*n).sqrt()))
-    x = (s - t)/2
-    y = (s + t)/2
-    product = (min(abs(x), abs(y))**(k-1) / abs(x-y)) * sign(x)**k
-    return product * sum([Integer(1)/2*euler_phi(Integer(t/f))*c(s, f, n, N)
+    t = Integer(int((s ** 2 - 4 * n).sqrt()))
+    x = (s - t) / 2
+    y = (s + t) / 2
+    product = (min(abs(x), abs(y)) ** (k - 1) / abs(x - y)) * sign(x) * *k
+    return product * sum([euler_phi(Integer(t / f)) * c(s, f, n, N) / 2
                           for f in t.divisors()])
 
 
@@ -198,11 +203,11 @@ def type_h(n, k, N):
         sage: type_h(471**2,4,191)
         7741300
     """
-    start = int(ceil(2*n.sqrt()))
+    start = int(ceil(2 * n.sqrt()))
     if n.is_square():
         start += 1
     return sum([QQ(absxy(s, n, k, N) + absxy(-s, n, k, N)) for
-                s in range(start, 4*n+1) if (s**2 - 4*n).is_square()])
+                s in range(start, 4 * n + 1) if (s ** 2 - 4 * n).is_square()])
 
 
 def classno(d, proof=True):
@@ -229,15 +234,15 @@ def xy(s, n, k, N):
         sage: xy(81,14,3,7)
         162
     """
-    K = QuadraticField(s**2 - 4*n)
+    K = QuadraticField(s ** 2 - 4 * n)
     a = K.gen()
     # x and y are the solutions to X^2 - s*X + n = 0.
-    x = (s + a)/2
-    y = (s - a)/2
-    product = Integer(1)/2 * (x**(k-1) - y**(k-1)) / (x - y)
-    return QQ(product * sum(classno(Integer((s**2 - 4*n)/f**2))
-                            / w((s**2 - 4*n)/f**2) * c(s, f, n, N)
-                            for f in tof(s**2 - 4*n).divisors()))
+    x = (s + a) / 2
+    y = (s - a) / 2
+    product = Integer(1) / 2 * (x ** (k - 1) - y ** (k - 1)) / (x - y)
+    return QQ(product * sum(classno(Integer((s ** 2 - 4 * n) / f ** 2))
+                            / w((s ** 2 - 4 * n) / f ** 2) * c(s, f, n, N)
+                            for f in tof(s ** 2 - 4 * n).divisors()))
 
 
 def type_e(n, k, N):
@@ -248,13 +253,13 @@ def type_e(n, k, N):
         sage: type_e(47**2,4,19)
         227310
     """
-    r = int(2*n.sqrt())
+    r = int(2 * n.sqrt())
     if n.is_square():
         r -= 1
     # return sum([xy(s, n, k, N) for s in range(-r, r+1)])
     # WARNING: I *conjecture* that the sum below is the same as the one
     # that I commented out above.
-    return xy(0, n, k, N) + 2*sum(xy(s, n, k, N) for s in range(1, r+1))
+    return xy(0, n, k, N) + 2 * sum(xy(s, n, k, N) for s in range(1, r + 1))
 
 
 def sum_s(n, k, N):
@@ -374,7 +379,7 @@ def trace_hecke_operator(n, k, N=1):
         t = 0
     t += -sum_s(n, k, N)
     if n.is_square():
-        t += (k-1)*mu(N) / 12 * n**((k//2) - 1)
+        t += (k - 1) * mu(N) / 12 * n ** ((k // 2) - 1)
     return t
 
 
@@ -416,12 +421,13 @@ def Tp(p, r, k, f):
         -1 + 3*q + 3*q^3 + 3*q^7 + O(q^266)
     """
     if r > 1:
-        return Tp(p, 1, k, Tp(p, r-1, k, f)) - p**(k-1)*Tp(p, r-2, k, f)
+        return (Tp(p, 1, k, Tp(p, r - 1, k, f))
+                - p ** (k - 1) * Tp(p, r - 2, k, f))
     if r == 1:
         R = QQ[['q']]
         q = R.gen()
-        prec = int(((f.prec()-1)/p) + 1)
-        return R(sum(f[n*p]*q**n + p**(k-1)*f[n]*q**(n*p)
+        prec = int(((f.prec() - 1) / p) + 1)
+        return R(sum(f[n * p] * q ** n + p ** (k - 1) * f[n] * q ** (n * p)
                      for n in range(1, prec)), prec)
     if r == 0:
         return f
@@ -460,7 +466,7 @@ def trace_formula_basis(k, prec):
     """
     f = trace_modular_form(k, prec)
     d = Integer(f[1])  # the dimension
-    return [hecke_operator(n, k, f) for n in range(1, d+1)]
+    return [hecke_operator(n, k, f) for n in range(1, d + 1)]
 
 
 def basis_matrix(B):
@@ -476,7 +482,7 @@ def basis_matrix(B):
     I = zero_matrix(QQ, d)
     for r in range(d):
         for c in range(d):
-            I[r, c] = B[r][c+1]
+            I[r, c] = B[r][c + 1]
     return I
 
 
@@ -494,7 +500,7 @@ def hecke_operator_matrix(k, n):
     """
     from sage.modular.dims import dimension_cusp_forms
     d = dimension_cusp_forms(1, k)
-    B = trace_formula_basis(k, n*d**2 + 1)
+    B = trace_formula_basis(k, n * d ** 2 + 1)
     return hecke_operator_matrix_wrt_basis(k, n, B)
 
 
@@ -502,13 +508,14 @@ def hecke_operator_matrix_wrt_basis(k, n, B):
     r"""
     EXAMPLES::
 
-        sage: from sage.modular.modform.hijikata import hecke_operator_matrix_wrt_basis
+        sage: from sage.modular.modform.hijikata import
+        ....: hecke_operator_matrix_wrt_basis
     """
     d = len(B)
-    I = basis_matrix(B)**(-1)
+    I = basis_matrix(B) ** (-1)
     A = []
     for j in range(d):
         g = hecke_operator(n, k, B[j])
-        A.append([g[i] for i in range(1, d+1)])
+        A.append([g[i] for i in range(1, d + 1)])
     A = I.parent()(A)
-    return I*A
+    return I * A
