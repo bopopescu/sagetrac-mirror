@@ -82,6 +82,11 @@ def mu(N):
 
 def sig(n, N):
     r"""
+    This is a modified version of the sigma function that maps an integer d
+    to the sum of the divisors of d.
+
+    See sage.rings.arith.sigma
+
     EXAMPLES::
 
         sage: from sage.modular.modform.hijikata import sig
