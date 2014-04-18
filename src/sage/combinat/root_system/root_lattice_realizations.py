@@ -2644,12 +2644,13 @@ class RootLatticeRealizations(Category_over_base_ring):
 
         def has_descent(self, i, positive=False):
             """
-            Test if self has a descent at position `i`, that is if self is
-            on the strict negative side of the `i^{th}` simple reflection
-            hyperplane.
+            Test if ``self`` has a descent at position `i`, that is if
+            ``self`` is on the strict negative side of the `i^{th}`
+            simple reflection hyperplane.
 
-            If positive if True, tests if it is on the strict positive
-            side instead.
+            If ``positive`` is set to ``True``, this tests instead if
+            ``self`` is on the strict positive side of the `i^{th}`
+            simple reflection hyperplane.
 
             EXAMPLES::
 
@@ -2673,8 +2674,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             s = self.scalar(self.parent().simple_coroots()[i])
             if positive:
                 return s > 0
-            else:
-                return s < 0
+            return s < 0
 
         def first_descent(self, index_set=None, positive=False):
             """

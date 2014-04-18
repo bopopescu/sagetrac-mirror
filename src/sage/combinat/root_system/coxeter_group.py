@@ -272,7 +272,7 @@ class CoxeterGroupAsPermutationGroup(UniqueRepresentation, PermutationGroup_gene
 
     class Element(PermutationGroupElement):
 
-        def has_descent(self, i, side = 'right', positive=False):
+        def has_descent(self, i, side='right', positive=False):
             """
             Returns whether `i` is a (left/right) descent of ``self``.
 
@@ -299,12 +299,13 @@ class CoxeterGroupAsPermutationGroup(UniqueRepresentation, PermutationGroup_gene
             :meth:`has_descent` as if the group was the full symmetric
             group.
             """
-            assert isinstance(positive, bool)
+            if not isinstance(positive, bool):
+                raise TypeError("%s is not a boolean" % bool)
             if side == 'right':
                 return self.has_right_descent(i) != positive
-            else:
-                assert side == 'left'
-                return self.has_left_descent(i)  != positive
+            if side == 'left':
+                return self.has_left_descent(i) != positive
+            raise ValueError("%s is neither 'right' nor 'left'" % side)
 
         def has_left_descent(self, i):
             r"""
@@ -318,6 +319,18 @@ class CoxeterGroupAsPermutationGroup(UniqueRepresentation, PermutationGroup_gene
                 sage: (s[1]*s[2]).has_left_descent(1) # optional - chevie
                 True
                 sage: (s[1]*s[2]).has_left_descent(2) # optional - chevie
+                False
+
+            With the matrix implementation (:trac:`15456`)::
+
+                sage: W = WeylGroup(['A',4])
+                sage: w = W.from_reduced_word([3,4,2])
+                sage: w.has_left_descent(3)
+                True
+
+                sage: W = CoxeterGroup(['A',3], implementation='matrix')
+                sage: w = W.an_element()
+                sage: w.has_left_descent(0)
                 False
             """
             return not self.parent()._is_positive_root[self(i)]
