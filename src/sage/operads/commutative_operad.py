@@ -2,11 +2,12 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
+
+
 class CommutativeOperad(CombinatorialFreeModule):
     r"""
     The Commutative operad
     """
-
     def __init__(self, R):
         """
         EXAMPLES::
@@ -14,9 +15,9 @@ class CommutativeOperad(CombinatorialFreeModule):
             sage: A = CommutativeOperad(QQ); A
             The Commutative operad over Rational Field
             sage: TestSuite(A).run()
-
         """
-        CombinatorialFreeModule.__init__(self, R, Words(), category = OperadsWithBasis(R))
+        CombinatorialFreeModule.__init__(self, R, Words(),
+                                         category=OperadsWithBasis(R))
 
     def _repr_(self):
         """
@@ -25,7 +26,7 @@ class CommutativeOperad(CombinatorialFreeModule):
             sage: CommutativeOperad(QQ)       # indirect doctest
             The Commutative operad over Rational Field
         """
-        return "The Commutative operad over %s"%(self.base_ring())
+        return "The Commutative operad over {}".format(self.base_ring())
 
     def species(self):
         """
@@ -33,15 +34,15 @@ class CommutativeOperad(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: f=CommutativeOperad(QQ).species()
+            sage: f = CommutativeOperad(QQ).species()
             sage: f.generating_series().coefficients(5)
             [0, 1, 1/2, 1/6, 1/24]
         """
-        from sage.combinat.species.library import *
+        from sage.combinat.species.library import SetSpecies
         return SetSpecies().restricted(min=1)
 
     @cached_method
-    def one_basis(self,letter):
+    def one_basis(self, letter):
         """
         Returns the word of length one, which index the one of this operad,
         as per :meth:`OperadsWithBasis.ParentMethods.one_basis`.
@@ -54,7 +55,7 @@ class CommutativeOperad(CombinatorialFreeModule):
         """
         return self.basis().keys()([letter])
 
-    def degree_on_basis(self,t):
+    def degree_on_basis(self, t):
         """
         Returns the degree of a word `t` in the Commutative operad.
 
@@ -68,7 +69,7 @@ class CommutativeOperad(CombinatorialFreeModule):
         """
         return t.length()
 
-    def map_labels(self,t,f):
+    def map_labels(self, t, f):
         """
         Maps the function `f` on the word `t`.
 
@@ -82,7 +83,7 @@ class CommutativeOperad(CombinatorialFreeModule):
         """
         return self.basis().keys()(sorted([f(u) for u in t]))
 
-    def labelling_on_basis(self,t):
+    def labelling_on_basis(self, t):
         """
         Put canonical labels on a word in the Commutative operad.
 
@@ -94,11 +95,12 @@ class CommutativeOperad(CombinatorialFreeModule):
             sage: A.labelling_on_basis(m)
             B[word: 1234]
         """
-        return self.basis()[self.basis().keys()(sorted([1+i for i in range(t.length())]))]
+        B = self.basis()
+        return B[B.keys()(sorted([1 + i for i in range(t.length())]))]
 
-    def unlabelling_on_basis(self,t):
+    def unlabelling_on_basis(self, t):
         """
-        Removes the labels of a tree in the Commutative operad.
+        Removes the labels of a word in the Commutative operad.
 
         EXAMPLES::
 
@@ -108,9 +110,10 @@ class CommutativeOperad(CombinatorialFreeModule):
             sage: A.unlabelling_on_basis(m)
             B[word: 1111]
         """
-        return self.basis()[self.basis().keys()([1 for i in range(t.length())])]
+        B = self.basis()
+        return B[B.keys()([1 for i in range(t.length())])]
 
-    def grafts(self,x,y,i):
+    def grafts(self, x, y, i):
         """
         Auxiliary procedure: inserts a word y at position i in a word x
         and returns a word
@@ -121,14 +124,12 @@ class CommutativeOperad(CombinatorialFreeModule):
             sage: Words = A.basis().keys()
             sage: A.grafts(Words("acb"), Words("de"),"c")
             word: abde
-
         """
-        if x[0]==i:
-            return self.basis().keys()(sorted(y+x[1:]))
-        else:
-            return self.basis().keys()(sorted(x[:1]+self.grafts(x[1:],y,i)))
+        if x[0] == i:
+            return self.basis().keys()(sorted(y + x[1:]))
+        return self.basis().keys()(sorted(x[:1] + self.grafts(x[1:], y, i)))
 
-    def composition_on_basis(self,x,y,i):
+    def composition_on_basis(self, x, y, i):
         """
         Composition of basis elements, as per :meth:`OperadsWithBasis.ParentMethods.composition_on_basis`.
 
@@ -140,9 +141,9 @@ class CommutativeOperad(CombinatorialFreeModule):
             B[word: abde]
         """
         if not(i in x):
-            return "The composition index is not present."
-        else:
-            return self.basis()[self.grafts(x,y,i)]
+            raise ValueError("the composition index is not present")
+
+        return self.basis()[self.grafts(x, y, i)]
 
     def commutative_product(self, x, y):
         """
@@ -157,8 +158,8 @@ class CommutativeOperad(CombinatorialFreeModule):
             sage: A.commutative_product(x, y)
             B[word: abcd]
         """
-        gen=self.basis()[self.basis().keys()([0,1])]
-        return gen.compose(x,0).compose(y,1)
+        gen = self.basis()[self.basis().keys()([0, 1])]
+        return gen.compose(x, 0).compose(y, 1)
 
     def operad_generators(self):
         """
@@ -169,23 +170,23 @@ class CommutativeOperad(CombinatorialFreeModule):
         """
         from sage.sets.family import Family
         return Family(dict([("commutative_product",
-                             self.basis()[self.basis().keys()([1,2])])]))
+                             self.basis()[self.basis().keys()([1, 2])])]))
 
-    def operad_morphism_on_basis(self,t,codomain):
+    def operad_morphism_on_basis(self, t, codomain):
         """
-        defines a morphism from the Commutative operad to the target operad
+        Defines a morphism from the Commutative operad to the target operad
 
-        the target operad has to possess a method called commutative_product
+        The target operad has to possess a method called ``commutative_product``
 
-        the argument should not have repeated labels
+        The argument should not have repeated labels.
 
         EXAMPLES::
 
             sage: A = CommutativeOperad(QQ)
         """
-        targetProduct=codomain.commutative_product
+        targetProduct = codomain.commutative_product
         n = len(t)
-        if n==1 :
+        if n == 1:
             return codomain.one(t[0])
-        else:
-            return targetProduct(self.operad_morphism_on_basis(t[0],codomain),self.operad_morphism_on_basis(t[1:],codomain))
+        return targetProduct(self.operad_morphism_on_basis(t[0], codomain),
+                             self.operad_morphism_on_basis(t[1:], codomain))

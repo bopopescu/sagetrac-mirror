@@ -1,4 +1,4 @@
-from sage.misc.lazy_import import lazy_import, LazyImport
+from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.operads.associative_operad', 'AssociativeOperad')
 lazy_import('sage.operads.nap_operad', 'NapOperad')

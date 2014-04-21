@@ -1,15 +1,13 @@
 from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
-from sage.combinat.free_module import (
-    CombinatorialFreeModule,
-    CombinatorialFreeModuleElement )
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.binary_tree import LabelledBinaryTrees
+
 
 class DendriformOperad(CombinatorialFreeModule):
     r"""
     The Dendriform operad
     """
-
     def __init__(self, R):
         """
         EXAMPLES::
@@ -18,7 +16,8 @@ class DendriformOperad(CombinatorialFreeModule):
             The Dendriform operad over Rational Field
             sage: TestSuite(A).run()
         """
-        CombinatorialFreeModule.__init__(self, R, LabelledBinaryTrees(), category = OperadsWithBasis(R))
+        CombinatorialFreeModule.__init__(self, R, LabelledBinaryTrees(),
+                                         category=OperadsWithBasis(R))
 
     def _repr_(self):
         """
@@ -27,7 +26,7 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: DendriformOperad(QQ) # indirect doctest
             The Dendriform operad over Rational Field
         """
-        return "The Dendriform operad over %s"%(self.base_ring())
+        return "The Dendriform operad over {}".format(self.base_ring())
 
     def species(self):
         """
@@ -39,15 +38,17 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: f.generating_series().coefficients(5)
             [0, 1, 2, 5, 14]
         """
-        from sage.combinat.species.library import *
-        X=SingletonSpecies()
-        u=EmptySetSpecies()
-        R=CombinatorialSpecies()
-        R.define((u+R)*X*(u+R))
+        from sage.combinat.species.library import (SingletonSpecies,
+                                                   EmptySetSpecies,
+                                                   CombinatorialSpecies)
+        X = SingletonSpecies()
+        u = EmptySetSpecies()
+        R = CombinatorialSpecies()
+        R.define((u + R) * X * (u + R))
         return R
 
     @cached_method
-    def one_basis(self,letter='@'):
+    def one_basis(self, letter='@'):
         """
         Returns the planar binary tree with one vertex, which indexes
         the one of this operad, as per
@@ -59,9 +60,9 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: A.one_basis("a")
             a[., .]
         """
-        return self.basis().keys()([],label=letter)
+        return self.basis().keys()([], label=letter)
 
-    def degree_on_basis(self,t):
+    def degree_on_basis(self, t):
         """
         Returns the degree of a tree in the Dendriform operad.
 
@@ -74,7 +75,7 @@ class DendriformOperad(CombinatorialFreeModule):
         """
         return t.node_number()
 
-    def labelling_on_basis(self,t):
+    def labelling_on_basis(self, t):
         """
         Put canonical labels on a tree in the Dendriform operad.
 
@@ -87,7 +88,7 @@ class DendriformOperad(CombinatorialFreeModule):
         """
         return self.basis()[t.canonical_labelling()]
 
-    def unlabelling_on_basis(self,t):
+    def unlabelling_on_basis(self, t):
         """
         Removes the labels of a tree in the Dendriform operad.
 
@@ -100,7 +101,7 @@ class DendriformOperad(CombinatorialFreeModule):
         """
         return self.basis()[t.shape()]
 
-    def shuffle_on_basis_list(self,x,y):
+    def shuffle_on_basis_list(self, x, y):
         """
         Returns the shuffle product (associative) of two planar binary
         trees as a list of planar binary trees.
@@ -108,8 +109,8 @@ class DendriformOperad(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = DendriformOperad(QQ)
-            sage: ouest=A.one_basis("o")
-            sage: est=A.one_basis("e")
+            sage: ouest = A.one_basis("o")
+            sage: est = A.one_basis("e")
             sage: A.shuffle_on_basis_list(ouest,est)
             [e[o[., .], .], o[., e[., .]]]
         """
@@ -117,10 +118,9 @@ class DendriformOperad(CombinatorialFreeModule):
             return [y]
         elif y.is_empty():
             return [x]
-        else:
-            return self.composition_on_basis_list(self.basis().keys()([x,None],label='diese'),y,'diese')+self.composition_on_basis_list(self.basis().keys()([None,y],label='diese'),x,'diese')
+        return self.composition_on_basis_list(self.basis().keys()([x, None], label='diese'), y, 'diese') + self.composition_on_basis_list(self.basis().keys()([None, y], label='diese'), x, 'diese')
 
-    def composition_on_basis_list(self,x,y,i):
+    def composition_on_basis_list(self, x, y, i):
         """
         Returns the composition of two planar binary
         trees in the dendriform operad as a list of planar binary trees.
@@ -133,16 +133,21 @@ class DendriformOperad(CombinatorialFreeModule):
             [d[., c[., .]]]
         """
         if i in x[0].labels():
-            return [self.basis().keys()([z,x[1]],label=x.label()) for z in self.composition_on_basis_list(x[0],y,i)]
+            return [self.basis().keys()([z, x[1]], label=x.label())
+                    for z in self.composition_on_basis_list(x[0], y, i)]
         elif i in x[1].labels():
-            return [self.basis().keys()([x[0],z],label=x.label()) for z in self.composition_on_basis_list(x[1],y,i)]
-        else:
-            return [self.basis().keys()([z,t],label=y.label()) for z in self.shuffle_on_basis_list(x[0],y[0]) for t in self.shuffle_on_basis_list(y[1],x[1])]
+            return [self.basis().keys()([x[0], z], label=x.label())
+                    for z in self.composition_on_basis_list(x[1], y, i)]
+        return [self.basis().keys()([z, t], label=y.label())
+                for z in self.shuffle_on_basis_list(x[0], y[0])
+                for t in self.shuffle_on_basis_list(y[1], x[1])]
 
-    def composition_on_basis(self,x,y,i):
-        """
-        This computes the composition x o_i y as a sum of planar binary trees,
-        for planar binary trees x and y. i should be a label of x.
+    def composition_on_basis(self, x, y, i):
+        r"""
+        This computes the composition `x o_i y` as a sum of planar binary trees,
+        for planar binary trees `x` and `y`.
+
+        The composition index `i` should be a label of `x`.
 
         EXAMPLES::
 
@@ -168,9 +173,9 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: y = A(LT([None, LT([],'b')], label='a'))
             """
         if not(i in x.labels()):
-            return "The composition index is not present."
-        else:
-            return sum(self.basis()[t] for t in self.composition_on_basis_list(x,y,i))
+            raise ValueError("The composition index is not present.")
+        return sum(self.basis()[t] for t in
+                   self.composition_on_basis_list(x, y, i))
 
     def pre_Lie_product(self, x, y):
         """
@@ -185,8 +190,8 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: A.pre_Lie_product(x, y)
             -B[a[b[., .], c[d[., .], .]]] + B[a[c[d[., .], b[., .]], .]] + B[a[b[c[d[., .], .], .], .]]
         """
-        LT=self.basis().keys()
-        expr=self.monomial(LT([LT([],label=1),None],label=0))-self.monomial(LT([None,LT([],label=1)],label=0))
+        LT = self.basis().keys()
+        expr = self.monomial(LT([LT([], label=1), None], label=0)) - self.monomial(LT([None, LT([], label=1)], label=0))
         return expr.compose(x, 0).compose(y, 1)
 
     def associative_product(self, x, y):
@@ -202,8 +207,8 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: A.associative_product(x, y)
             B[a[b[., .], c[d[., .], .]]] + B[c[a[b[., .], d[., .]], .]] + B[c[d[a[b[., .], .], .], .]]
         """
-        LT=self.basis().keys()
-        expr=self.monomial(LT([LT([],label=0),None],label=1))+self.monomial(LT([None,LT([],label=1)],label=0))
+        LT = self.basis().keys()
+        expr = self.monomial(LT([LT([], label=0), None], label=1)) + self.monomial(LT([None, LT([], label=1)], label=0))
         return expr.compose(x, 0).compose(y, 1)
 
     def chosen_product(self, x, y, name='assoc'):
@@ -230,15 +235,20 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: A.chosen_product(x, y,'right_dend')
             B[a[b[., .], c[d[., .], .]]]
         """
-        LT=self.basis().keys()
-        if name=='assoc':
-            expr=self.monomial(LT([LT([],label=0),None],label=1))+self.monomial(LT([None,LT([],label=1)],label=0))
-        elif name=='prelie':
-            expr=self.monomial(LT([LT([],label=1),None],label=0))-self.monomial(LT([None,LT([],label=1)],label=0))
-        elif name=='lie':
-            expr=self.monomial(LT([LT([],label=0),None],label=1))+self.monomial(LT([None,LT([],label=1)],label=0))-self.monomial(LT([LT([],label=1),None],label=0))-self.monomial(LT([None,LT([],label=0)],label=1))
-        elif name=='left_dend':
-            expr=self.monomial(LT([LT([],label=0),None],label=1))
-        elif name=='right_dend':
-            expr=self.monomial(LT([None,LT([],label=1)],label=0))
+        LT = self.basis().keys()
+        if name == 'assoc':
+            expr = self.monomial(LT([LT([], label=0), None], label=1))
+            expr += self.monomial(LT([None, LT([], label=1)], label=0))
+        elif name == 'prelie':
+            expr = self.monomial(LT([LT([], label=1), None], label=0))
+            expr -= self.monomial(LT([None, LT([], label=1)], label=0))
+        elif name == 'lie':
+            expr = self.monomial(LT([LT([], label=0), None], label=1))
+            expr += self.monomial(LT([None, LT([], label=1)], label=0))
+            expr -= self.monomial(LT([LT([], label=1), None], label=0))
+            expr -= self.monomial(LT([None, LT([], label=0)], label=1))
+        elif name == 'left_dend':
+            expr = self.monomial(LT([LT([], label=0), None], label=1))
+        elif name == 'right_dend':
+            expr = self.monomial(LT([None, LT([], label=1)], label=0))
         return expr.compose(x, 0).compose(y, 1)

@@ -4,17 +4,17 @@ from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
 from sage.combinat.words.shuffle_product import ShuffleProduct_w1w2
 
+
 class ZinbielOperad(CombinatorialFreeModule):
     r"""
     The Zinbiel operad
 
-    FIXME:
+    EXAMPLES::
 
-    sage: Z = ZinbielOperad(QQ)
-    sage: Z.an_element()
-    B[word: _an_element_]
+        sage: Z = ZinbielOperad(QQ)
+        sage: Z.an_element()
+        B[word: _an_element_]
     """
-
     def __init__(self, R):
         """
         EXAMPLES::
@@ -23,14 +23,14 @@ class ZinbielOperad(CombinatorialFreeModule):
             The Zinbiel operad over Rational Field
             sage: TestSuite(A).run()
 
-            sage: W=Words()
+            sage: W = Words()
             sage: A.composition(A(W("abc")), A(W("def")), "b")
             B[word: adcef] + B[word: adecf] + B[word: adefc]
             sage: A.composition(A("abc"), A("def"), "b")
             B[word: adcef] + B[word: adecf] + B[word: adefc]
         """
         CombinatorialFreeModule.__init__(self, R, Words(),
-                                         category = OperadsWithBasis(R))
+                                         category=OperadsWithBasis(R))
 
     def _repr_(self):
         """
@@ -39,7 +39,7 @@ class ZinbielOperad(CombinatorialFreeModule):
             sage: ZinbielOperad(QQ)     # indirect doctest
             The Zinbiel operad over Rational Field
         """
-        return "The Zinbiel operad over %s"%(self.base_ring())
+        return "The Zinbiel operad over {}".format(self.base_ring())
 
     def species(self):
         """
@@ -47,11 +47,11 @@ class ZinbielOperad(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: f=ZinbielOperad(QQ).species()
+            sage: f = ZinbielOperad(QQ).species()
             sage: f.generating_series().coefficients(5)
             [0, 1, 1, 1, 1]
         """
-        from sage.combinat.species.linear_order_species import LinearOrderSpecies
+        from sage.combinat.species.library import LinearOrderSpecies
         return LinearOrderSpecies().restricted(min=1)
 
     def _coerce_end(self, st):
@@ -92,7 +92,6 @@ class ZinbielOperad(CombinatorialFreeModule):
         """
         return self.basis().keys()([letter])
 
-
     def operad_generators(self):
         """
         EXAMPLES::
@@ -102,12 +101,14 @@ class ZinbielOperad(CombinatorialFreeModule):
         """
         from sage.sets.family import Family
         return Family(dict([("zinbiel_product",
-                             self._from_key([1,2]))]))
+                             self._from_key([1, 2]))]))
 
-    def composition_on_basis_list(self,x,y,i):
-        """
-        Returns the composition of two words x o_i y as a list of
-        words. i must be a label of x.
+    def composition_on_basis_list(self, x, y, i):
+        r"""
+        Returns the composition of two words `x o_i y` as a list of
+        words.
+
+        The composition index `i` must be a label of `x`.
 
         EXAMPLES::
 
@@ -117,14 +118,13 @@ class ZinbielOperad(CombinatorialFreeModule):
             [word: dbce, word: dbec, word: debc]
         """
         if not(i in x):
-            return "The composition index is not present."
-        elif x[0]==i:
-            return map(lambda u:y[:1]+u,ShuffleProduct_w1w2(x[1:],y[1:]))
-        else:
-            return map(lambda u:x[:1]+u,
-                       self.composition_on_basis_list(x[1:],y,i))
+            raise ValueError("the composition index is not present")
+        elif x[0] == i:
+            return map(lambda u: y[:1] + u, ShuffleProduct_w1w2(x[1:], y[1:]))
+        return map(lambda u: x[:1] + u,
+                   self.composition_on_basis_list(x[1:], y, i))
 
-    def composition_on_basis(self,x, y,i):
+    def composition_on_basis(self, x, y, i):
         """
         Composition of basis elements, as per :meth:`OperadsWithBasis.ParentMethods.composition_on_basis`.
 
@@ -136,7 +136,6 @@ class ZinbielOperad(CombinatorialFreeModule):
             B[word: dbce] + B[word: dbec] + B[word: debc]
         """
         if not(i in x):
-            return "The composition index is not present."
-        else:
-            return self.sum_of_monomials(
-                t for t in self.composition_on_basis_list(x,y,i))
+            raise ValueError("the composition index is not present")
+        return self.sum_of_monomials(t for t in
+                                     self.composition_on_basis_list(x, y, i))

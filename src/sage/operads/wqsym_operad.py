@@ -24,19 +24,18 @@ from sage.misc.cachefunc import cached_method
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
 from sage.combinat.words.shuffle_product import ShuffleProduct_overlapping
-
-
+from sage.structure.unique_representation import UniqueRepresentation
 
 # TODO: generalize to non standard case:
 # SP = DisjointUnionEnumeratedSets(Family(NN, OrderedSetPartitions))
 
+
 class WQSymNewOperad(CombinatorialFreeModule):
     r"""
-    The WQSym operads.
+    The WQSym operad.
 
     The basis is indexed by words-partitions.
     """
-
     def __init__(self, R):
         """
         EXAMPLES::
@@ -46,11 +45,11 @@ class WQSymNewOperad(CombinatorialFreeModule):
             sage: TestSuite(A).run()
 
             sage: A.composition(A[{1,2}, {3}],
-            ...                 A[{2}, {1}, {3}], 1)
+            ....:               A[{2}, {1}, {3}], 1)
             A[12,13,3] + A[12,3,1,3] + 2*A[12,1,3,3] + A[12,1,3]
         """
         CombinatorialFreeModule.__init__(self, R, Words(),
-                                         category = OperadsWithBasis(R))
+                                         category=OperadsWithBasis(R))
 
     def _repr_(self):
         """
@@ -59,7 +58,7 @@ class WQSymNewOperad(CombinatorialFreeModule):
             sage: WQSymNewOperad(QQ)        # indirect doctest
             The WQSym operad over Rational Field
         """
-        return "The WQSym operad over %s"%(self.base_ring())
+        return "The WQSym operad over {}".format(self.base_ring())
 
     def species(self):
         """
@@ -67,13 +66,14 @@ class WQSymNewOperad(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: f=WQSymNewOperad(QQ).species()
+            sage: f = WQSymNewOperad(QQ).species()
             sage: f.generating_series().coefficients(5)
             [0, 1, 3/2, 13/6, 25/8]
         """
-        from sage.combinat.species.library import *
-        E=SetSpecies().restricted(min=1)
-        L=LinearOrderSpecies().restricted(min=1)
+        from sage.combinat.species.library import (LinearOrderSpecies,
+                                                   SetSpecies)
+        E = SetSpecies().restricted(min=1)
+        L = LinearOrderSpecies().restricted(min=1)
         return L(E)
 
     def __getitem__(self, args):
@@ -92,7 +92,7 @@ class WQSymNewOperad(CombinatorialFreeModule):
         """
         """
         res = ",".join("".join(str(x) for x in part) for part in t)
-        return "A["+res+"]"
+        return "A[" + res + "]"
 
     def _fix_key(self, k):
         """
@@ -111,7 +111,6 @@ class WQSymNewOperad(CombinatorialFreeModule):
             A[12,3]
             sage: WQSymNewOperad(QQ)._from_key("abc")
             A[a,b,c]
-
         """
         k = self._fix_key(k)
         return self._element_constructor(k)
@@ -124,8 +123,8 @@ class WQSymNewOperad(CombinatorialFreeModule):
             sage: A.an_element()
             2*A[1] + A[12,3]
         """
-        return ( self._from_key(({1,2},{3})) +
-                 self._from_key(({1},)) + self._from_key(({1},)) )
+        return (self._from_key(({1, 2}, {3})) +
+                self._from_key(({1},)) + self._from_key(({1},)))
 
     @cached_method
     def one_basis(self, letter=1):
@@ -141,7 +140,6 @@ class WQSymNewOperad(CombinatorialFreeModule):
         """
         return self._from_key(({letter}))
 
-
     # def operad_generators(self):
     #     """
     #     EXAMPLES::
@@ -153,40 +151,43 @@ class WQSymNewOperad(CombinatorialFreeModule):
     #     return Family(dict([("zinbiel_product",
     #                         self._from_key([1,2]))]))
 
-    def composition_on_basis_list(self,x,y,i):
-        """
-        Returns the composition of two words x o_i y as a list of
-        words. i must be a label of x.
+    def composition_on_basis_list(self, x, y, i):
+        r"""
+        Returns the composition of two words `x o_i y` as a list of
+        words.
+
+        The composition index `i` must be a label of `x`.
 
         EXAMPLES::
 
             sage: A = WQSymNewOperad(QQ)
             sage: A.composition_on_basis_list(
-            ...       A._fix_key([[1,2],[3],[4]]),
-            ...       A._fix_key([[5,6], [7]]), 3)
+            ....:     A._fix_key([[1,2],[3],[4]]),
+            ....:     A._fix_key([[5,6], [7]]), 3)
             [word: frozenset([1, 2]),frozenset([3, 5, 6]),frozenset([4]),frozenset([7]), word: frozenset([1, 2]),frozenset([3, 5, 6]),frozenset([7]),frozenset([4]), word: frozenset([1, 2]),frozenset([3, 5, 6]),frozenset([4, 7])]
 
         TESTS::
 
             sage: A.composition_on_basis_list(
-            ...       A._fix_key([[1,2],[3],[4]]),
-            ...       A._fix_key([[5,6]]), 5)
+            ....:     A._fix_key([[1,2],[3],[4]]),
+            ....:     A._fix_key([[5,6]]), 5)
             Traceback (most recent call last):
             ...
             ValueError: The composition index is not present.
         """
         for pos, st in enumerate(x):
-            if i in st: break
+            if i in st:
+                break
         else:
-            raise ValueError, "The composition index is not present."
-        start = x[:pos]+Words()((x[pos]|y[0] - {i},))
-        end   = Words()(x[pos+1:])
-        return map(lambda z: start+z,
-              ShuffleProduct_overlapping(end, Words()(y[1:]),
-                                       sum_func=lambda x, y: x|y,
-                                       neutral = frozenset()).list())
+            raise ValueError("the composition index is not present")
+        start = x[:pos] + Words()((x[pos] | y[0] - {i},))
+        end = Words()(x[pos + 1:])
+        return map(lambda z: start + z,
+                   ShuffleProduct_overlapping(end, Words()(y[1:]),
+                                              sum_func=lambda x, y: x | y,
+                                              neutral=frozenset()).list())
 
-    def composition_on_basis(self,x, y,i):
+    def composition_on_basis(self, x, y, i):
         """
         Composition of basis elements, as per :meth:`OperadsWithBasis.ParentMethods.composition_on_basis`.
 
@@ -194,20 +195,19 @@ class WQSymNewOperad(CombinatorialFreeModule):
 
             sage: A = WQSymNewOperad(QQ)
             sage: A.composition_on_basis(
-            ...       A._fix_key([[1,2],[3],[4]]),
-            ...       A._fix_key([[5,6],[7]]), 3)
+            ....:     A._fix_key([[1,2],[3],[4]]),
+            ....:     A._fix_key([[5,6],[7]]), 3)
             A[12,356,7,4] + A[12,356,47] + A[12,356,4,7]
             sage: A.composition(A[{1,2},{3},{4}], A[{5,6},{7}], 3)
             A[12,356,47] + A[12,356,7,4] + A[12,356,4,7]
         """
-        return self.sum_of_monomials(
-            t for t in self.composition_on_basis_list(x,y,i))
+        return self.sum_of_monomials(t for t in
+                                     self.composition_on_basis_list(x, y, i))
 
 
 class WQSymFractionOperadElement(RingElement):
     """
     """
-
     def __init__(self, parent, frac, degree):
         """
         TESTS::
@@ -252,6 +252,9 @@ class WQSymFractionOperadElement(RingElement):
 
     def __cmp__(self, other):
         """
+
+        EXAMPLES::
+
             sage: A = WQSymFractionOperad()
             sage: el1 = A.from_set_partition(Set([(1,2),(3,)]))
             sage: el2 = A.from_set_partition(Set([(1,3),(2,)]))
@@ -266,6 +269,8 @@ class WQSymFractionOperadElement(RingElement):
 
     def _add_(self, other):
         """
+        EXAMPLES::
+
             sage: A = WQSymFractionOperad()
             sage: el1 = A.from_set_partition(Set([(1,2),(3,)]))
             sage: el2 = A.from_set_partition(Set([(1,3),(2,)]))
@@ -299,17 +304,18 @@ class WQSymFractionOperadElement(RingElement):
         var = parent.var
         n = self._degree
         m = g._degree
-        prd = prod(var(k) for k in range(i,i+m))
+        prd = prod(var(k) for k in range(i, i + m))
         ssf = dict()
         ssf[var(i)] = prd
-        for k in range(1, n-i+1):
-            ssf[var(i+k)] = var(i+k+m-1)
+        for k in range(1, n - i + 1):
+            ssf[var(i + k)] = var(i + k + m - 1)
         ssg = dict()
-        for k in range(1, m+1):
-            ssg[var(k)] = var(k+i-1)
+        for k in range(1, m + 1):
+            ssg[var(k)] = var(k + i - 1)
         return self.__class__(parent,
-                   (g._frac.subs(ssg)*self._frac.subs(ssf)*(prd-1)).factor(),
-                              m+n-1)
+                              (g._frac.subs(ssg)
+                               * self._frac.subs(ssf)
+                               * (prd - 1)).factor(), m + n - 1)
 
     def permute(self, perm):
         """
@@ -325,15 +331,19 @@ class WQSymFractionOperadElement(RingElement):
         var = parent.var
         # assert(len(perm)==self._degree)
         return self.__class__(parent,
-                   self._frac.subs(dict((var(i), var(perm(i)))
-                                        for i in range(1,self._degree+1))),
+                              self._frac.subs({var(i): var(perm(i)) for i in
+                                               range(1, self._degree + 1)}),
                               self._degree)
 
     def nice_frac(self):
+        """
+        """
         n = self.degree()
         return self._frac.subs(self.parent().nice_frac_subs(n))
 
     def num_den_subsets(self):
+        """
+        """
         num, den = self.nice_frac().numerator_denominator()
         num = num.operands()
         den = den.operands()
@@ -341,9 +351,8 @@ class WQSymFractionOperadElement(RingElement):
         return tuple(dct[i] for i in num), tuple(dct[i] for i in den)
 
 
-from sage.structure.unique_representation import UniqueRepresentation
 class WQSymFractionOperad(UniqueRepresentation, Parent):
-    def __init__(self, var_name = "Z", R=SR):
+    def __init__(self, var_name="Z", R=SR):
         """
         EXAMPLES::
 
@@ -353,7 +362,7 @@ class WQSymFractionOperad(UniqueRepresentation, Parent):
         """
         self._var_name = var_name
         self._base = R
-        Parent.__init__(self, category = SymmetricOperads(SR))
+        Parent.__init__(self, category=SymmetricOperads(SR))
 
     def _repr_(self):
         """
@@ -362,7 +371,7 @@ class WQSymFractionOperad(UniqueRepresentation, Parent):
             sage: WQSymFractionOperad()
             The WQSym operad over Symbolic Ring
         """
-        return "The WQSym operad over %s"%(self.base_ring())
+        return "The WQSym operad over {}".format(self.base_ring())
 
     def _an_element_(self):
         """
@@ -371,9 +380,8 @@ class WQSymFractionOperad(UniqueRepresentation, Parent):
             sage: WQSymFractionOperad().an_element()
             (Z1 - 1)/(Z1*Z2 - 1)
         """
-        return self._element_constructor_(
-            (self.var(1)-1)/(self.var(1)*self.var(2)-1), 2)
-
+        return self._element_constructor_((self.var(1) - 1)
+                                          / (self.var(1) * self.var(2) - 1), 2)
 
     def zero(self):
         """
@@ -397,22 +405,26 @@ class WQSymFractionOperad(UniqueRepresentation, Parent):
             Z2
         """
         from sage.calculus.var import var
-        return var("%s%s"%(self._var_name, i))
+        return var("{}{}".format(self._var_name, i))
 
     @cached_method
     def nice_frac_subs(self, n):
+        """
+        """
         from sage.combinat.subset import Subsets
-        return dict((prod(self.var(i) for i in st)-1,
-                     SR.symbol("["+"".join(map(str, st))+"]"))
+        return dict((prod(self.var(i) for i in st) - 1,
+                     SR.symbol("[{}]".format(st)))
                     for st in Subsets(n) if st)
 
     symbdict = dict()
 
     @cached_method
     def num_den_subsets(self, n):
+        """
+        """
         from sage.combinat.subset import Subsets
         for st in Subsets(n):
-            self.symbdict[SR.symbol("["+"".join(map(str, st))+"]")] = st
+            self.symbdict[SR.symbol("[{}]".format(st))] = st
         return self.symbdict
 
     @cached_method
@@ -424,7 +436,7 @@ class WQSymFractionOperad(UniqueRepresentation, Parent):
             sage: A.one()
             1/(Z1 - 1)
         """
-        return self._element_constructor(1/(self.var(1) - 1), 1)
+        return self._element_constructor(1 / (self.var(1) - 1), 1)
 
     def from_set_partition(self, sp):
         """
@@ -441,8 +453,8 @@ class WQSymFractionOperad(UniqueRepresentation, Parent):
         deg = 0
         for p in sp:
             deg += len(p)
-            den = den*prod(self.var(i) for i in p)
-            res = res/(den-1)
+            den = den * prod(self.var(i) for i in p)
+            res = res / (den - 1)
         return self._element_constructor_(res, deg)
 
     def _element_constructor_(self, *args, **opts):

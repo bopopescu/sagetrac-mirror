@@ -2,11 +2,12 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.ordered_tree import LabelledOrderedTrees
+
+
 class FreeOperad(CombinatorialFreeModule):
     r"""
     The free operad over any given set of generators
     """
-
     def __init__(self, R):
         """
         EXAMPLES::
@@ -15,7 +16,8 @@ class FreeOperad(CombinatorialFreeModule):
             The Free operad over Rational Field with generators
             sage: TestSuite(A).run()
         """
-        CombinatorialFreeModule.__init__(self, R, LabelledOrderedTrees(), category = OperadsWithBasis(R))
+        CombinatorialFreeModule.__init__(self, R, LabelledOrderedTrees(),
+                                         category=OperadsWithBasis(R))
 
     def _repr_(self):
         """
@@ -24,10 +26,10 @@ class FreeOperad(CombinatorialFreeModule):
             sage: FreeOperad(QQ)            # indirect doctest
             The Free operad over Rational Field with generators
         """
-        return "The Free operad over %s with generators "%(self.base_ring())
+        return "The Free operad over {} with generators ".format(self.base_ring())
 
     @cached_method
-    def one_basis(self,letter):
+    def one_basis(self, letter):
         """
         Returns the planar tree with no vertex and one leaf, which indexes
         the one of this operad, as per
@@ -39,9 +41,9 @@ class FreeOperad(CombinatorialFreeModule):
             sage: A.one_basis("a")
             a[]
         """
-        return self.basis().keys()([],label=letter)
+        return self.basis().keys()([], label=letter)
 
-    def composition_on_basis_as_tree(self,x,y,i):
+    def composition_on_basis_as_tree(self, x, y, i):
         """
         Returns the composition of two planar trees in the free operad
         as a planar tree.
@@ -50,49 +52,51 @@ class FreeOperad(CombinatorialFreeModule):
 
             sage: A = FreeOperad(QQ)
             sage: Trees = A.basis().keys()
-            sage: one=Trees([],label='a')
-            sage: t=Trees([Trees([],label='c')],label='d')
+            sage: one = Trees([],label='a')
+            sage: t = Trees([Trees([],label='c')],label='d')
             sage: A.composition_on_basis_as_tree(one,one,'a')
             a[]
             sage: A.composition_on_basis_as_tree(one,t,'a')
             d[c[]]
             sage: A.composition_on_basis_as_tree(t,one,'c')
             d[a[]]
-            sage: t1=Trees([Trees([],label='c')],label='d')
-            sage: t2=Trees([Trees([],label='e'),Trees([],label='b')],label='f')
+            sage: t1 = Trees([Trees([],label='c')],label='d')
+            sage: t2 = Trees([Trees([],label='e'),Trees([],label='b')],label='f')
             sage: A.composition_on_basis_as_tree(t1,t2,'c')
             d[f[e[], b[]]]
             sage: A.composition_on_basis_as_tree(t2,t1,'b')
             f[e[], d[c[]]]
         """
-        if x.node_number()==1:
+        if x.node_number() == 1:
             return y
-        else:
-            with x.clone() as t:
-                for j in range(len(t)):
-                    if i in t[j].leaf_labels():
-                        t[j]=self.composition_on_basis_as_tree(t[j],y,i)
-            return t
 
-    def composition_on_basis(self,x,y,i):
-        """
-        This computes the composition x o_i y as a planar tree,
-        for planar trees x and y. i should be a leaf label of x.
+        with x.clone() as t:
+            for j in range(len(t)):
+                if i in t[j].leaf_labels():
+                    t[j] = self.composition_on_basis_as_tree(t[j], y, i)
+        return t
+
+    def composition_on_basis(self, x, y, i):
+        r"""
+        This computes the composition `x o_i y` as a planar tree,
+        for planar trees `x` and `y`.
+
+        The composition index `i` should be a leaf label of `x`.
 
         EXAMPLES::
 
             sage: A = FreeOperad(QQ)
             sage: Trees = A.basis().keys()
-            sage: one=Trees([],label='a')
-            sage: t=Trees([Trees([],label='c')],label='d')
+            sage: one = Trees([],label='a')
+            sage: t = Trees([Trees([],label='c')],label='d')
             sage: A.composition_on_basis(one,one,'a')
             B[a[]]
             sage: A.composition_on_basis(one,t,'a')
             B[d[c[]]]
             sage: A.composition_on_basis(t,one,'c')
             B[d[a[]]]
-            sage: t1=Trees([Trees([],label='c')],label='d')
-            sage: t2=Trees([Trees([],label='e'),Trees([],label='b')],label='f')
+            sage: t1 = Trees([Trees([],label='c')],label='d')
+            sage: t2 = Trees([Trees([],label='e'),Trees([],label='b')],label='f')
             sage: A.composition_on_basis(t1,t2,'c')
             B[d[f[e[], b[]]]]
             sage: A.composition_on_basis(t2,t1,'b')
@@ -104,9 +108,9 @@ class FreeOperad(CombinatorialFreeModule):
             sage: Trees = A.basis().keys()
         """
         if not(i in x.leaf_labels()):
-            return "The composition index is not present."
-        else:
-            return self.basis()[self.composition_on_basis_as_tree(x,y,i)]
+            raise ValueError("the composition index is not present")
+
+        return self.basis()[self.composition_on_basis_as_tree(x, y, i)]
 
     def operad_morphism_on_basis(self, t, cod, fun=None):
         """
@@ -125,17 +129,16 @@ class FreeOperad(CombinatorialFreeModule):
             sage: PL = PreLieOperad(QQ)
             sage: Tr = A.basis().keys()
             sage: t = Tr([Tr([], label='a'), Tr([], label='b')],
-            ...          label='pre_Lie_product')
+            ....:        label='pre_Lie_product')
             sage: A.operad_morphism_on_basis(t, PL,
-            ...        PL.operad_generators().__getitem__)
+            ....:      PL.operad_generators().__getitem__)
             B[a[b[]]]
             sage: A.operad_morphism(PL,
-            ...        PL.operad_generators().__getitem__)(A(t))
+            ....:      PL.operad_generators().__getitem__)(A(t))
             B[a[b[]]]
             sage: A.operad_morphism(PL,
-            ...        PL.operad_generators().__getitem__)(2*A(t))
+            ....:      PL.operad_generators().__getitem__)(2*A(t))
             2*B[a[b[]]]
-
         """
         if fun is None:
             fun = lambda st: getattr(cod, st)
@@ -143,7 +146,7 @@ class FreeOperad(CombinatorialFreeModule):
             return cod.one(t.label())
         res = fun(t.label())
         for i in range(len(t), 0, -1):
-            ti = t[i-1] # trees starts from zero / operads from 1
+            ti = t[i - 1]  # trees starts from zero / operads from 1
             ri = self.operad_morphism_on_basis(ti, cod, fun)
             res = cod.composition(res, ri, i)
         return res

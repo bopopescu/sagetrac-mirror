@@ -2,11 +2,12 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
+
+
 class AssociativeOperad(CombinatorialFreeModule):
     r"""
     The Associative operad
     """
-
     def __init__(self, R):
         """
         EXAMPLES::
@@ -14,9 +15,9 @@ class AssociativeOperad(CombinatorialFreeModule):
             sage: A = AssociativeOperad(QQ); A
             The Associative operad over Rational Field
             sage: TestSuite(A).run()
-
         """
-        CombinatorialFreeModule.__init__(self, R, Words(), category = OperadsWithBasis(R))
+        CombinatorialFreeModule.__init__(self, R, Words(),
+                                         category=OperadsWithBasis(R))
 
     def _repr_(self):
         """
@@ -25,7 +26,7 @@ class AssociativeOperad(CombinatorialFreeModule):
             sage: AssociativeOperad(QQ)       # indirect doctest
             The Associative operad over Rational Field
         """
-        return "The Associative operad over %s"%(self.base_ring())
+        return "The Associative operad over {}".format(self.base_ring())
 
     def species(self):
         """
@@ -41,7 +42,7 @@ class AssociativeOperad(CombinatorialFreeModule):
         return LinearOrderSpecies().restricted(min=1)
 
     @cached_method
-    def one_basis(self,letter):
+    def one_basis(self, letter):
         """
         Returns the word of length one, which index the one of this operad,
         as per :meth:`OperadsWithBasis.ParentMethods.one_basis`.
@@ -54,9 +55,11 @@ class AssociativeOperad(CombinatorialFreeModule):
         """
         return self.basis().keys()([letter])
 
-    def degree_on_basis(self,t):
+    def degree_on_basis(self, t):
         """
         Returns the degree of a word `t` in the Associative operad.
+
+        This is the length of the word.
 
         EXAMPLES::
 
@@ -68,7 +71,7 @@ class AssociativeOperad(CombinatorialFreeModule):
         """
         return t.length()
 
-    def map_labels(self,t,f):
+    def map_labels(self, t, f):
         """
         Maps the function `f` on the word `t`.
 
@@ -82,7 +85,7 @@ class AssociativeOperad(CombinatorialFreeModule):
         """
         return self.basis().keys()([f(u) for u in t])
 
-    def labelling_on_basis(self,t):
+    def labelling_on_basis(self, t):
         """
         Put canonical labels on a word in the Associative operad.
 
@@ -94,9 +97,10 @@ class AssociativeOperad(CombinatorialFreeModule):
             sage: A.labelling_on_basis(m)
             B[word: 1234]
         """
-        return self.basis()[self.basis().keys()([1+i for i in range(t.length())])]
+        B = self.basis()
+        return B[B.keys()([1 + i for i in range(t.length())])]
 
-    def unlabelling_on_basis(self,t):
+    def unlabelling_on_basis(self, t):
         """
         Removes the labels of a tree in the Associative operad.
 
@@ -108,9 +112,10 @@ class AssociativeOperad(CombinatorialFreeModule):
             sage: A.unlabelling_on_basis(m)
             B[word: 1111]
         """
-        return self.basis()[self.basis().keys()([1 for i in range(t.length())])]
+        B = self.basis()
+        return B[B.keys()([1 for i in range(t.length())])]
 
-    def grafts(self,x,y,i):
+    def grafts(self, x, y, i):
         """
         Auxiliary procedure: inserts a word y at position i in a word x
         and returns a word
@@ -121,14 +126,12 @@ class AssociativeOperad(CombinatorialFreeModule):
             sage: Words = A.basis().keys()
             sage: A.grafts(Words("acb"), Words("de"),"c")
             word: adeb
-
         """
-        if x[0]==i:
-            return y+x[1:]
-        else:
-            return x[:1]+self.grafts(x[1:],y,i)
+        if x[0] == i:
+            return y + x[1:]
+        return x[:1] + self.grafts(x[1:], y, i)
 
-    def composition_on_basis(self,x,y,i):
+    def composition_on_basis(self, x, y, i):
         """
         Composition of basis elements, as per :meth:`OperadsWithBasis.ParentMethods.composition_on_basis`.
 
@@ -140,9 +143,8 @@ class AssociativeOperad(CombinatorialFreeModule):
             B[word: adeb]
         """
         if not(i in x):
-            return "The composition index is not present."
-        else:
-            return self.basis()[self.grafts(x,y,i)]
+            raise ValueError("the composition index is not present")
+        return self.basis()[self.grafts(x, y, i)]
 
     def associative_product(self, x, y):
         """
@@ -157,38 +159,38 @@ class AssociativeOperad(CombinatorialFreeModule):
             sage: A.associative_product(x, y)
             B[word: abdc]
         """
-        gen=self.basis()[self.basis().keys()([0,1])]
-        return gen.compose(x,0).compose(y,1)
+        gen = self.basis()[self.basis().keys()([0, 1])]
+        return gen.compose(x, 0).compose(y, 1)
 
     def operad_generators(self):
         """
         EXAMPLES::
 
-        sage: AssociativeOperad(QQ).operad_generators()
-        Finite family {'associative_product': B[word: 12]}
+            sage: AssociativeOperad(QQ).operad_generators()
+            Finite family {'associative_product': B[word: 12]}
         """
         from sage.sets.family import Family
         return Family(dict([("associative_product",
-                             self.basis()[self.basis().keys()([1,2])])]))
+                             self.basis()[self.basis().keys()([1, 2])])]))
 
-    def operad_morphism_on_basis(self,t,codomain):
+    def operad_morphism_on_basis(self, t, codomain):
         """
-        defines a morphism from the Associative operad to the target operad
+        Defines a morphism from the Associative operad to the target operad
 
-        the target operad has to possess a method called associative_product
+        The target operad has to possess a method called ``associative_product``.
 
-        the argument should not have repeated labels
+        The argument should not have repeated labels.
 
         EXAMPLES::
 
             sage: A = AssociativeOperad(QQ)
             sage: D = DendriformOperad(QQ)
-            sage: A.operad_morphism_on_basis(A.one_basis('a'),D)
+            sage: A.operad_morphism_on_basis(A.one_basis('a'), D)
             B[a[., .]]
         """
-        targetProduct=codomain.associative_product
+        targetProduct = codomain.associative_product
         n = len(t)
-        if n==1 :
+        if n == 1:
             return codomain.one(t[0])
-        else:
-            return targetProduct(self.operad_morphism_on_basis(t[0],codomain),self.operad_morphism_on_basis(t[1:],codomain))
+        return targetProduct(self.operad_morphism_on_basis(t[0], codomain),
+                             self.operad_morphism_on_basis(t[1:], codomain))
