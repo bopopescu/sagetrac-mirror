@@ -224,15 +224,17 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: x = A(LT([LT([],'b'),None], label='a'))
             sage: y = A(LT([LT([],'d'),None], label='c'))
             sage: A.chosen_product(x, y, 'assoc')
-            B[a[b[., .], c[d[., .], .]]] + B[c[a[b[., .], d[., .]], .]] + B[c[d[a[b[., .], .], .], .]]
+            B[a[b[., .], c[d[., .], .]]] + B[c[a[b[., .], d[., .]], .]]
+            + B[c[d[a[b[., .], .], .], .]]
             sage: A.chosen_product(x, y, 'lie')
-            B[a[b[., .], c[d[., .], .]]] - B[c[d[., .], a[b[., .], .]]] + B[c[a[b[., .], d[., .]], .]] - B[a[c[d[., .], b[., .]], .]] + B[c[d[a[b[., .], .], .], .]] - B[a[b[c[d[., .], .], .], .]]
+            -B[c[d[., .], a[b[., .], .]]] + B[a[b[., .], c[d[., .], .]]] + B[c[a[b[., .], d[., .]], .]] - B[a[c[d[., .], b[., .]], .]] + B[c[d[a[b[., .], .], .], .]] - B[a[b[c[d[., .], .], .], .]]
 
-            sage: A.chosen_product(x, y,'prelie')
-            -B[a[b[., .], c[d[., .], .]]] + B[a[c[d[., .], b[., .]], .]] + B[a[b[c[d[., .], .], .], .]]
-            sage: A.chosen_product(x, y,'left_dend')
+            sage: A.chosen_product(x, y, 'prelie')
+            -B[a[b[., .], c[d[., .], .]]] + B[a[c[d[., .], b[., .]], .]]
+            + B[a[b[c[d[., .], .], .], .]]
+            sage: A.chosen_product(x, y, 'left_dend')
             B[c[a[b[., .], d[., .]], .]] + B[c[d[a[b[., .], .], .], .]]
-            sage: A.chosen_product(x, y,'right_dend')
+            sage: A.chosen_product(x, y, 'right_dend')
             B[a[b[., .], c[d[., .], .]]]
         """
         LT = self.basis().keys()

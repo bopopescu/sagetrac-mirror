@@ -19,8 +19,10 @@ class NapOperad(CombinatorialFreeModule):
             An example of an operad with basis: the Nap operad over Rational Field
             sage: TestSuite(A).run()
         """
+        # one should rather use LabelledRootedTrees
         CombinatorialFreeModule.__init__(self, R, LabelledOrderedTrees(),
                                          category=OperadsWithBasis(R))
+
 
     def _repr_(self):
         """

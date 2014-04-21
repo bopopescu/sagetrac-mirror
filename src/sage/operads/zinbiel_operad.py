@@ -13,7 +13,7 @@ class ZinbielOperad(CombinatorialFreeModule):
 
         sage: Z = ZinbielOperad(QQ)
         sage: Z.an_element()
-        B[word: _an_element_]
+        B[word: ]
     """
     def __init__(self, R):
         """
@@ -34,6 +34,8 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     def _repr_(self):
         """
+        Returns a string representation of ``self``.
+
         EXAMPLES::
 
             sage: ZinbielOperad(QQ)     # indirect doctest
@@ -43,7 +45,9 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     def species(self):
         """
-        The species of non-empty lists
+        Returns the species of non-empty lists.
+
+        This is the species associated with the Zinbiel operad.
 
         EXAMPLES::
 
@@ -66,11 +70,12 @@ class ZinbielOperad(CombinatorialFreeModule):
         """
         if isinstance(st, str):
             return self._from_key(st)
-        else:
-            raise TypeError
+        raise TypeError
 
     def _from_key(self, k):
         """
+        Returns an element from a word.
+
         EXAMPLES::
 
             sage: ZinbielOperad(QQ)._from_key("abc")

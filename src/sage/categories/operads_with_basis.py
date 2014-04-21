@@ -11,8 +11,10 @@ OperadsWithBasis
 from sage.misc.abstract_method import abstract_method
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.categories.all import Category, GradedModulesWithBasis, Operads
+from sage.categories.all import Operads
 from category_types import Category_over_base_ring
+from sage.categories.graded_modules_with_basis import GradedModulesWithBasis
+
 
 class OperadsWithBasis(Category_over_base_ring):
     """
@@ -30,14 +32,14 @@ class OperadsWithBasis(Category_over_base_ring):
         sage: C = OperadsWithBasis(QQ)
         sage: TestSuite(C).run()
     """
-
     @cached_method
     def super_categories(self):
         """
         EXAMPLES::
 
             sage: OperadsWithBasis(QQ).super_categories()
-            [Category of graded vector spaces with basis over Rational Field, Category of operads over Rational Field]
+            [Category of graded vector spaces with basis over Rational Field,
+            Category of operads over Rational Field]
         """
         R = self.base_ring()
         return [GradedModulesWithBasis(R), Operads(R)]
@@ -55,17 +57,16 @@ class OperadsWithBasis(Category_over_base_ring):
     class ParentMethods:
 
         @cached_method
-        def one(self,letter):
+        def one(self, letter):
             """
             EXAMPLES::
             """
             if self.one_basis is not NotImplemented:
                 return self.basis()[self.one_basis(letter)]
-            else:
-                return NotImplemented
+            return NotImplemented
 
-        @abstract_method(optional = True)
-        def one_basis(self,letter):
+        @abstract_method(optional=True)
+        def one_basis(self, letter):
             """
             When the one of an operad with basis is an element of
             this basis, this optional method can return the index of
@@ -80,7 +81,7 @@ class OperadsWithBasis(Category_over_base_ring):
                 B[word: a]
             """
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def composition_on_basis(self, i, j, k):
             """
             The composition of the operad on the basis (optional)
@@ -91,9 +92,11 @@ class OperadsWithBasis(Category_over_base_ring):
 
              - ``k`` -- the composition label
 
-            Returns the composition of the two corresponding basis elements at the chosen label
+            Returns the composition of the two corresponding basis
+            elements at the chosen label
 
-            If implemented, :meth:`composition` is defined from it by bilinearity.
+            If implemented, :meth:`composition` is defined from it by
+            bilinearity.
 
             EXAMPLES::
 
@@ -117,9 +120,11 @@ class OperadsWithBasis(Category_over_base_ring):
 
              - ``N`` -- the order of truncation
 
-            Returns the composition of the two corresponding basis elements at the chosen label, up to order N
+            Returns the composition of the two corresponding basis
+            elements at the chosen label, up to order N
 
-            If implemented, :meth:`composition_truncated` is defined from it by bilinearity.
+            If implemented, :meth:`composition_truncated` is defined
+            from it by bilinearity.
 
             EXAMPLES::
 
@@ -130,14 +135,13 @@ class OperadsWithBasis(Category_over_base_ring):
                 sage: A.composition_on_basis_truncated(Word("abc"),Word("de"),"b",3)
                 0
             """
-            if self.degree_on_basis(i)+self.degree_on_basis(j)-1<=N:
-                return self.composition_on_basis(i,j,k)
-            else:
-                return self(0)
+            if self.degree_on_basis(i) + self.degree_on_basis(j) - 1 <= N:
+                return self.composition_on_basis(i, j, k)
+            return self.zero()
 
         def composition_on_basis_with_numbers(self, i, j, k):
             """
-            This is variant of composition where one assume that
+            This is variant of composition where one assumes that
             labels are integers from 1 to n.
 
             EXAMPLES::
@@ -148,13 +152,13 @@ class OperadsWithBasis(Category_over_base_ring):
                 B[word: 3421]
             """
             # the operad must define map_labels !
-            shifted_j=j.map_labels(lambda z:z+k-1)
+            shifted_j = j.map_labels(lambda z: z + k - 1)
+
             def shift(l):
-                if l>k:
-                    return l+self.degree_on_basis(j)-1
-                else:
-                    return l
-            shifted_i=i.map_labels(shift)
+                if l > k:
+                    return l + self.degree_on_basis(j) - 1
+                return l
+            shifted_i = i.map_labels(shift)
             return self.composition_on_basis(shifted_i, shifted_j, k)
 
         @lazy_attribute
@@ -173,9 +177,8 @@ class OperadsWithBasis(Category_over_base_ring):
                 B[word: adec]
             """
             if self.composition_on_basis is not NotImplemented:
-                return self._module_morphism(self._module_morphism(self.composition_on_basis, position = 0, codomain=self),position = 1)
-            else:
-                return NotImplemented
+                return self._module_morphism(self._module_morphism(self.composition_on_basis, position=0, codomain=self), position=1)
+            return NotImplemented
 
         @lazy_attribute
         def composition_truncated(self):
@@ -197,16 +200,16 @@ class OperadsWithBasis(Category_over_base_ring):
                 0
             """
             if self.composition_on_basis_truncated is not NotImplemented:
-                return self._module_morphism(self._module_morphism(self.composition_on_basis_truncated, position = 0, codomain=self),position = 1)
-            else:
-                return NotImplemented
+                return self._module_morphism(self._module_morphism(self.composition_on_basis_truncated, position=0, codomain=self), position=1)
+            return NotImplemented
 
         @lazy_attribute
         def composition_with_numbers(self):
             """
             This is a variant of composition, where one assumes that
-            the objects are labelled by integers from 1 to n. The
-            result is labelled in the same way.
+            the objects are labelled by integers from 1 to n.
+
+            The result is labelled in the same way.
 
             EXAMPLES::
 
@@ -216,11 +219,10 @@ class OperadsWithBasis(Category_over_base_ring):
                 B[word: 3241]
             """
             if self.composition_on_basis_with_numbers is not NotImplemented:
-                return self._module_morphism(self._module_morphism(self.composition_on_basis_with_numbers, position = 0, codomain=self),position = 1)
-            else:
-                return NotImplemented
+                return self._module_morphism(self._module_morphism(self.composition_on_basis_with_numbers, position=0, codomain=self), position=1)
+            return NotImplemented
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def operad_morphism_on_basis(self, i, codomain):
             """
             Morphism from the operad `self` to the operad ``P``
@@ -246,10 +248,10 @@ class OperadsWithBasis(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: PL=PreLieOperad(QQ)
-                sage: DO=DendriformOperad(QQ)
-                sage: PLT=PL.basis().keys()
-                sage: t0=PL(PLT([],'a'))
+                sage: PL = PreLieOperad(QQ)
+                sage: DO = DendriformOperad(QQ)
+                sage: PLT = PL.basis().keys()
+                sage: t0 = PL(PLT([],'a'))
                 sage: PL2PL = PL.operad_morphism(PL)
                 sage: PL2PL(t0)
                 B[a[]]
@@ -261,10 +263,10 @@ class OperadsWithBasis(Category_over_base_ring):
             """
             if self.operad_morphism_on_basis is not NotImplemented:
                 return self._module_morphism(
-                    lambda x: self.operad_morphism_on_basis(x, codomain, *args, **opts),
-                    position = 0, codomain=codomain)
-            else:
-                raise NotImplementedError
+                    lambda x: self.operad_morphism_on_basis(x, codomain,
+                                                            *args, **opts),
+                    position=0, codomain=codomain)
+            raise NotImplementedError
 
         @lazy_attribute
         def labelling(self):
@@ -274,16 +276,16 @@ class OperadsWithBasis(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: DO=DendriformOperad(QQ)
-                sage: t=2*DO(LabelledBinaryTree([None, None],label='@'))
+                sage: DO = DendriformOperad(QQ)
+                sage: t = 2*DO(LabelledBinaryTree([None, None],label='@'))
                 sage: DO.labelling(t)
                 2*B[1[., .]]
             """
             if self.labelling_on_basis is not NotImplemented:
                 return self._module_morphism(
-                    lambda x: self.labelling_on_basis(x),position = 0,codomain=self)
-            else:
-                raise NotImplementedError
+                    lambda x: self.labelling_on_basis(x), position=0,
+                    codomain=self)
+            raise NotImplementedError
 
         @lazy_attribute
         def unlabelling(self):
@@ -292,18 +294,17 @@ class OperadsWithBasis(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: DO=DendriformOperad(QQ)
-                sage: t=2*DO(LabelledBinaryTree([None, None],label='1'))
+                sage: DO = DendriformOperad(QQ)
+                sage: t = 2*DO(LabelledBinaryTree([None, None],label='1'))
                 sage: DO.unlabelling(t)
                 2*B[[., .]]
             """
             if self.unlabelling_on_basis is not NotImplemented:
                 return self._module_morphism(
-                    lambda x: self.unlabelling_on_basis(x), position = 0, codomain=self)
-            else:
-                raise NotImplementedError
+                    lambda x: self.unlabelling_on_basis(x), position=0, codomain=self)
+            raise NotImplementedError
 
-        def suspension(self,s,q):
+        def suspension(self, s, q):
             """
             Return the suspension of `s` with argument `q`.
 
@@ -313,21 +314,22 @@ class OperadsWithBasis(Category_over_base_ring):
 
             For the element `s = \sum_n s_n`, this is defined as
 
-            \sum_\n q**(n-1) s_n
+            `\sum_\n q**(n-1) s_n`
 
             EXAMPLES::
 
-                sage: PL=PreLieOperad(QQ)
-                sage: o=PL.one('o')
+                sage: PL = PreLieOperad(QQ)
+                sage: o = PL.one('o')
                 sage: PL.suspension(o,4)
                 B[o[]]
-                sage: t=(o<o)+((o<o)<o)
+                sage: t = (o<o)+((o<o)<o)
                 sage: PL.suspension(t,2)
                 2*B[o[o[]]] + 4*B[o[o[], o[]]] + 4*B[o[o[o[]]]]
             """
-            return s.map_item(lambda i, c: (i, q**(self.degree_on_basis(i)-1)*c))
+            susp = lambda i, c: (i, q ** (self.degree_on_basis(i) - 1) * c)
+            return s.map_item(susp)
 
-        def group_product_with_numbers(self,s,t,N):
+        def group_product_with_numbers(self, s, t, N):
             """
             Returns the group product of ``s`` by ``t`` up to order ``N``.
 
@@ -336,22 +338,22 @@ class OperadsWithBasis(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: PL=PreLieOperad(QQ)
-                sage: x=PL.one(1)
+                sage: PL = PreLieOperad(QQ)
+                sage: x = PL.one(1)
                 sage: PL.group_product_with_numbers(x,x,2)
                 B[1[]]
             """
-            dom=s.parent()
-            resu=dom(0)
-            for i in range(1,N+1):
-                si=s.homogeneous_component(i)
-                t_short=t.truncate(1+N-i)
-                for j in range(1,i+1):
-                    si=dom.composition_with_numbers(si,t_short,i+1-j).truncate(N)
-                resu=resu+si
+            dom = s.parent()
+            resu = dom.zero()
+            for i in range(1, N + 1):
+                si = s.homogeneous_component(i)
+                t_short = t.truncate(1 + N - i)
+                for j in range(1, i + 1):
+                    si = dom.composition_with_numbers(si, t_short, i + 1 - j).truncate(N)
+                resu += si
             return resu
 
-        def group_product_without_numbers(self,s,t,N):
+        def group_product_without_numbers(self, s, t, N):
             """
             Returns the group product of ``s`` by ``t`` up to order ``N``.
 
@@ -359,16 +361,16 @@ class OperadsWithBasis(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: PL=PreLieOperad(QQ)
-                sage: x=PL.unlabelling(PL.one(1))
+                sage: PL = PreLieOperad(QQ)
+                sage: x = PL.unlabelling(PL.one(1))
                 sage: PL.group_product_without_numbers(x,x,2)
                 B[[]]
             """
-            return self.unlabelling(self.group_product_with_numbers(self.labelling(s),self.labelling(t),N))
+            return self.unlabelling(self.group_product_with_numbers(self.labelling(s), self.labelling(t), N))
 
-        def inverse_with_numbers(self,s,N):
-            """
-            Returns the inverse of ``s`` up to order ``N``.
+        def inverse_with_numbers(self, s, N):
+            r"""
+            Returns the inverse of `s` up to order `N`.
 
             This takes place in the group associated with the
             composition of the operad.
@@ -378,17 +380,16 @@ class OperadsWithBasis(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: PL=PreLieOperad(QQ)
-                sage: x=PL.one(1)
+                sage: PL = PreLieOperad(QQ)
+                sage: x = PL.one(1)
                 sage: PL.inverse_with_numbers(x,1)
                 B[1[]]
 
-                sage: PL=PreLieOperad(QQ)
-                sage: x=4*PL.one(1)
+                sage: x = 4*PL.one(1)
                 sage: PL.inverse_with_numbers(x,1)
                 1/4*B[1[]]
 
-                sage: x=PL.one(1)+(PL.one(1)<PL.one(2))
+                sage: x = PL.one(1)+(PL.one(1)<PL.one(2))
                 sage: inv = PL.inverse_with_numbers(x,3); inv
                 B[1[]] - B[2[1[]]]
                 sage: PL.group_product_with_numbers(x,inv,3)
@@ -396,29 +397,29 @@ class OperadsWithBasis(Category_over_base_ring):
             """
             coeff_o = s.homogeneous_component(1).coefficients()[0]
             if coeff_o == 0:
-                raise ValueError, "This series is not invertible"
-            dom=s.parent()
-            t = s/coeff_o
-            inv=dom.one(1)/coeff_o
-            for j in range(2,N+1):
-                inv+=dom.one(1)/coeff_o-dom.group_product_with_numbers(t,inv,j)
+                raise ValueError("this series is not invertible")
+            dom = s.parent()
+            t = s / coeff_o
+            inv = dom.one(1) / coeff_o
+            for j in range(2, N + 1):
+                inv += dom.one(1) / coeff_o - dom.group_product_with_numbers(t, inv, j)
             return inv
 
-        def right_division_with_numbers(self,s,t,N):
-            """
-            Computes the product of ``s`` by ``t^{-1}`` up to order ``N``.
+        def right_division_with_numbers(self, s, t, N):
+            r"""
+            Computes the product of `s` by `t^{-1}` up to order `N`.
 
             EXAMPLES::
 
-                sage: PL=PreLieOperad(QQ)
-                sage: x=PL.one(1)
-                sage: PL.right_division_with_numbers(x,x,1)
+                sage: PL = PreLieOperad(QQ)
+                sage: x = PL.one(1)
+                sage: PL.right_division_with_numbers(x, x, 1)
                 B[1[]]
             """
-            dom=s.parent()
-            inv=dom.one(1)
-            for j in range(2,N+1):
-                inv=inv+s.truncate(j)-dom.group_product_with_numbers(inv,t,j)
+            dom = s.parent()
+            inv = dom.one(1)
+            for j in range(2, N + 1):
+                inv += s.truncate(j) - dom.group_product_with_numbers(inv, t, j)
             return inv
 
     class ElementMethods:
@@ -429,14 +430,14 @@ class OperadsWithBasis(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: w=PreLieOperad(PolynomialRing(ZZ,'x')).one('A')
-                sage: x=w.parent().base_ring().gen()
-                sage: ww=(1+x)*w ; ww
+                sage: w = PreLieOperad(PolynomialRing(ZZ,'x')).one('A')
+                sage: x = w.parent().base_ring().gen()
+                sage: ww = (1+x)*w ; ww
                 (x+1)*B[A[]]
                 sage: ww.eval(x=1)
                 2*B[A[]]
             """
-            return self.map_coefficients(lambda g:g(*args,**kwds))
+            return self.map_coefficients(lambda g: g(*args, **kwds))
 
         def canonical_labelling(self):
             """
@@ -444,7 +445,7 @@ class OperadsWithBasis(Category_over_base_ring):
 
             EXAMPLES::
 
-                sage: w=PreLieOperad(PolynomialRing(ZZ,'x')).one('A')
+                sage: w = PreLieOperad(PolynomialRing(ZZ,'x')).one('A')
                 sage: w.canonical_labelling()
                 B[1[]]
             """

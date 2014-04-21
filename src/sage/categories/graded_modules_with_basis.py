@@ -9,8 +9,9 @@ Graded modules with basis
 #******************************************************************************
 
 from category_types import Category_over_base_ring
-from sage.categories.all import GradedModules, ModulesWithBasis
+from sage.categories.all import ModulesWithBasis
 from sage.misc.cachefunc import cached_method
+from sage.categories.graded_modules import GradedModules
 
 
 class GradedModulesWithBasis(Category_over_base_ring):

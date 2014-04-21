@@ -226,11 +226,13 @@ class WQSymFractionOperadElement(RingElement):
 
     def _repr_(self):
         """
+        Returns a string representation of ``self``.
+
         EXAMPLES::
 
             sage: A = WQSymFractionOperad()
             sage: A.from_set_partition(Set([(1,2),(3,)])).__repr__()
-            '1/((Z1*Z2 - 1)*(Z1*Z2*Z3 - 1))'
+            '1/((Z1*Z2*Z3 - 1)*(Z1*Z2 - 1))'
         """
         return repr(self._frac)
 
@@ -274,8 +276,8 @@ class WQSymFractionOperadElement(RingElement):
             sage: A = WQSymFractionOperad()
             sage: el1 = A.from_set_partition(Set([(1,2),(3,)]))
             sage: el2 = A.from_set_partition(Set([(1,3),(2,)]))
-            sage: el1+el2
-            (Z1*Z2 + Z2 - 2)/((Z2 - 1)*(Z1*Z2 - 1)*(Z1*Z2*Z3 - 1))
+            sage: el1 + el2
+            (Z1*Z2 + Z2 - 2)/((Z1*Z2*Z3 - 1)*(Z1*Z2 - 1)*(Z2 - 1))
         """
         parent = self.parent()
         # assert(self._degree == other._degree)
@@ -285,13 +287,15 @@ class WQSymFractionOperadElement(RingElement):
 
     def compose(self, g, i):
         """
+        Returns the composition `f o_i g` in the operad.
+
         EXAMPLES::
 
             sage: A = WQSymFractionOperad()
             sage: el1 = A.from_set_partition(Set([(1,2),(3,)])); el1
-            1/((Z1*Z2 - 1)*(Z1*Z2*Z3 - 1))
+            1/((Z1*Z2*Z3 - 1)*(Z1*Z2 - 1))
             sage: el1.compose(A.one(), 1)
-            1/((Z1*Z2 - 1)*(Z1*Z2*Z3 - 1))
+            1/((Z1*Z2*Z3 - 1)*(Z1*Z2 - 1))
 
         TESTS::
 
@@ -323,9 +327,9 @@ class WQSymFractionOperadElement(RingElement):
 
             sage: A = WQSymFractionOperad()
             sage: el1 = A.from_set_partition(Set([(1,2),(3,)])); el1
-            1/((Z1*Z2 - 1)*(Z1*Z2*Z3 - 1))
+            1/((Z1*Z2*Z3 - 1)*(Z1*Z2 - 1))
             sage: el1.permute(Permutation([3,1,2]))
-            1/((Z1*Z3 - 1)*(Z1*Z2*Z3 - 1))
+            1/((Z1*Z2*Z3 - 1)*(Z1*Z3 - 1))
         """
         parent = self.parent()
         var = parent.var
@@ -440,13 +444,15 @@ class WQSymFractionOperad(UniqueRepresentation, Parent):
 
     def from_set_partition(self, sp):
         """
+        Returns an element from a set partition.
+
         EXAMPLES::
 
             sage: A = WQSymFractionOperad()
             sage: A.from_set_partition(Set([(1,2),(3,)]))
-            1/((Z1*Z2 - 1)*(Z1*Z2*Z3 - 1))
+            1/((Z1*Z2*Z3 - 1)*(Z1*Z2 - 1))
             sage: [A.from_set_partition(p) for p in OrderedSetPartitions(3)]
-            [1/((Z1 - 1)*(Z1*Z2 - 1)*(Z1*Z2*Z3 - 1)), 1/((Z1 - 1)*(Z1*Z3 - 1)*(Z1*Z2*Z3 - 1)), 1/((Z2 - 1)*(Z1*Z2 - 1)*(Z1*Z2*Z3 - 1)), 1/((Z3 - 1)*(Z1*Z3 - 1)*(Z1*Z2*Z3 - 1)), 1/((Z2 - 1)*(Z2*Z3 - 1)*(Z1*Z2*Z3 - 1)), 1/((Z3 - 1)*(Z2*Z3 - 1)*(Z1*Z2*Z3 - 1)), 1/((Z1 - 1)*(Z1*Z2*Z3 - 1)), 1/((Z2 - 1)*(Z1*Z2*Z3 - 1)), 1/((Z3 - 1)*(Z1*Z2*Z3 - 1)), 1/((Z1*Z2 - 1)*(Z1*Z2*Z3 - 1)), 1/((Z1*Z3 - 1)*(Z1*Z2*Z3 - 1)), 1/((Z2*Z3 - 1)*(Z1*Z2*Z3 - 1)), 1/(Z1*Z2*Z3 - 1)]
+            [1/((Z1*Z2*Z3 - 1)*(Z1*Z2 - 1)*(Z1 - 1)), 1/((Z1*Z2*Z3 - 1)*(Z1*Z3 - 1)*(Z1 - 1)), 1/((Z1*Z2*Z3 - 1)*(Z1*Z2 - 1)*(Z2 - 1)), 1/((Z1*Z2*Z3 - 1)*(Z1*Z3 - 1)*(Z3 - 1)), 1/((Z1*Z2*Z3 - 1)*(Z2*Z3 - 1)*(Z2 - 1)), 1/((Z1*Z2*Z3 - 1)*(Z2*Z3 - 1)*(Z3 - 1)), 1/((Z1*Z2*Z3 - 1)*(Z1 - 1)), 1/((Z1*Z2*Z3 - 1)*(Z2 - 1)), 1/((Z1*Z2*Z3 - 1)*(Z3 - 1)), 1/((Z1*Z2*Z3 - 1)*(Z1*Z2 - 1)), 1/((Z1*Z2*Z3 - 1)*(Z1*Z3 - 1)), 1/((Z1*Z2*Z3 - 1)*(Z2*Z3 - 1)), 1/(Z1*Z2*Z3 - 1)]
         """
         den = 1
         res = 1
