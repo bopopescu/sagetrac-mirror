@@ -7,6 +7,21 @@ from sage.combinat.words.words import Words
 class CommutativeOperad(CombinatorialFreeModule):
     r"""
     The Commutative operad
+
+    This is an operad on the species of non-empty sets.
+
+    EXAMPLES::
+
+            sage: A = CommutativeOperad(QQ)
+            sage: W = A.basis().keys()
+            sage: x = A(W('ab'))
+            sage: y = A(W('dc'))
+            sage: x.compose(y, 'a')
+            B[word: bcd]
+
+    REFERENCES:
+
+    .. [todo]
     """
     def __init__(self, R):
         """
@@ -21,6 +36,8 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def _repr_(self):
         """
+        Returns a string representation of ``self``.
+
         EXAMPLES::
 
             sage: CommutativeOperad(QQ)       # indirect doctest
@@ -32,6 +49,8 @@ class CommutativeOperad(CombinatorialFreeModule):
         """
         The species of non-empty sets
 
+        This is the species underlying the Commutative operad.
+
         EXAMPLES::
 
             sage: f = CommutativeOperad(QQ).species()
@@ -41,11 +60,42 @@ class CommutativeOperad(CombinatorialFreeModule):
         from sage.combinat.species.library import SetSpecies
         return SetSpecies().restricted(min=1)
 
+    def _coerce_end(self, st):
+        """
+        Allows for the shortcut ``A(<string>)``.
+
+        EXAMPLES::
+
+            sage: A = CommutativeOperad(QQ)
+            sage: A("abc")
+            B[word: abc]
+        """
+        if isinstance(st, str):
+            return self._from_key(st)
+        raise TypeError
+
+    def _from_key(self, k):
+        """
+        Returns an element from a word.
+
+        EXAMPLES::
+
+            sage: CommutativeOperad(QQ)._from_key("abc")
+            B[word: abc]
+            sage: CommutativeOperad(QQ)._from_key("bac")
+            B[word: abc]
+        """
+        return self._element_constructor(self.basis().keys()(sorted(k)))
+
     @cached_method
-    def one_basis(self, letter):
+    def one_basis(self, letter='@'):
         """
         Returns the word of length one, which index the one of this operad,
         as per :meth:`OperadsWithBasis.ParentMethods.one_basis`.
+
+        INPUT:
+
+        - ``letter`` (default ``'@'``) -- letter used to label the unit
 
         EXAMPLES::
 
@@ -58,6 +108,8 @@ class CommutativeOperad(CombinatorialFreeModule):
     def degree_on_basis(self, t):
         """
         Returns the degree of a word `t` in the Commutative operad.
+
+        This is the length of the word.
 
         EXAMPLES::
 
@@ -114,8 +166,8 @@ class CommutativeOperad(CombinatorialFreeModule):
         return B[B.keys()([1 for i in range(t.length())])]
 
     def grafts(self, x, y, i):
-        """
-        Auxiliary procedure: inserts a word y at position i in a word x
+        r"""
+        Auxiliary procedure: inserts a word `y` at position `i` in a word `x`
         and returns a word
 
         EXAMPLES::
@@ -163,10 +215,12 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def operad_generators(self):
         """
+        Returns the generators of the operad.
+
         EXAMPLES::
 
-        sage: CommutativeOperad(QQ).operad_generators()
-        Finite family {'commutative_product': B[word: 12]}
+            sage: CommutativeOperad(QQ).operad_generators()
+            Finite family {'commutative_product': B[word: 12]}
         """
         from sage.sets.family import Family
         return Family(dict([("commutative_product",
@@ -176,9 +230,10 @@ class CommutativeOperad(CombinatorialFreeModule):
         """
         Defines a morphism from the Commutative operad to the target operad
 
-        The target operad has to possess a method called ``commutative_product``
+        The target operad has to possess a method called
+        ``commutative_product``.
 
-        The argument should not have repeated labels.
+        The argument `t` should not have repeated labels.
 
         EXAMPLES::
 

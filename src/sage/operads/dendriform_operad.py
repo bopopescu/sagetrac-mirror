@@ -7,6 +7,25 @@ from sage.combinat.binary_tree import LabelledBinaryTrees
 class DendriformOperad(CombinatorialFreeModule):
     r"""
     The Dendriform operad
+
+    This is an operad on the species of planar binary trees.
+
+    EXAMPLES::
+
+        sage: A = DendriformOperad(QQ)
+        sage: LT = A.basis().keys()
+        sage: x = A(LT([LT([],'b'),None], label='a'))
+        sage: y = A(LT([None, LT([],'c')], label='d'))
+        sage: x.compose(y, 'a')
+        B[d[b[., .], c[., .]]]
+
+        sage: z = A(LT([LT([], 'e'), LT([],'c')], label='d'))
+        sage: x.compose(z,'a')
+        B[d[b[., e[., .]], c[., .]]] + B[d[e[b[., .], .], c[., .]]]
+
+    REFERENCES:
+
+    .. [todo]
     """
     def __init__(self, R):
         """
@@ -15,15 +34,24 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: A = DendriformOperad(QQ); A
             The Dendriform operad over Rational Field
             sage: TestSuite(A).run()
+
+            sage: A = DendriformOperad(QQ)
+            sage: LT = A.basis().keys()
+            sage: x = A(LT([LT([],'u'),None], label='v'))
+            sage: y = A(LT([None, LT([],'j')], label='i'))
+            sage: x.compose(y, 'v')
+            B[i[u[., .], j[., .]]]
         """
         CombinatorialFreeModule.__init__(self, R, LabelledBinaryTrees(),
                                          category=OperadsWithBasis(R))
 
     def _repr_(self):
         """
+        Returns a string representation of ``self``.
+
         EXAMPLES::
 
-            sage: DendriformOperad(QQ) # indirect doctest
+            sage: DendriformOperad(QQ)  # indirect doctest
             The Dendriform operad over Rational Field
         """
         return "The Dendriform operad over {}".format(self.base_ring())
@@ -32,9 +60,11 @@ class DendriformOperad(CombinatorialFreeModule):
         """
         The species of planar binary trees with labels at inner vertices
 
+        This is the species underlying the Dendriform operad.
+
         EXAMPLES::
 
-            sage: f=DendriformOperad(QQ).species()
+            sage: f = DendriformOperad(QQ).species()
             sage: f.generating_series().coefficients(5)
             [0, 1, 2, 5, 14]
         """
@@ -54,6 +84,10 @@ class DendriformOperad(CombinatorialFreeModule):
         the one of this operad, as per
         :meth:`OperadsWithBasis.ParentMethods.one_basis`.
 
+        INPUT:
+
+        - ``letter`` (default ``'@'``) -- letter used to label the unit
+
         EXAMPLES::
 
             sage: A = DendriformOperad(QQ)
@@ -65,6 +99,8 @@ class DendriformOperad(CombinatorialFreeModule):
     def degree_on_basis(self, t):
         """
         Returns the degree of a tree in the Dendriform operad.
+
+        This is the number of nodes (inner vertices).
 
         EXAMPLES::
 
@@ -158,22 +194,22 @@ class DendriformOperad(CombinatorialFreeModule):
 
         TESTS::
 
-            sage: A = DendriformOperad(QQ)
-            sage: Trees = A.basis().keys()
             sage: A.composition_on_basis(Trees([],label="a"), Trees([None,Trees([],label="c")],label="d"),"a")
             B[d[., c[., .]]]
 
-            sage: A = DendriformOperad(QQ)
             sage: LT = A.basis().keys()
             sage: x = A(LT([LT([],'b'),None], label='a'))
             sage: y = A(LT([None, LT([],'c')], label='d'))
             sage: x.compose(y, 'a')
             B[d[b[., .], c[., .]]]
 
-            sage: y = A(LT([None, LT([],'b')], label='a'))
-            """
+            sage: A.composition_on_basis(Trees([],label="a"), Trees([None,Trees([],label="c")],label="d"),"e")
+            Traceback (most recent call last):
+            ...
+            ValueError: the composition index is not present
+        """
         if not(i in x.labels()):
-            raise ValueError("The composition index is not present.")
+            raise ValueError("the composition index is not present")
         return sum(self.basis()[t] for t in
                    self.composition_on_basis_list(x, y, i))
 

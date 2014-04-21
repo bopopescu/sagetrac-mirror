@@ -9,11 +9,21 @@ class ZinbielOperad(CombinatorialFreeModule):
     r"""
     The Zinbiel operad
 
+    This is an operad on the species of non-empty lists.
+
     EXAMPLES::
 
         sage: Z = ZinbielOperad(QQ)
-        sage: Z.an_element()
-        B[word: ]
+        sage: Z('abc')
+        B[word: abc]
+        sage: Z('abc').compose(Z('de'), 'a')
+        B[word: dbce] + B[word: dbec] + B[word: debc]
+        sage: Z('abc').compose(Z('de'), 'c')
+        B[word: abde]
+
+    REFERENCES:
+
+    .. [todo]
     """
     def __init__(self, R):
         """
@@ -47,7 +57,7 @@ class ZinbielOperad(CombinatorialFreeModule):
         """
         Returns the species of non-empty lists.
 
-        This is the species associated with the Zinbiel operad.
+        This is the species underlying the Zinbiel operad.
 
         EXAMPLES::
 
@@ -60,7 +70,7 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     def _coerce_end(self, st):
         """
-        Allows for the shortcut ``A(<string>)``
+        Allows for the shortcut ``A(<string>)``.
 
         EXAMPLES::
 
@@ -84,10 +94,14 @@ class ZinbielOperad(CombinatorialFreeModule):
         return self._element_constructor(self.basis().keys()(k))
 
     @cached_method
-    def one_basis(self, letter=1):
+    def one_basis(self, letter='@'):
         """
         Returns the word of length one, which index the one of this operad,
         as per :meth:`OperadsWithBasis.ParentMethods.one_basis`.
+
+        INPUT:
+
+        - ``letter`` (default ``'@'``) -- letter used to label the unit
 
         EXAMPLES::
 
@@ -99,6 +113,8 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     def operad_generators(self):
         """
+        Returns the generators of the operad.
+
         EXAMPLES::
 
             sage: ZinbielOperad(QQ).operad_generators()
@@ -118,9 +134,16 @@ class ZinbielOperad(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = ZinbielOperad(QQ)
-            sage: Words = A.basis().keys()
-            sage: A.composition_on_basis_list(Words("abc"), Words("de"),"a")
+            sage: W = A.basis().keys()
+            sage: A.composition_on_basis_list(W("abc"), W("de"), "a")
             [word: dbce, word: dbec, word: debc]
+
+        TESTS::
+
+            sage: A.composition_on_basis_list(W("abc"), W("de"), "f")
+            Traceback (most recent call last):
+            ...
+            ValueError: the composition index is not present
         """
         if not(i in x):
             raise ValueError("the composition index is not present")
@@ -136,9 +159,16 @@ class ZinbielOperad(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = ZinbielOperad(QQ)
-            sage: Words = A.basis().keys()
-            sage: A.composition_on_basis(Words(["a","b","c"]), Words(["d","e"]),"a")
+            sage: W = A.basis().keys()
+            sage: A.composition_on_basis(W(["a","b","c"]), W(["d","e"]), "a")
             B[word: dbce] + B[word: dbec] + B[word: debc]
+
+        TESTS::
+
+            sage: A.composition_on_basis(W(["a","b","c"]), W(["d","e"]), "u")
+            Traceback (most recent call last):
+            ...
+            ValueError: the composition index is not present
         """
         if not(i in x):
             raise ValueError("the composition index is not present")
