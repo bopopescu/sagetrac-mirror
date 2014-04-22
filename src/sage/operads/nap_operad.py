@@ -2,40 +2,58 @@ from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.ordered_tree import LabelledOrderedTrees
-# NAP (Non Assocative Permutative) operad : based on rooted trees
 
 
 class NapOperad(CombinatorialFreeModule):
     r"""
-    An example of an operad with basis: the Nap operad
+    The Nap operad
+
+    The word Nap stands here for 'Not Associative Permutative'
+
+    This is an operad on the species of rooted trees.
 
     This class illustrates a minimal implementation of an operad with basis.
+
+    EXAMPLES::
+
+        sage: NAP = NapOperad(QQ)
+        sage: B = NAP.basis()
+        sage: LT = NAP.basis().keys()
+        sage: t = LT([LT([],label='b'),LT([],label='c')], label='a')
+        sage: s = LT([LT([],label='d'),LT([],label='e')], label='f')
+        sage: NAP.composition(B[t],B[s],"b")
+        B[a[f[d[], e[]], c[]]]
+        sage: NAP.composition(B[s],B[t],"d")
+        B[f[a[b[], c[]], e[]]]
     """
     def __init__(self, R):
         """
         EXAMPLES::
 
             sage: A = NapOperad(QQ); A
-            An example of an operad with basis: the Nap operad over Rational Field
+            The Nap operad over Rational Field
             sage: TestSuite(A).run()
         """
         # one should rather use LabelledRootedTrees
         CombinatorialFreeModule.__init__(self, R, LabelledOrderedTrees(),
                                          category=OperadsWithBasis(R))
 
-
     def _repr_(self):
         """
+        Returns a string representation of ``self``.
+
         EXAMPLES::
 
             sage: NapOperad(QQ)         # indirect doctest
-            An example of an operad with basis: the Nap operad over Rational Field
+            The Nap operad over Rational Field
         """
-        return "An example of an operad with basis: the Nap operad over {}".format(self.base_ring())
+        return "The Nap operad over {}".format(self.base_ring())
 
     def species(self):
         """
         The species of rooted trees
+
+        This is the species underlying the Nap operad.
 
         EXAMPLES::
 
@@ -53,10 +71,14 @@ class NapOperad(CombinatorialFreeModule):
         return R
 
     @cached_method
-    def one_basis(self, letter):
+    def one_basis(self, letter='@'):
         """
         Returns the tree with one vertex, which index the one of this operad,
         as per :meth:`OperadsWithBasis.ParentMethods.one_basis`.
+
+        INPUT:
+
+        - ``letter`` (default ``'@'``) -- letter used to label the unit
 
         EXAMPLES::
 
@@ -89,7 +111,7 @@ class NapOperad(CombinatorialFreeModule):
         """
         return self.basis().keys()(list(x) + list(y), label=y.label())
 
-    def composition_on_basis(self, x, y, i):
+    def composition_on_basis_as_tree(self, x, y, i):
         r"""
         This returns a rooted tree obtained from a rooted tree `x`
         and a rooted tree `y` by the composition `x o_i y`.
@@ -102,16 +124,47 @@ class NapOperad(CombinatorialFreeModule):
             sage: LT = NAP.basis().keys()
             sage: t = LT([LT([],label='b'),LT([],label='c')], label='a')
             sage: s = LT([LT([],label='d'),LT([],label='e')], label='f')
-            sage: NAP.composition_on_basis(t,s,"b")
+            sage: NAP.composition_on_basis_as_tree(t,s,"b")
             a[f[d[], e[]], c[]]
+
+        TESTS::
+
+            sage: NAP.composition_on_basis_as_tree(t,s,"f")
+            Traceback (most recent call last):
+            ...
+            ValueError: the composition index is not present
         """
         if not(i in x.labels()):
-            raise ValueError("The composition index is not present "
-                             "in the first argument")
+            raise ValueError("the composition index is not present")
         elif x.label() == i:
             return self.composition_on_basis_in_root(x, y)
 
         j = [k for k in range(len(x)) if i in x[k].labels()][0]
         with x.clone() as x1:
-            x1[j] = self.composition_on_basis(x[j], y, i)
+            x1[j] = self.composition_on_basis_as_tree(x[j], y, i)
         return x1
+
+    def composition_on_basis(self, x, y, i):
+        r"""
+        This returns a monomial obtained from a rooted tree `x`
+        and a rooted tree `y` by the composition `x o_i y`.
+
+        The composition index `i` should be a label of `x`.
+
+        EXAMPLES::
+
+            sage: NAP = NapOperad(QQ)
+            sage: LT = NAP.basis().keys()
+            sage: t = LT([LT([],label='b'),LT([],label='c')], label='a')
+            sage: s = LT([LT([],label='d'),LT([],label='e')], label='f')
+            sage: NAP.composition_on_basis(t,s,"b")
+            B[a[f[d[], e[]], c[]]]
+
+        TESTS::
+
+            sage: NAP.composition_on_basis(t,s,"f")
+            Traceback (most recent call last):
+            ...
+            ValueError: the composition index is not present
+        """
+        return self.basis()[self.composition_on_basis_as_tree(x, y, i)]
