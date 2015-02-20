@@ -9,26 +9,29 @@
 r"""
 Hijikata trace formula
 
-Compute the trace `tr(T_n)` of the `n`th Hecke operator
-acting on `S_k(\Gamma_0(N))`, for any `n \geq 1`,
-except if `n|N`,  in which case `n` must be prime.
+Compute the trace `tr(T_n)` of the `n`th Hecke operator acting on
+`S_k(\Gamma_0(N))`, for any `n \geq 1`, except if `n|N`, in which case
+`n` must be prime.
 
 AUTHORS:
 
 - William A. Stein (February 5, 2012)
 """
-from sage.rings.all import Integer, QQ, QuadraticField, euler_phi
+from sage.rings.all import Integer, QQ, QuadraticField
 from sage.functions.all import ceil, sign
 from sage.misc.all import prod
 from sage.libs.pari.all import pari
 from sage.matrix.all import zero_matrix
+from sage.rings.arith import euler_phi, dedekind_psi
 
 
 def w(d):
     r"""
-    Return the w factor for the lattice of discriminant d
+    Return the `w` factor for the lattice of discriminant `d`.
 
-    This is always 1 except when d is -3 or -4.
+    This is always 1 except when `d` is -3 or -4.
+
+    See QuadraticField(d).number_of_roots_of_unit() / 2
 
     EXAMPLES::
 
@@ -38,7 +41,7 @@ def w(d):
     """
     if d == -4:
         return 2
-    elif d == -3:
+    if d == -3:
         return 3
     return 1
 
@@ -58,26 +61,25 @@ def tof(a):
     return Integer(t / 2)
 
 
-def mu(N):
-    r"""
-    Return Dedekind psi function
+# moved to rings/arith.py
+# def dedekind_psi(N):
+#     r"""
+#     Return Dedekind psi function
 
-    .. MATH::
+#     .. MATH::
 
-        `n \prod_{p|n, p prime} (1 + 1/p)`
+#         `n \prod_{p|n, p prime} (1 + 1/p)`
 
-    REFERENCES:
+#     See :wikipedia:`Dedekind_psi_function` and :oeis:`A001615`
 
-    .. :oeis:`A001615`
+#     EXAMPLES::
 
-    EXAMPLES::
-
-        sage: from sage.modular.modform.hijikata import mu
-        sage: [mu(d) for d in range(1, 12)]
-        [1, 3, 4, 6, 6, 12, 8, 12, 12, 18, 12]
-    """
-    N = Integer(N)
-    return N * prod(1 + 1 / p for p in N.prime_divisors())
+#         sage: from sage.modular.modform.hijikata import dedekind_psi
+#         sage: [dedekind_psi(d) for d in range(1, 12)]
+#         [1, 3, 4, 6, 6, 12, 8, 12, 12, 18, 12]
+#     """
+#     N = Integer(N)
+#     return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
 
 
 def sig(n, N):
@@ -219,14 +221,16 @@ def classno(d, proof=True):
     r"""
     Return the class number of the order of discriminant d.
 
+    See QuadraticField(d).class_number()
+
     EXAMPLES::
 
         sage: from sage.modular.modform.hijikata import classno
         sage: classno(-163)
         1
     """
-    # There is currently no qfbclassno method in gen.pyx, hence the string.
-    return Integer(pari('qfbclassno(%s,%s)' % (d, 1 if proof else 0)))
+    f = 1 if proof else 0
+    return Integer(pari(d).qfbclassno(flag=f))
 
 
 def xy(s, n, k, N):
@@ -267,6 +271,22 @@ def type_e(n, k, N):
     return xy(0, n, k, N) + 2 * sum(xy(s, n, k, N) for s in range(1, r + 1))
 
 
+def type_e_conj(n, k, N):
+    """
+    Conjectural formula for type_e
+
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import type_e_conj
+        sage: type_e_conj(47**2,4,19)
+        227310
+    """
+    r = int(2 * n.sqrt())
+    if n.is_square():
+        r -= 1
+    return sum([xy(s, n, k, N) for s in range(-r, r+1)])
+
+
 def sum_s(n, k, N):
     r"""
     EXAMPLES::
@@ -291,7 +311,8 @@ def test_trace_hecke_operator(n_range, k_range, N_range, verbose=True):
     - ``k_range`` -- list of weights; odd weights are ignored (since
       trace is always 0)
     - ``N_range`` -- list levels
-    - ``verbose`` -- bool (default: True); if True print level and weight
+    - ``verbose`` -- bool (default: ``True``); if ``True`` print level and
+      weight
 
     EXAMPLES:
 
@@ -384,7 +405,7 @@ def trace_hecke_operator(n, k, N=1):
         t = 0
     t += -sum_s(n, k, N)
     if n.is_square():
-        t += (k - 1) * mu(N) / 12 * n ** ((k // 2) - 1)
+        t += (k - 1) * dedekind_psi(N) / 12 * n ** ((k // 2) - 1)
     return t
 
 
@@ -394,7 +415,7 @@ def trace_modular_form(k, prec):
     precision prec, where `T_n` is the `n`th Hecke operator on
     `S_k(SL_2(Z))`.
 
-    The complexity is almost entirely a function of prec, but not of
+    The complexity is almost entirely a function of ``prec``, but not of
     `k`.
 
     INPUT:

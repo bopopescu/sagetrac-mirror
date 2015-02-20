@@ -29,7 +29,7 @@ from sage.rings.real_mpfi import RealIntervalField
 import fast_arith
 
 from integer_ring import ZZ
-import integer
+from sage.rings.integer import Integer
 
 ##################################################################
 # Elementary Arithmetic
@@ -167,7 +167,7 @@ def algdep(z, degree, known_bits=None, use_bits=None, known_digits=None, use_dig
 
     x = ZZ['x'].gen()
 
-    if isinstance(z, (int, long, integer.Integer)):
+    if isinstance(z, (int, long, Integer)):
         if height_bound and abs(z) >= height_bound:
             return None
         return x - ZZ(z)
@@ -306,7 +306,7 @@ def bernoulli(n, algorithm='default', num_threads=1):
 
     - David Joyner and William Stein
     """
-    from sage.rings.all import Integer, Rational
+    from sage.rings.all import Rational
     n = Integer(n)
 
     if algorithm == 'default':
@@ -454,7 +454,6 @@ def is_prime(n):
     from sage.structure.proof.all import arithmetic
     proof = arithmetic()
     if isinstance(n, int) or isinstance(n, long):
-        from sage.rings.integer import Integer
         if proof:
             return Integer(n).is_prime()
         else:
@@ -780,7 +779,6 @@ def prime_powers(start, stop=None):
         TypeError: stop must be an integer, bar is not an integer
 
     """
-    from integer import Integer
     # check to ensure that both inputs are positive integers
     if not isinstance(start, (int, Integer)):
         raise TypeError("start must be an integer, {} is not an integer".format(start))
@@ -2020,7 +2018,7 @@ def inverse_mod(a, m):
     try:
         return a.inverse_mod(m)
     except AttributeError:
-        return integer.Integer(a).inverse_mod(m)
+        return Integer(a).inverse_mod(m)
 
 #######################################################
 # Functions to find the fastest available commands
@@ -2455,7 +2453,7 @@ def factor(n, proof=None, int_=False, algorithm='pari', verbose=0, **kwds):
     if isinstance(n, (int, long)):
         n = ZZ(n)
 
-    if isinstance(n, integer.Integer):
+    if isinstance(n, Integer):
         return n.factor(proof=proof, algorithm=algorithm,
                         int_ = int_, verbose=verbose)
     else:
@@ -2554,7 +2552,7 @@ def odd_part(n):
         sage: odd_part(factorial(31))
         122529844256906551386796875
     """
-    if not isinstance(n, integer.Integer):
+    if not isinstance(n, Integer):
         n = ZZ(n)
     return n.odd_part()
 
@@ -2919,7 +2917,7 @@ def crt(a,b,m=None,n=None):
     if isinstance(a, list):
         return CRT_list(a, b)
     if isinstance(a, (int, long)):
-        a = integer.Integer(a) # otherwise we get an error at (b-a).quo_rem(g)
+        a = Integer(a)  # otherwise we get an error at (b-a).quo_rem(g)
     g, alpha, beta = XGCD(m, n)
     q, r = (b - a).quo_rem(g)
     if r != 0:
@@ -3212,7 +3210,7 @@ def binomial(x, m, **kwds):
             m=ZZ(m)
         except TypeError:
             pass
-    if not isinstance(m,integer.Integer):
+    if not isinstance(m, Integer):
         try:
             m = ZZ(x-m)
         except TypeError:
@@ -3244,7 +3242,7 @@ def binomial(x, m, **kwds):
             x=ZZ(x)
         except TypeError:
             pass
-    if isinstance(x,integer.Integer):
+    if isinstance(x, Integer):
         if m < 0 or (x >= 0 and m > x):
             return ZZ.zero()
 
@@ -3818,7 +3816,7 @@ class Moebius:
         """
         if isinstance(n, (int, long)):
             n = ZZ(n)
-        elif not isinstance(n, integer.Integer):
+        elif not isinstance(n, Integer):
             # Use a generic algorithm.
             if n < 0:
                 n = -n
@@ -3830,7 +3828,7 @@ class Moebius:
 
         # Use fast PARI algorithm
         if n == 0:
-            return integer.Integer(0)
+            return Integer(0)
         return ZZ(pari(n).moebius())
 
 
@@ -3910,7 +3908,7 @@ class Moebius:
         else:
             step = int(step)
 
-        Z = integer.Integer
+        Z = Integer
 
         if start <= 0 and 0 < stop and start % step == 0:
             return self.range(start, 0, step) + [Z(0)] +\
@@ -4350,7 +4348,7 @@ def falling_factorial(x, a):
 
     - Jaap Spies (2006-03-05)
     """
-    if (isinstance(a, (integer.Integer, int, long)) or
+    if (isinstance(a, (Integer, int, long)) or
         (isinstance(a, sage.symbolic.expression.Expression) and
          a.is_integer())) and a >= 0:
         return prod([(x - i) for i in range(a)], z=x.parent()(1))
@@ -4438,7 +4436,7 @@ def rising_factorial(x, a):
 
     - Jaap Spies (2006-03-05)
     """
-    if (isinstance(a, (integer.Integer, int, long)) or
+    if (isinstance(a, (Integer, int, long)) or
         (isinstance(a, sage.symbolic.expression.Expression) and
          a.is_integer())) and a >= 0:
         return prod([(x + i) for i in range(a)], z=x.parent()(1))
@@ -5176,6 +5174,29 @@ def squarefree_divisors(x):
     from sage.misc.misc import powerset
     for a in powerset(p_list):
         yield prod(a,1)
+
+
+def dedekind_psi(N):
+    r"""
+    Return the Dedekind psi function.
+
+    This is the multiplicative function defined by
+
+    .. MATH::
+
+        `n \prod_{p|n, p prime} (1 + 1/p)`
+
+    See :wikipedia:`Dedekind_psi_function` and :oeis:`A001615`.
+
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import dedekind_psi
+        sage: [dedekind_psi(d) for d in range(1, 12)]
+        [1, 3, 4, 6, 6, 12, 8, 12, 12, 18, 12]
+    """
+    N = Integer(N)
+    return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
+
 
 def dedekind_sum(p, q, algorithm='default'):
     r"""
