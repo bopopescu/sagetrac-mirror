@@ -22,7 +22,10 @@ from sage.functions.all import ceil, sign
 from sage.misc.all import prod
 from sage.libs.pari.all import pari
 from sage.matrix.all import zero_matrix
-from sage.rings.arith import euler_phi, dedekind_psi
+from sage.rings.arith import euler_phi, dedekind_psi, sigma
+from sage.rings.finite_rings.constructor import FiniteField
+from sage.rings.polynomial.polynomial_ring import polygen
+from sage.rings.finite_rings.integer_mod_ring import Zmod
 
 
 def w(d):
@@ -61,31 +64,12 @@ def tof(a):
     return Integer(t / 2)
 
 
-# moved to rings/arith.py
-# def dedekind_psi(N):
-#     r"""
-#     Return Dedekind psi function
-
-#     .. MATH::
-
-#         `n \prod_{p|n, p prime} (1 + 1/p)`
-
-#     See :wikipedia:`Dedekind_psi_function` and :oeis:`A001615`
-
-#     EXAMPLES::
-
-#         sage: from sage.modular.modform.hijikata import dedekind_psi
-#         sage: [dedekind_psi(d) for d in range(1, 12)]
-#         [1, 3, 4, 6, 6, 12, 8, 12, 12, 18, 12]
-#     """
-#     N = Integer(N)
-#     return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
-
-
 def sig(n, N):
     r"""
-    This is a modified version of the sigma function that maps an integer d
-    to the sum of the divisors of d.
+    This is a modified version of the sigma function that maps an integer n
+    to the sum of the divisors of n.
+
+    Values are modified only for divisors of N.
 
     See sage.rings.arith.sigma
 
@@ -99,14 +83,18 @@ def sig(n, N):
     n = Integer(n)
     if N % n == 0:
         return n
-    return prod((1 - p ** (e + 1)) / (1 - p) for p, e in n.factor())
+    return sigma(n, 1)
+    # return prod((1 - p ** (e + 1)) / (1 - p) for p, e in n.factor())
 
 
 def quadpoints(s, n, p, v):
     r"""
-    .. WARNING::
+    Return the solutions of the quadratic equation `x ^ 2 - s x + n = 0`
+    in the ring `\Zmod(p^v)`.
 
-        This is a very very stupid algorithm!
+    .. TODO::
+
+        find a better algorithm (using p-adics ?)
 
     EXAMPLES::
 
@@ -116,8 +104,19 @@ def quadpoints(s, n, p, v):
         sage: quadpoints(8121,4471,691,2)
         [219922, 265680]
     """
-    pv = p ** v
-    return [x for x in range(pv) if (x ** 2 - s * x + n) % pv == 0]
+    p_pow = p
+    sols = [x for x in range(p_pow) if (x ** 2 - s * x + n) % p_pow == 0]
+    for k in range(v - 1):
+        p_pow_next = p_pow * p
+        sols_next = []
+        for x in sols:
+            for i in range(p):
+                nx = x + i * p_pow
+                if (nx ** 2 - s * nx + n) % p_pow_next == 0:
+                    sols_next += [nx]
+        p_pow = p_pow_next
+        sols = sols_next
+    return sols
 
 
 def A(s, f, n, p, v):
