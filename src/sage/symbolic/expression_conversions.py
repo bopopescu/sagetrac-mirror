@@ -22,7 +22,7 @@ from sage.functions.all import exp
 from sage.symbolic.operators import arithmetic_operators, relation_operators, FDerivativeOperator
 from sage.rings.number_field.number_field_element_quadratic import NumberFieldElement_quadratic
 from functools import reduce
-GaussianField = I.pyobject().parent()
+GaussianField = I.parent()
 
 class FakeExpression(object):
     r"""
@@ -434,7 +434,7 @@ class InterfaceInit(Converter):
 
             sage: from sage.symbolic.expression_conversions import InterfaceInit
             sage: ii = InterfaceInit(gp)
-            sage: f = 2+I
+            sage: f = SR(2+I)
             sage: ii.pyobject(f, f.pyobject())
             'I + 2'
 
@@ -668,7 +668,7 @@ class SympyConverter(Converter):
 
     Make sure we can convert I (trac #6424)::
 
-        sage: bool(I._sympy_() == I)
+        sage: bool(SR(I)._sympy_() == I)
         True
         sage: (x+I)._sympy_()
         x + I

@@ -231,7 +231,7 @@ cdef class Expression(CommutativeRingElement):
             -Infinity
             sage: SR(unsigned_infinity).pyobject()
             Infinity
-            sage: SR(I*oo).pyobject()
+            sage: (SR(I)*SR(oo)).pyobject()
             Traceback (most recent call last):
             ...
             TypeError: Python infinity cannot have complex phase.
@@ -1748,9 +1748,9 @@ cdef class Expression(CommutativeRingElement):
 
         Note that the complex I is not a constant::
 
-            sage: I.is_constant()
+            sage: SR(I).is_constant()
             False
-            sage: I.is_numeric()
+            sage: SR(I).is_numeric()
             True
         """
         return is_a_constant(self._gobj)
@@ -2159,13 +2159,13 @@ cdef class Expression(CommutativeRingElement):
 
         Comparisons of infinities::
 
-            sage: assert( (1+I)*oo == (2+2*I)*oo )
+            sage: assert( (1+SR(I))*oo == (2+2*SR(I))*oo )
             sage: assert( SR(unsigned_infinity) == SR(unsigned_infinity) )
-            sage: assert( SR(I*oo) == I*oo )
+            sage: assert( SR(SR(I)*oo) == SR(I)*oo )
             sage: assert( SR(-oo) <= SR(oo) )
             sage: assert( SR(oo) >= SR(-oo) )
             sage: assert( SR(oo) != SR(-oo) )
-            sage: assert( sqrt(2)*oo != I*oo )
+            sage: assert( sqrt(2)*oo != SR(I)*oo )
 
         The expression may be zero with integers but is not
         when in the complex domain (:trac:`15571`)::
@@ -3076,7 +3076,7 @@ cdef class Expression(CommutativeRingElement):
 
         Check if :trac:`10849` is fixed::
 
-            sage: t = I.pyobject().parent()(-1/2)
+            sage: t = I.parent()(-1/2)
             sage: t > 0
             False
             sage: t = I*x-1/2; t
@@ -6443,9 +6443,9 @@ cdef class Expression(CommutativeRingElement):
         Using the ``hold`` parameter it is possible to prevent automatic
         evaluation::
 
-            sage: I.imag_part()
+            sage: SR(I).imag_part()
             1
-            sage: I.imag_part(hold=True)
+            sage: SR(I).imag_part(hold=True)
             imag_part(I)
 
         This also works using functional notation::
@@ -6458,7 +6458,7 @@ cdef class Expression(CommutativeRingElement):
         To then evaluate again, we currently must use Maxima via
         :meth:`simplify`::
 
-            sage: a = I.imag_part(hold=True); a.simplify()
+            sage: a = SR(I).imag_part(hold=True); a.simplify()
             1
 
         TESTS::
@@ -7367,15 +7367,15 @@ cdef class Expression(CommutativeRingElement):
 
         To prevent automatic evaluation use the ``hold`` argument::
 
-            sage: I.log()
+            sage: SR(I).log()
             1/2*I*pi
-            sage: I.log(hold=True)
+            sage: SR(I).log(hold=True)
             log(I)
 
         To then evaluate again, we currently must use Maxima via
         :meth:`simplify`::
 
-            sage: a = I.log(hold=True); a.simplify()
+            sage: a = SR(I).log(hold=True); a.simplify()
             1/2*I*pi
 
         The ``hold`` parameter also works in functional notation::
@@ -8158,7 +8158,7 @@ cdef class Expression(CommutativeRingElement):
 
             sage: a = RR.random_element()
             sage: b = RR.random_element()
-            sage: f = a + b*I
+            sage: f = SR(a + b*I)
             sage: bool(f.rectform() == a + b*I)
             True
 

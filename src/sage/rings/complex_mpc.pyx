@@ -62,6 +62,8 @@ import re
 import real_mpfr
 import weakref
 
+import sage.rings.number_field.number_field_element_quadratic
+
 from sage.structure.parent import Parent
 from sage.structure.parent_gens import ParentWithGens
 from sage.structure.element cimport RingElement, Element, ModuleElement
@@ -401,7 +403,7 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
             sage: C20(i*4, 7)
             Traceback (most recent call last):
             ...
-            TypeError: unable to coerce to a ComplexNumber: <type 'sage.symbolic.expression.Expression'>
+            TypeError: unable to coerce to a ComplexNumber: <type 'sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_QQi'>
 
         Each part can be set with strings (written in base ten)::
 
@@ -467,7 +469,8 @@ cdef class MPComplexField_class(sage.rings.ring.Field):
             return CCtoMPC(S, self)
 
         late_import()
-        if S in [AA, QQbar, CLF, RLF] or (S == CDF and self._prec <= 53):
+        from sage.rings.number_field.number_field import NumberField_QQi
+        if S in [AA, QQbar, CLF, RLF, NumberField_QQi()] or (S == CDF and self._prec <= 53):
             return self._generic_convert_map(S)
 
         return self._coerce_map_via([CLF], S)
@@ -829,6 +832,8 @@ cdef class MPComplexNumber(sage.structure.element.FieldElement):
             elif isinstance(z, ComplexNumber):
                 mpc_set_fr_fr(self.value, (<ComplexNumber>z).__re, (<ComplexNumber>z).__im, rnd)
                 return
+            elif isinstance(z, sage.rings.number_field.number_field_element_quadratic.NumberFieldElement_QQi):
+                real, imag = z.real_part(), z.imag_part()
             elif isinstance(z, sage.libs.pari.all.pari_gen):
                 real, imag = z.real(), z.imag()
             elif isinstance(z, list) or isinstance(z, tuple):

@@ -710,6 +710,7 @@ Here's an example with straight\-up numbers.
     sage: c = 2.0
     sage: d = 2 + 0*I
     sage: e = 2.0 + 0.0*I
+    sage: f = pi
 
 We will not go in great depth about this, either, but it is worth
 knowing about.  Notice that each of these types of numbers has or does
@@ -724,7 +725,9 @@ not have :math:`I=\sqrt{-1}`, decimal points, or division.
     sage: print parent(c)
     Real Field with 53 bits of precision
     sage: print parent(d)
-    Symbolic Ring
+    Number Field in I with defining polynomial x^2 + 1
     sage: print parent(e)
+    Complex Field with 53 bits of precision
+    sage: print parent(f)
     Symbolic Ring
 

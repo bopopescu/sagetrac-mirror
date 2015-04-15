@@ -37,6 +37,7 @@ include "sage/ext/stdsage.pxi"
 
 from sage.structure.element cimport Element
 
+from sage.libs.pari.all import pari
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.rings.real_double import RDF
@@ -1424,7 +1425,7 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             -1/2
             sage: SR(a)
             1/2*I*sqrt(3) - 1/2
-            sage: bool(I*a.imag() + a.real() == a)
+            sage: bool(SR(I)*a.imag() + a.real() == a)
             True
 
         TESTS::
@@ -1874,6 +1875,30 @@ cdef class NumberFieldElement_quadratic(NumberFieldElement_absolute):
             return x
         return x+1
 
+cdef class NumberFieldElement_QQi(NumberFieldElement_quadratic):
+
+    def _pari_(self, name='ignored'):
+        return self[1]*pari.I() + self[0]
+
+    def _symbolic_(self, SR):
+        from sage.symbolic.pynac import symbolic_I
+        return self[1]*symbolic_I + self[0]
+
+    cpdef real_part(self):
+        return self[0]
+
+    real = real_part
+
+    cpdef imag_part(self):
+        return self[1]
+
+    imag = imag_part
+
+    # for compatibility with the old symbolic I
+
+    def log(self, *args, **kwds):
+        from sage.symbolic.ring import SR
+        return SR(self).log(*args, **kwds)
 
 cdef class OrderElement_quadratic(NumberFieldElement_quadratic):
     """

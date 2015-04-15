@@ -165,7 +165,7 @@ class AbelianGroupWithValuesEmbedding(Morphism):
         sage: embedding = Z4.values_embedding();  embedding
         Generic morphism:
           From: Multiplicative Abelian group isomorphic to C4
-          To:   Symbolic Ring
+          To:   Number Field in I with defining polynomial x^2 + 1
         sage: embedding(1)
         1
         sage: embedding(g)
@@ -185,7 +185,7 @@ class AbelianGroupWithValuesEmbedding(Morphism):
             sage: AbelianGroupWithValuesEmbedding(Z4, Z4.values_group())
             Generic morphism:
               From: Multiplicative Abelian group isomorphic to C4
-              To:   Symbolic Ring
+              To:   Number Field in I with defining polynomial x^2 + 1
         """
         assert domain.values_group() is codomain
         from sage.categories.homset import Hom
@@ -480,7 +480,7 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
 
             sage: Z4 = AbelianGroupWithValues([I], [4])
             sage: Z4.values_group()
-            Symbolic Ring
+            Number Field in I with defining polynomial x^2 + 1
         """
         return self._values_group
 
@@ -498,6 +498,6 @@ class AbelianGroupWithValues_class(AbelianGroup_class):
             sage: Z4.values_embedding()
             Generic morphism:
               From: Multiplicative Abelian group isomorphic to C4
-              To:   Symbolic Ring
+              To:   Number Field in I with defining polynomial x^2 + 1
         """
         return AbelianGroupWithValuesEmbedding(self, self.values_group())

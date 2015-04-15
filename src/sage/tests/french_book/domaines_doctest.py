@@ -240,15 +240,8 @@ Sage example in ./domaines.tex, line 600::
     sage: z = CC(1,2); z.arg()
     1.10714871779409
 
-Sage example in ./domaines.tex, line 608::
-
-    sage: I.parent()
-    Symbolic Ring
-
 Sage example in ./domaines.tex, line 613::
 
-    sage: (1.+2.*I).parent()
-    Symbolic Ring
     sage: CC(1.+2.*I).parent()
     Complex Field with 53 bits of precision
 
@@ -334,7 +327,7 @@ Sage example in ./domaines.tex, line 850::
 Sage example in ./domaines.tex, line 855::
 
     sage: SR.category()
-    Category of commutative rings
+    Category of fields
 
 Sage example in ./domaines.tex, line 884::
 

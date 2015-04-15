@@ -2621,7 +2621,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         If not, we get an error message::
 
-            sage: a.add_multiple_of_row(1,0,i)
+            sage: a.add_multiple_of_row(1,0,pi)
             Traceback (most recent call last):
             ...
             TypeError: Multiplying row by Symbolic Ring element cannot be done over Rational Field, use change_ring or with_added_multiple_of_row instead.
@@ -2705,7 +2705,7 @@ cdef class Matrix(sage.structure.element.Matrix):
 
         If not, we get an error message::
 
-            sage: a.add_multiple_of_column(1,0,i)
+            sage: a.add_multiple_of_column(1,0,pi)
             Traceback (most recent call last):
             ...
             TypeError: Multiplying column by Symbolic Ring element cannot be done over Rational Field, use change_ring or with_added_multiple_of_column instead.

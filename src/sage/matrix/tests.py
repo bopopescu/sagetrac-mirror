@@ -37,7 +37,8 @@ We test various degenerate cases of kernel computation::
     Basis matrix:
     []
 
-Division by a scalar:
+Division by a scalar::
+
     sage: matrix(QQ, 2, 2, [1, 1, 1, 1]) / 2
     [1/2 1/2]
     [1/2 1/2]
@@ -51,7 +52,7 @@ Division by a scalar:
     [-1.00000000000000*I -1.00000000000000*I]
     [-1.00000000000000*I -1.00000000000000*I]
     sage: A.parent()
-    Full MatrixSpace of 2 by 2 dense matrices over Symbolic Ring
+    Full MatrixSpace of 2 by 2 dense matrices over Complex Field with 53 bits of precision
 
 We test an example determinant computation where LinBox gave an incorrect
 result:

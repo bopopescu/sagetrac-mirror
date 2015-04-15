@@ -2752,7 +2752,7 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
             5.40301236071... + 0.926018962976...*I
             6
 
-            sage: z = - 2.3 + 3.1*i
+            sage: z = -23/10 + 31/10*i
             sage: B = G.I()
             sage: for A in [G.S(), G.T(), G.U(), G.U()^(G.n()//2), G.U()^(-3)]:
             ....:     print "A={}: ".format(A.string_repr("conj"))
@@ -3095,13 +3095,13 @@ class HeckeTriangleGroupElement(MatrixGroupElement_generic):
 
             sage: from sage.modular.modform_hecketriangle.hecke_triangle_groups import HeckeTriangleGroup
             sage: G = HeckeTriangleGroup(5)
-            sage: G.S().acton(1 + i/2)
+            sage: G.S().acton(1 + SR(i)/2)
             2/5*I - 4/5
-            sage: G.S().acton(1 + i/2).parent()
+            sage: G.S().acton(1 + SR(i)/2).parent()
             Symbolic Ring
-            sage: G.S().acton(i + exp(-2))
+            sage: G.S().acton(SR(i) + exp(-2))
             -1/(e^(-2) + I)
-            sage: G.S().acton(i + exp(-2)).parent()
+            sage: G.S().acton(SR(i) + exp(-2)).parent()
             Symbolic Ring
 
             sage: G.T().acton(infinity) == infinity

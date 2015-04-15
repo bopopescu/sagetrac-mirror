@@ -1177,6 +1177,8 @@ class AlgebraicField(Singleton, AlgebraicField_common):
             return True
         if from_par == AA or from_par == QQbar:
             return True
+        if from_par is sage.rings.number_field.number_field.NumberField_QQi():
+            return True
         _late_import()
         if is_SymbolicExpressionRing(from_par):
             return True

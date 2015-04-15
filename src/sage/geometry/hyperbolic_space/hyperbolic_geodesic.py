@@ -44,7 +44,6 @@ the same::
 #***********************************************************************
 
 from sage.structure.sage_object import SageObject
-from sage.symbolic.pynac import I
 from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.infinity import infinity
 from sage.rings.all import CC, RR
@@ -61,6 +60,9 @@ from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.geometry.hyperbolic_space.hyperbolic_isometry',
             'mobius_transform')
+
+import sage.symbolic.pynac
+I = sage.symbolic.pynac.symbolic_I
 
 
 class HyperbolicGeodesic(SageObject):
@@ -1146,7 +1148,7 @@ class HyperbolicGeodesicUHP(HyperbolicGeodesic):
             sage: bool(A(e).coordinates() == infinity)
             True
         """
-        B = matrix([[1, 0], [0, -I]])
+        B = matrix(SR, [[1, 0], [0, -I]])
         [s, e] = [k.coordinates() for k in self.complete().endpoints()]
         # outmat below will be returned after we normalize the determinant.
         outmat = B * HyperbolicGeodesicUHP._crossratio_matrix(s, p, e)

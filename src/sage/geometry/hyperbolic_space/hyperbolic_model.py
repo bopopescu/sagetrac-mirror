@@ -89,9 +89,12 @@ from sage.functions.other import imag, real, sqrt
 from sage.functions.all import arccosh
 from sage.rings.all import CC, RR, RDF
 from sage.rings.infinity import infinity
-from sage.symbolic.pynac import I
+from sage.symbolic.ring import SR
 from sage.matrix.constructor import matrix
 from sage.categories.homset import Hom
+
+import sage.symbolic.pynac
+I = sage.symbolic.pynac.symbolic_I
 
 from sage.geometry.hyperbolic_space.hyperbolic_constants import EPSILON, LORENTZ_GRAM
 from sage.geometry.hyperbolic_space.hyperbolic_point import (

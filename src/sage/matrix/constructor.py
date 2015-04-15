@@ -1945,7 +1945,7 @@ def elementary_matrix(arg0, arg1=None, **kwds):
 
         sage: E = elementary_matrix(4, row1=1, scale=I)
         sage: E.parent()
-        Full MatrixSpace of 4 by 4 dense matrices over Symbolic Ring
+        Full MatrixSpace of 4 by 4 dense matrices over Number Field in I with defining polynomial x^2 + 1
 
         sage: E = elementary_matrix(4, row1=1, scale=CDF(I))
         sage: E.parent()
@@ -1954,6 +1954,10 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         sage: E = elementary_matrix(4, row1=1, scale=QQbar(I))
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Algebraic Field
+
+        sage: E = elementary_matrix(4, row1=1, scale=pi)
+        sage: E.parent()
+        Full MatrixSpace of 4 by 4 dense matrices over Symbolic Ring
 
     Returned matrices have a dense implementation by default,
     but a sparse implementation may be requested.  ::

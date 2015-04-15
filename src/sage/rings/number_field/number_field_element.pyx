@@ -2075,7 +2075,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: int(1/I)
             Traceback (most recent call last):
             ...
-            TypeError: cannot coerce nonconstant polynomial to int
+            ValueError: cannot convert -I to int
             sage: int(I*I)
             -1
 
@@ -2085,7 +2085,7 @@ cdef class NumberFieldElement(FieldElement):
             sage: int(a)
             Traceback (most recent call last):
             ...
-            TypeError: cannot coerce nonconstant polynomial to int
+            ValueError: cannot convert a to int
             sage: int(K(9390283))
             9390283
 
@@ -2097,7 +2097,10 @@ cdef class NumberFieldElement(FieldElement):
             sage: int(K(393/29))
             13
         """
-        return int(self.polynomial())
+        try:
+            return int(self.polynomial())
+        except TypeError:
+            raise ValueError("cannot convert {} to int".format(self))
 
     def __long__(self):
         """
@@ -2304,7 +2307,8 @@ cdef class NumberFieldElement(FieldElement):
 
         if isinstance(K, number_field.NumberField_cyclotomic):
             # solution by radicals may be difficult, but we have a closed form
-            from sage.all import exp, I, pi, ComplexField, RR
+            from sage.all import exp, pi, ComplexField, RR
+            from sage.symbolic.pynac import symbolic_I as I
             CC = ComplexField(53)
             two_pi_i = 2 * pi * I
             k = ( K._n()*CC(K.gen()).log() / CC(two_pi_i) ).real().round() # n ln z / (2 pi i)

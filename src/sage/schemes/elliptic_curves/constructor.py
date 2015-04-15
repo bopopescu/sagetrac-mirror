@@ -265,6 +265,13 @@ class EllipticCurveFactory(UniqueFactory):
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>
 
         sage: E = EllipticCurve([i,i]); E
+        Elliptic Curve defined by y^2 = x^3 + I*x + I over Number Field in I with defining polynomial x^2 + 1
+        sage: type(E)
+        <class 'sage.schemes.elliptic_curves.ell_number_field.EllipticCurve_number_field_with_category'>
+        sage: E.category()
+        Category of schemes over Number Field in I with defining polynomial x^2 + 1
+
+        sage: E = EllipticCurve([SR(i),SR(i)]); E
         Elliptic Curve defined by y^2 = x^3 + I*x + I over Symbolic Ring
         sage: type(E)
         <class 'sage.schemes.elliptic_curves.ell_field.EllipticCurve_field_with_category'>

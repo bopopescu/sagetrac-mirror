@@ -60,7 +60,6 @@ Some more examples::
 #***********************************************************************
 
 from sage.structure.element import Element
-from sage.symbolic.pynac import I
 from sage.misc.latex import latex
 from sage.matrix.matrix import is_Matrix
 from sage.matrix.constructor import matrix
@@ -68,6 +67,9 @@ from sage.modules.free_module_element import vector
 from sage.rings.infinity import infinity
 from sage.rings.all import RR, CC
 from sage.functions.other import real, imag
+
+import sage.symbolic.pynac
+I = sage.symbolic.pynac.symbolic_I
 
 from sage.geometry.hyperbolic_space.hyperbolic_isometry import HyperbolicIsometry
 

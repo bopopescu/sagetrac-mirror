@@ -373,7 +373,7 @@ class AnInfinity(object):
             Traceback (most recent call last):
             ...
             SignError: cannot add unsigned infinities
-            sage: unsigned_infinity + oo*i
+            sage: unsigned_infinity + oo*SR(i)
             Traceback (most recent call last):
             ...
             SignError: cannot add unsigned infinities
@@ -410,7 +410,7 @@ class AnInfinity(object):
             Traceback (most recent call last):
             ...
             SignError: cannot subtract unsigned infinities
-            sage: unsigned_infinity - oo*i
+            sage: unsigned_infinity - oo*SR(i)
             Traceback (most recent call last):
             ...
             SignError: cannot subtract unsigned infinities

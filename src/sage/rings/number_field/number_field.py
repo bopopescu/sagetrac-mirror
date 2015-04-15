@@ -87,6 +87,7 @@ We do some arithmetic in a tower of relative number fields::
 
 from sage.structure.parent_gens import localvars
 from sage.misc.cachefunc import cached_method
+from sage.misc.fast_methods import Singleton
 
 import sage.libs.ntl.all as ntl
 import sage.interfaces.gap
@@ -191,6 +192,7 @@ import weakref
 from sage.misc.latex import latex
 
 import sage.rings.arith as arith
+import sage.rings.complex_field as complex_field
 import sage.rings.rational_field as rational_field
 import sage.rings.integer_ring as integer_ring
 import sage.rings.infinity as infinity
@@ -575,7 +577,11 @@ class NumberFieldFactory(UniqueFactory):
         if isinstance(base, NumberField_generic):
             return base.extension(polynomial, name, check=check, embedding=None, structure=structure) # relative number fields do not support embeddings
         if polynomial.degree() == 2:
-            return NumberField_quadratic(polynomial, name, latex_name, check, embedding, assume_disc_small=assume_disc_small, maximize_at_primes=maximize_at_primes, structure=structure)
+            candidate = NumberField_quadratic(polynomial, name, latex_name, check, embedding, assume_disc_small=assume_disc_small, maximize_at_primes=maximize_at_primes, structure=structure)
+            if candidate == NumberField_QQi():
+                return NumberField_QQi()
+            else:
+                return candidate
         else:
             return NumberField_absolute(polynomial, name, latex_name, check, embedding, assume_disc_small=assume_disc_small, maximize_at_primes=maximize_at_primes, structure=structure)
 
@@ -9621,7 +9627,7 @@ class NumberField_quadratic(NumberField_absolute):
         Number Field in b with defining polynomial x^2 + 4
     """
     def __init__(self, polynomial, name=None, latex_name=None, check=True, embedding=None,
-                 assume_disc_small=False, maximize_at_primes=None, structure=None):
+                 assume_disc_small=False, maximize_at_primes=None, structure=None, element_class=None):
         """
         Create a quadratic number field.
 
@@ -9649,7 +9655,7 @@ class NumberField_quadratic(NumberField_absolute):
                                       embedding=embedding, latex_name=latex_name,
                                       assume_disc_small=assume_disc_small, maximize_at_primes=maximize_at_primes, structure=structure)
         self._standard_embedding = True
-        self._element_class = number_field_element_quadratic.NumberFieldElement_quadratic
+        self._element_class = element_class or number_field_element_quadratic.NumberFieldElement_quadratic
         c, b, a = [rational.Rational(t) for t in self.defining_polynomial().list()]
         # set the generator
         Dpoly = b*b - 4*a*c
@@ -9916,6 +9922,16 @@ class NumberField_quadratic(NumberField_absolute):
 
         from sage.schemes.elliptic_curves.all import hilbert_class_polynomial as HCP
         return QQ[name](HCP(D))
+
+class NumberField_QQi(Singleton, NumberField_quadratic):
+
+    def __init__(self):
+        from sage.rings.polynomial.polynomial_ring import polygen
+        NumberField_quadratic.__init__(self, polygen(QQ, 'x')**2 + 1,
+                embedding=complex_field.ComplexField().gen(),
+                element_class = number_field_element_quadratic.NumberFieldElement_QQi,
+                name='I',
+                latex_name='i')
 
 def is_fundamental_discriminant(D):
     r"""
