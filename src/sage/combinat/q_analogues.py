@@ -233,7 +233,7 @@ def q_binomial(n, k, q=None, algorithm='auto'):
     This also works for complex roots of unity::
 
         sage: q_binomial(6,1,I)
-        1 + I
+        I + 1
 
     Check that the algorithm does not matter::
 
