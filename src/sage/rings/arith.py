@@ -2863,7 +2863,7 @@ def crt(a,b,m=None,n=None):
     if isinstance(a, list):
         return CRT_list(a, b)
     if isinstance(a, (int, long)):
-        a = Integer(a) # otherwise we get an error at (b-a).quo_rem(g)
+        a = Integer(a)  # otherwise we get an error at (b-a).quo_rem(g)
     g, alpha, beta = XGCD(m, n)
     q, r = (b - a).quo_rem(g)
     if r != 0:
@@ -5142,6 +5142,29 @@ def squarefree_divisors(x):
     """
     for a in powerset(prime_divisors(x)):
         yield prod(a, ZZ.one())
+
+
+def dedekind_psi(N):
+    r"""
+    Return the Dedekind psi function.
+
+    This is the multiplicative function defined by
+
+    .. MATH::
+
+        `n \prod_{p|n, p prime} (1 + 1/p)`
+
+    See :wikipedia:`Dedekind_psi_function` and :oeis:`A001615`.
+
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import dedekind_psi
+        sage: [dedekind_psi(d) for d in range(1, 12)]
+        [1, 3, 4, 6, 6, 12, 8, 12, 12, 18, 12]
+    """
+    N = Integer(N)
+    return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
+
 
 def dedekind_sum(p, q, algorithm='default'):
     r"""
