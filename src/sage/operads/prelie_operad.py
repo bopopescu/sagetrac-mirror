@@ -1,11 +1,11 @@
+# -*- coding: utf-8 -*-
 r"""
 The Pre-Lie Operad
 
 AUTHORS:
 
-- Florent Hivert, Frederic Chapoton (2011)
+- Florent Hivert, Frédéric Chapoton (2011-2015)
 """
-
 #*****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@lri.fr>,
 #
@@ -14,7 +14,6 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 from sage.misc.cachefunc import cached_method
 from sage.functions.other import factorial
 from sage.categories.all import (OperadsWithBasis,
@@ -23,7 +22,7 @@ from sage.combinat.free_module import (CombinatorialFreeModule,
                                        CombinatorialFreeModuleElement)
 from sage.combinat.rooted_tree import LabelledRootedTrees
 from sage.combinat.cartesian_product import CartesianProduct
-from sage.combinat.split_nk import SplitNK
+from sage.combinat.set_partition_ordered import OrderedSetPartitions
 
 # PreLie operad : rooted trees
 
@@ -63,6 +62,8 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def _repr_(self):
         """
+        Return the string representation.
+
         EXAMPLES::
 
             sage: PreLieOperad(QQ)  # indirect doctest
@@ -72,7 +73,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def species(self):
         """
-        The species of rooted trees
+        Return the species of rooted trees.
 
         EXAMPLES::
 
@@ -92,12 +93,11 @@ class PreLieOperad(CombinatorialFreeModule):
     @cached_method
     def one_basis(self, letter="@"):
         """
-        Returns the tree with one vertex, which index the one of this operad,
-        as per :meth:`OperadsWithBasis.ParentMethods.one_basis`.
+        Return the tree with one vertex, which index the one of this operad.
 
         INPUT:
 
-        - letter (default '@') -- letter used to decorate the vertex
+        - letter (default '@') -- letter used to label the vertex
 
         EXAMPLES::
 
@@ -111,7 +111,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def degree_on_basis(self, t):
         """
-        Returns the degree of a rooted tree in the Pre-Lie operad.
+        Return the degree of a rooted tree in the Pre-Lie operad.
 
         This is the number of vertices.
 
@@ -124,24 +124,11 @@ class PreLieOperad(CombinatorialFreeModule):
         """
         return t.node_number()
 
-    def labelling_on_basis(self, t):
-        """
-        Put canonical labels on a tree in the Pre-Lie operad.
-
-        This means here a labelling by consecutive integers starting at 1.
-
-        EXAMPLES::
-
-            sage: A = PreLieOperad(QQ)
-            sage: LT = A.basis().keys()
-            sage: A.labelling_on_basis(LT([LT([],'b')], label='a'))
-            B[1[2[]]]
-        """
-        return self.basis()[t.canonical_labelling()]
-
     def unlabelling_on_basis(self, t):
         """
-        Removes the labels of a tree in the Pre-Lie operad.
+        Remove the labels of a tree in the Pre-Lie operad.
+
+        The image is an element in the free pre-Lie algebra on one generator.
 
         EXAMPLES::
 
@@ -150,12 +137,16 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: A.unlabelling_on_basis(LT([LT([],'b')], label='a'))
             B[[[]]]
         """
-        return self.basis()[t.shape()]
+        from sage.combinat.free_prelie_algebra import FreePreLieAlgebra
+        F = FreePreLieAlgebra(self.base_ring(), '@')
+        return F.basis()[t.shape()]
 
     def one(self, letter="@"):
         """
         I overload the one of the operad so that it can also serve as the one
         of the Hopf algebra
+
+        MOVE TO FREE ALGEBRAS !
 
         EXAMPLES::
 
@@ -170,7 +161,9 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def some_elements(self):
         """
-        Returns some elements of the operad
+        Return some elements of the operad
+
+        SOME ARE NOT REALLY in THE OPERAD !
 
         EXAMPLES::
 
@@ -189,9 +182,9 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def singleGraft(self, y, x, graftingFunction, path_prefix=()):
         """
-        This returns the rooted tree obtained from a rooted tree y, a
-        rooted tree x and a grafting function ``graftingFunction`` from
-        range(len(x)) to the set of paths in y.
+        Return the rooted tree obtained from a rooted tree `y`, a
+        rooted tree `x` and a grafting function ``graftingFunction`` from
+        range(len(x)) to the set of paths in `y`.
 
         .. WARNING:
 
@@ -222,7 +215,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def composition_on_basis_in_root(self, x, y):
         """
-        This returns a list of rooted trees obtained from a rooted tree `x`
+        Return a list of rooted trees obtained from a rooted tree `x`
         and a rooted tree `y` by the composition `x o_i y` where `i` is the root
         of `x`.
 
@@ -241,8 +234,10 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def composition_on_basis_list(self, x, y, i):
         """
-        This returns a list of rooted trees obtained from a rooted tree `x`
-        and a rooted tree `y` by the composition `x o_i y`. `i` should be a label of `x`.
+        Return a list of rooted trees obtained from a rooted tree `x`
+        and a rooted tree `y` by the composition `x o_i y`.
+
+        The composition index `i` should be a label of `x`.
 
         EXAMPLES::
 
@@ -268,8 +263,10 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def composition_on_basis(self, x, y, i):
         """
-        This computes the composition `x o_i y` as a sum of rooted trees,
-        for rooted trees `x` and `y`. `i` should be a label of `x`.
+        Return the composition `x o_i y` as a sum of rooted trees,
+        for rooted trees `x` and `y`.
+
+        The composition index `i` should be a label of `x`.
 
         EXAMPLES::
 
@@ -295,6 +292,8 @@ class PreLieOperad(CombinatorialFreeModule):
         """
         The product of the Hopf algebra is the composition at the root.
 
+        MOVE TO FREE ALGEBRAS, hard ?
+
         EXAMPLES::
 
             sage: A = PreLieOperad(QQ)
@@ -311,12 +310,14 @@ class PreLieOperad(CombinatorialFreeModule):
         """
         The coproduct of the Hopf algebra is un-shuffle.
 
+        MOVE TO FREE ALGEBRAS ? possible, easy
+
         EXAMPLES::
 
             sage: A = PreLieOperad(QQ)
             sage: LT = A.basis().keys()
             sage: y = A(LT([LT([],'a'), LT([],'b'), LT([],'c')], label='@'))
-            sage: y.coproduct()    # random # indirect doctest
+            sage: y.coproduct()    # indirect doctest
             B[@[]] # B[@[a[], b[], c[]]] + B[@[a[]]] # B[@[b[], c[]]] + B[@[b[], c[]]] # B[@[a[]]] + B[@[a[], b[]]] # B[@[c[]]] + B[@[a[], b[], c[]]] # B[@[]] + B[@[b[]]] # B[@[a[], c[]]] + B[@[a[], c[]]] # B[@[b[]]] + B[@[c[]]] # B[@[a[], b[]]]
         """
         LT = self.basis().keys()
@@ -325,11 +326,12 @@ class PreLieOperad(CombinatorialFreeModule):
             return self.monomial(LT([x[i] for i in lst], label='@'))
         return sum(tensor([list_to_tree(u), list_to_tree(v)])
                    for k in range(len(x) + 1)
-                   for (u, v) in SplitNK(len(x), k))
+                   for (u, v) in OrderedSetPartitions(range(len(x)),
+                                                      [k, len(x) - k]))
 
     def operad_generator_basis(self, fstlabel=0, sndlabel=1):
         """
-        Returns the generator of ``self`` as a labelled rooted tree
+        Return the generator of ``self`` as a labelled rooted tree.
 
         EXAMPLES::
 
@@ -342,7 +344,14 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def operad_generator(self, fstlabel=0, sndlabel=1):
         """
-        Returns the generator of ``self``
+        Return the generator of ``self``.
+
+        This is the rooted tree with two vertices.
+
+        INPUT:
+
+        - labels of the vertices -- optional, by default 0 for the root vertex
+          and 1 for the other vertex
 
         EXAMPLES::
 
@@ -354,10 +363,12 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def operad_generators(self):
         """
+        Return the familly of generators.
+
         EXAMPLES::
 
-        sage: PreLieOperad(QQ).operad_generators()
-        Finite family {'pre_Lie_product': B[1[2[]]]}
+            sage: PreLieOperad(QQ).operad_generators()
+            Finite family {'pre_Lie_product': B[1[2[]]]}
         """
         from sage.sets.family import Family
         return Family(dict([("pre_Lie_product",
@@ -365,7 +376,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def pre_Lie_product(self, x, y):
         """
-        This computes the pre-Lie product.
+        This computes the pre-Lie product inside the operad.
 
         EXAMPLES::
 
@@ -378,44 +389,13 @@ class PreLieOperad(CombinatorialFreeModule):
         """
         return self.operad_generator().compose(x, 0).compose(y, 1)
 
-    # def normalize_on_basis(self, tr):
-    #     """
-    #     EXAMPLES::
-
-    #         sage: A = PreLieOperad(QQ)
-    #         sage: LT = A.basis().keys()
-    #         sage: x = LT([LT([],'b'), LT([],'c')], label='a')
-    #         sage: A.normalize_on_basis(x)
-    #         B[a[b[], c[]]]
-    #         sage: x = LT([LT([],'c'), LT([],'b')], label='a')
-    #         sage: A.normalize_on_basis(x)
-    #         B[a[b[], c[]]]
-    #     """
-    #     return self.basis()[tr.cayley_normalize()]
-
-    # @lazy_attribute
-    # def normalize(self):
-    #     """
-    #     EXAMPLES::
-
-    #         sage: A = PreLieOperad(QQ)
-    #         sage: LT = A.basis().keys()
-    #         sage: x = A(LT([LT([],'b'), LT([],'c')], label='a'))
-    #         sage: A.normalize(x)
-    #         B[a[b[], c[]]]
-    #         sage: x = A(LT([LT([],'c'), LT([],'b')], label='a'))
-    #         sage: A.normalize(x)
-    #         B[a[b[], c[]]]
-    #     """
-    #     return self.module_morphism(self.normalize_on_basis, codomain = self)
-
     def operad_morphism_on_basis(self, t, cod):
         """
-        Defines a morphism from the PreLie operad to the target operad
+        Define a morphism from the PreLie operad to the target operad.
 
         The target operad has to possess a method called ``pre_Lie_product``.
 
-        The argument t should not have repeated labels
+        The argument t (a rooted tree) should not have repeated labels.
 
         EXAMPLES::
 
@@ -458,17 +438,19 @@ class PreLieOperad(CombinatorialFreeModule):
     def corolla(self, n, x, y, N=10):
         r"""
         Evaluate the corolla with `n` leaves, with `x` in the root and `y`
-        in the leaves
+        in the leaves.
+
+        SHOULD BE A METHOD OF PRELIE-ALGEBRAS
 
         The result is computed up to order `N` (included).
 
         INPUT:
 
-        - `n`: an integer
+        - `n` -- an integer
 
-        - `x`, `y`: two tree-indexed series
+        - `x`, `y` -- two tree-indexed series
 
-        - `N` (optional): an integer (default: 10)
+        - `N` (optional) -- an integer (default: 10) truncation order
 
         OUTPUT:
 
@@ -505,18 +487,18 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def sum_corolla_prelie(self, n, x, y, N=10):
         r"""
-        evaluate the sum of all corollas with up to `n` leaves, with
-        `x` in the root and `y` in the leaves
+        Evaluate the sum of all corollas with up to `n` leaves, with
+        `x` in the root and `y` in the leaves.
 
         The result is computed up to order `N` (included).
 
         INPUT:
 
-        - `n`: an integer
+        - `n` -- an integer
 
-        - `a`, `b`: two tree-indexed series
+        - `a`, `b` -- two tree-indexed series
 
-        - `N` (optional): an integer (default: 10)
+        - `N` (optional) -- an integer (default: 10) truncation order
 
         OUTPUT:
 
@@ -538,7 +520,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def diese_product(self, x, y, N=10):
         r"""
-        evaluate the `\#` product of `x` and `y` up to order `N`
+        Evaluate the `\#` product of `x` and `y` up to order `N`
 
         The `\#` product is an associative product on tree-indexed
             `\#` series. This is similar to the
@@ -549,11 +531,13 @@ class PreLieOperad(CombinatorialFreeModule):
 
         The result is computed up to order `N` (included).
 
+        SHOULD BE A METHOD OF PRELIE-ALGEBRAS
+
         INPUT:
 
         - `x`, `y` -- two tree-indexed series
 
-        - `N` (optional) -- an integer (default: 10)
+        - `N` (optional) -- an integer (default: 10) truncation order
 
         OUTPUT:
 
@@ -581,7 +565,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def inverse_diese(self, x, N=10):
         r"""
-        computes the inverse of `x` for the `\#` product up to order `N`
+        Return the inverse of `x` for the `\#` product up to order `N`
 
         The result is computed up to order `N` (included).
 
@@ -589,7 +573,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
         - `x` -- a tree-indexed series
 
-        - `N` (optional) -- an integer (default: 10)
+        - `N` (optional) -- an integer (default: 10) truncation order
 
         OUTPUT:
 
@@ -619,7 +603,9 @@ class PreLieOperad(CombinatorialFreeModule):
                 sage: A.one("x") < A.one("x")
                 B[x[x[]]]
 
-            .. warning:: Due to priority rules for operators, term must be put
+            .. warning::
+
+                Due to priority rules for operators, term must be put
                 within parentheses inside sum, product... For example you must
                 write::
 
@@ -627,7 +613,7 @@ class PreLieOperad(CombinatorialFreeModule):
                     sage: (a<b) + c
                     B[c[]] + B[a[b[]]]
 
-                Indeed ``a<b + c`` is understood as ``a< (b + c)``
+                Indeed ``a<b + c`` is understood as ``a< (b + c)``::
 
                     sage: (a<b + c) - (a < (b + c))
                     0
