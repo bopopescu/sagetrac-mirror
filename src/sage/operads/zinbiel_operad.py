@@ -44,7 +44,7 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     def _repr_(self):
         """
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -55,7 +55,7 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     def species(self):
         """
-        Returns the species of non-empty lists.
+        Return the species of non-empty lists.
 
         This is the species underlying the Zinbiel operad.
 
@@ -70,7 +70,7 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     def _coerce_end(self, st):
         """
-        Allows for the shortcut ``A(<string>)``.
+        Allow for the shortcut ``A(<string>)``.
 
         EXAMPLES::
 
@@ -84,7 +84,7 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     def _from_key(self, k):
         """
-        Returns an element from a word.
+        Return an element from a word.
 
         EXAMPLES::
 
@@ -96,8 +96,7 @@ class ZinbielOperad(CombinatorialFreeModule):
     @cached_method
     def one_basis(self, letter='@'):
         """
-        Returns the word of length one, which index the one of this operad,
-        as per :meth:`OperadsWithBasis.ParentMethods.one_basis`.
+        Return the word of length one, which index the one of this operad.
 
         INPUT:
 
@@ -113,7 +112,7 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     def operad_generators(self):
         """
-        Returns the generators of the operad.
+        Return the generators of the operad.
 
         EXAMPLES::
 
@@ -126,7 +125,7 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     def composition_on_basis_list(self, x, y, i):
         r"""
-        Returns the composition of two words `x o_i y` as a list of
+        Return the composition of two words `x o_i y` as a list of
         words.
 
         The composition index `i` must be a label of `x`.
@@ -154,7 +153,15 @@ class ZinbielOperad(CombinatorialFreeModule):
 
     def composition_on_basis(self, x, y, i):
         """
-        Composition of basis elements, as per :meth:`OperadsWithBasis.ParentMethods.composition_on_basis`.
+        Return the composition of words as a sum of basis elements.
+
+        INPUT:
+
+        - x, y -- words
+
+        - i -- the composition index
+
+        The composition index `i` must be a label of `x`.
 
         EXAMPLES::
 

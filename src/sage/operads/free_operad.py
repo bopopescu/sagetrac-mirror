@@ -26,14 +26,14 @@ class FreeOperad(CombinatorialFreeModule):
             sage: FreeOperad(QQ)            # indirect doctest
             The Free operad over Rational Field with generators
         """
-        return "The Free operad over {} with generators ".format(self.base_ring())
+        msg = "The Free operad over {} with generators "
+        return msg.format(self.base_ring())
 
     @cached_method
     def one_basis(self, letter):
         """
-        Returns the planar tree with no vertex and one leaf, which indexes
-        the one of this operad, as per
-        :meth:`OperadsWithBasis.ParentMethods.one_basis`.
+        Return the planar tree with no vertex and one leaf, which indexes
+        the one of this operad.
 
         EXAMPLES::
 
@@ -45,8 +45,18 @@ class FreeOperad(CombinatorialFreeModule):
 
     def composition_on_basis_as_tree(self, x, y, i):
         """
-        Returns the composition of two planar trees in the free operad
+        Return the composition of two planar trees in the free operad
         as a planar tree.
+
+        This is just grafting `y` on the leaf `i` of `x`.
+
+        INPUT:
+
+        - `x,y` -- two planar trees
+
+        - `i` -- composition index
+
+        The composition index `i` should be a leaf label of `x`.
 
         EXAMPLES::
 
@@ -61,7 +71,8 @@ class FreeOperad(CombinatorialFreeModule):
             sage: A.composition_on_basis_as_tree(t,one,'c')
             d[a[]]
             sage: t1 = Trees([Trees([],label='c')],label='d')
-            sage: t2 = Trees([Trees([],label='e'),Trees([],label='b')],label='f')
+            sage: t2 = Trees([Trees([],label='e'),Trees([],label='b')],
+            ....:   label='f')
             sage: A.composition_on_basis_as_tree(t1,t2,'c')
             d[f[e[], b[]]]
             sage: A.composition_on_basis_as_tree(t2,t1,'b')
@@ -78,8 +89,7 @@ class FreeOperad(CombinatorialFreeModule):
 
     def composition_on_basis(self, x, y, i):
         r"""
-        This computes the composition `x o_i y` as a planar tree,
-        for planar trees `x` and `y`.
+        Return the composition `x o_i y` for planar trees `x` and `y`.
 
         The composition index `i` should be a leaf label of `x`.
 
@@ -96,7 +106,8 @@ class FreeOperad(CombinatorialFreeModule):
             sage: A.composition_on_basis(t,one,'c')
             B[d[a[]]]
             sage: t1 = Trees([Trees([],label='c')],label='d')
-            sage: t2 = Trees([Trees([],label='e'),Trees([],label='b')],label='f')
+            sage: t2 = Trees([Trees([],label='e'),Trees([],label='b')],
+            ....:   label='f')
             sage: A.composition_on_basis(t1,t2,'c')
             B[d[f[e[], b[]]]]
             sage: A.composition_on_basis(t2,t1,'b')
@@ -114,14 +125,14 @@ class FreeOperad(CombinatorialFreeModule):
 
     def operad_morphism_on_basis(self, t, cod, fun=None):
         """
-        Defines a morphism from the free operad to the target operad
+        Define a morphism from the free operad to the target operad.
 
         INPUT:
 
-         - If given ``fun`` is a function associating the generator of
-           ``self`` to element of the codomain cod. If not given the generator
-           are supposed to be indexed by string and the image of the generator
-           ``gen`` is computed via ``cod.gen``.
+        - If given ``fun`` is a function associating the generator of
+          ``self`` to element of the codomain ``cod``. If not given
+          the generator are supposed to be indexed by string and the
+          image of the generator ``gen`` is computed via ``cod.gen``.
 
         EXAMPLES::
 
