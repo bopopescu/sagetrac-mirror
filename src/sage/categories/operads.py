@@ -30,7 +30,6 @@ class Operads(Category_over_base_ring):
         sage: C = Operads(ZZ)
         sage: TestSuite(C).run()
     """
-
     @cached_method
     def super_categories(self):
         """
@@ -40,5 +39,4 @@ class Operads(Category_over_base_ring):
             [Category of vector spaces over Rational Field,
             Category of set operads]
         """
-        R = self.base_ring()
-        return [Modules(R), SetOperads()]
+        return [Modules(self.base_ring()), SetOperads()]

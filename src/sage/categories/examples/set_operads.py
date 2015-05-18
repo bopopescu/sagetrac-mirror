@@ -7,12 +7,12 @@ Examples of set operads
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 from sage.categories.all import SetOperads
 from sage.combinat.words.words import Words
 from sage.structure.parent import Parent
+
 
 class AssociativeOperad(Parent):
     r"""
@@ -20,7 +20,6 @@ class AssociativeOperad(Parent):
 
     This class illustrates a minimal implementation of a set operad.
     """
-
     def __init__(self):
         """
         EXAMPLES::
@@ -30,22 +29,23 @@ class AssociativeOperad(Parent):
             sage: TestSuite(A).run()
         """
         self.element_class = Words()
-        Parent.__init__(self, category = SetOperads())
+        Parent.__init__(self, category=SetOperads())
 
     def _repr_(self):
         """
+        Return the string representation.
+
         EXAMPLES::
 
-            sage: SetOperads().example() # indirect doctest
+            sage: SetOperads().example()  # indirect doctest
             An example of a set operad: the Associative operad
         """
         return "An example of a set operad: the Associative operad"
 
     @cached_method
-    def one(self,letter):
+    def one(self, letter):
         """
-        Returns the word of length one, which index the one of this operad,
-        as per :meth:`SetOperads.ParentMethods.one`.
+        Return the word of length one, which index the one of this operad.
 
         EXAMPLES::
 
@@ -57,7 +57,7 @@ class AssociativeOperad(Parent):
 
     def _an_element_(self):
         """
-        Returns a word
+        Return a word.
 
         EXAMPLES::
 
@@ -67,12 +67,9 @@ class AssociativeOperad(Parent):
         """
         return self.element_class("abcd")
 
-    def composition(self,x,y,i):
+    def composition(self, x, y, i):
         """
-        Composition of words, as per
-        :meth:`SetOperads.ParentMethods.composition`.
-
-        inserts a word y at position i in a word x and returns a word
+        Insert a word y at position i in a word x and return a word.
 
         This is the composition of the set-theoretic Associative operad.
 
@@ -81,11 +78,9 @@ class AssociativeOperad(Parent):
             sage: A = SetOperads().example()
             sage: A.composition(Word("acb"), Word("de"),"c")
             word: adeb
-
         """
-        if x[0]==i:
-            return self.element_class(y+x[1:])
-        else:
-            return self.element_class(x[:1]+self.composition(x[1:],y,i))
+        if x[0] == i:
+            return self.element_class(y + x[1:])
+        return self.element_class(x[:1] + self.composition(x[1:], y, i))
 
 Example = AssociativeOperad
