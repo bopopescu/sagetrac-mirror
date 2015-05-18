@@ -173,7 +173,7 @@ class WQSymNewOperad(CombinatorialFreeModule):
             ....:     A._fix_key([[5,6]]), 5)
             Traceback (most recent call last):
             ...
-            ValueError: The composition index is not present.
+            ValueError: the composition index is not present
         """
         for pos, st in enumerate(x):
             if i in st:

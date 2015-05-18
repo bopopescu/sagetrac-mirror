@@ -249,7 +249,7 @@ class PreLieOperad(CombinatorialFreeModule):
             [a[b[], d[]], a[b[d[]]]]
         """
         if not(i in x.labels()):
-            raise ValueError("The composition index is not present in the first argument")
+            raise ValueError("the composition index is not present")
         elif x.label() == i:
             return self.composition_on_basis_in_root(x, y)
         resu = []
@@ -275,14 +275,14 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: A.composition_on_basis(x,y,'a')
             Traceback (most recent call last):
             ...
-            ValueError: The composition index is not present.
+            ValueError: the composition index is not present
             sage: A.composition(A(x), A(y), 'd')
             B[c[a[b[]]]]
             sage: A.composition(A(x), A(y), 'c')
             B[a[b[], d[]]] + B[a[b[d[]]]]
         """
         if not(i in x.labels()):
-            raise ValueError("The composition index is not present")
+            raise ValueError("the composition index is not present")
         return sum(self.basis()[t] for t in
                    self.composition_on_basis_list(x, y, i))
 
