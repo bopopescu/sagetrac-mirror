@@ -121,7 +121,7 @@ class WQSymNewOperad(CombinatorialFreeModule):
 
             sage: A = WQSymNewOperad(QQ)
             sage: A.an_element()
-            2*A[1] + A[12,3]
+            A[12,3] + 2*A[1]
         """
         return (self._from_key(({1, 2}, {3})) +
                 self._from_key(({1},)) + self._from_key(({1},)))
@@ -183,9 +183,7 @@ class WQSymNewOperad(CombinatorialFreeModule):
         start = x[:pos] + Words()((x[pos] | y[0] - {i},))
         end = Words()(x[pos + 1:])
         return map(lambda z: start + z,
-                   ShuffleProduct_overlapping(end, Words()(y[1:]),
-                                              sum_func=lambda x, y: x | y,
-                                              neutral=frozenset()).list())
+                   ShuffleProduct_overlapping(end, Words()(y[1:])).list())
 
     def composition_on_basis(self, x, y, i):
         """

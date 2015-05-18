@@ -54,9 +54,11 @@ class PreLieOperad(CombinatorialFreeModule):
             The Pre-Lie operad over Rational Field
             sage: TestSuite(A).run()
         """
+        # cmp = LabelledRootedTrees().graded_cmp()
+        cmp = LabelledRootedTrees()._cmp_
         CombinatorialFreeModule.__init__(self, R, LabelledRootedTrees(),
                                          latex_prefix="",
-                                         monomial_cmp=LabelledRootedTrees().graded_cmp(),
+                                         monomial_cmp=cmp,
                                          category=(OperadsWithBasis(R), GradedHopfAlgebrasWithBasis(R)))
 
     def _repr_(self):
