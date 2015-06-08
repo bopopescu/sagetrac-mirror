@@ -80,16 +80,16 @@ def install_all_optional_packages(force=True, dry_run=False):
     # install each one
     for pkg in v:
         try:
-            print "Installing %s..."%pkg
+            print("Installing {}...".format(pkg))
             if not dry_run:
                 # only actually do the install of the package if dry_run is False
                 install_package(pkg, force=force)
         except ValueError as msg:
             # An error occurred -- catch exception and record this in
             # the list of failed installed.
-            print "*"*70
-            print "FAILED to install '%s'"%pkg
-            print "*"*70
+            print("*"*70)
+            print("FAILED to install '{}'".format(pkg))
+            print("*"*70)
             failed.append(pkg)
     return failed
 
@@ -135,16 +135,25 @@ def install_package(package=None, force=False):
     """
     global __installed_packages
     if os.uname()[0][:6] == 'CYGWIN' and package is not None:
-        print "install_package may not work correctly under Microsoft Windows"
-        print "since you can't change an opened file.  Quit all"
-        print "instances of Sage and use 'sage -i %s' instead or" % package
-        print "use the force option to install_package()."
+        print("install_package may not work correctly under Microsoft Windows")
+        print("since you can't change an opened file.  Quit all")
+        print("instances of Sage and use 'sage -i {}' instead or".format(package))
+        print("use the force option to install_package().")
 
     if package is None:
         if __installed_packages is None:
             import sage.env
             __installed_packages = sorted(os.listdir(sage.env.SAGE_SPKG_INST))
         return __installed_packages
+
+
+
+    import stopgap
+    stopgap.stopgap("The Sage function 'install_packages' is currently broken: it does not correctly install new packages. Please use 'sage -i {}' from a shell prompt instead.".format(package), 16759)
+    return
+
+
+
     # Get full package name / list of candidates:
     if force:
         # Also search packages already installed.
@@ -157,21 +166,21 @@ def install_package(package=None, force=False):
     O.extend([P for P in optional_packages()[1] if P.startswith(package)])
     E.extend([P for P in experimental_packages()[1] if P.startswith(package)])
     L = S+O+E
-    if len(L)>1:
+    if len(L) > 1:
         if force:
-            print "Possible package names starting with '%s' are:"%(package)
+            print("Possible package names starting with '{}' are:".format(package))
         else:
-            print "Possible names of non-installed packages starting with '%s':"%(package)
+            print("Possible names of non-installed packages starting with '{}':".format(package))
         for P in L:
-            print " ", P
-        raise ValueError("There is more than one package name starting with '%s'. Please specify!"%(package))
-    if len(L)==0:
+            print(" ", P)
+        raise ValueError("There is more than one package name starting with '{}'. Please specify!".format(package))
+    if len(L) == 0:
         if not force:
             if is_package_installed(package):
-                raise ValueError("Package is already installed. Try install_package('%s',force=True)"%(package))
-        raise ValueError("There is no package name starting with '%s'."%(package))
-    # len(L)==1, i.e. exactly one package matches the given one.
-    os.system('sage -f "%s"'%(L[0]))
+                raise ValueError("Package is already installed. Try install_package('{}',force=True)".format(package))
+        raise ValueError("There is no package name starting with '{}'.".format(package))
+    # len(L) == 1, i.e. exactly one package matches the given one.
+    os.system('sage -f "{}"'.format(L[0]))
     __installed_packages = None
 
 
@@ -187,6 +196,81 @@ def is_package_installed(package):
     """
     return any(p.startswith(package) for p in install_package())
 
+def _package_lists_from_sage_output(package_type,version=False,local=False):
+    r"""
+    Helper function for :func:`standard_packages`, :func:`optional_packages` and
+    :func:`experimental_packages`.
+
+    INPUT:
+
+    - ``package_type`` (string) -- one of `"standard"`, `"optional"` or
+      `"experimental"`
+
+    - ``version`` (boolean) -- whether to return the version of each (installed)
+      package.
+
+    - ``local`` (boolean) -- only query local data (no internet needed)
+
+    OUTPUT:
+
+    When ``version=False``, the function returns a pair of list
+    ``(installed,not_installed)`` with the corresponding packages' name.
+
+    When ``version=True``, the elements of each list are not package names but
+    pairs ``(package_name,package_version)`` where ``version`` is a string
+    representing the version of each package that is installed.
+
+    EXAMPLE::
+
+        sage: from sage.misc.package import standard_packages
+        sage: installed, not_installed = standard_packages()  # optional internet
+
+    Local check that all standard packages are installed::
+
+        sage: from sage.misc.package import _package_lists_from_sage_output
+        sage: installed, not_installed = _package_lists_from_sage_output('standard',local=True)
+        sage: bool(not_installed)
+        False
+        sage: 'glpk' in installed
+        True
+
+    Same, with a version number::
+
+        sage: installed, not_installed = _package_lists_from_sage_output('standard',local=True,version=True)
+        sage: bool(not_installed)
+        False
+        sage: any(x[0] == 'glpk' and type(x[1]) == str and '4.55' <= x[1] for x in installed)
+        True
+    """
+    if package_type not in ['standard','optional','experimental']:
+        raise ValueError("'package_type' must be one of 'standard','optional','experimental'.")
+
+    cmd = 'sage -{} --dump'.format(package_type)
+    if not version:
+        cmd += " --no-version"
+    if local:
+        cmd += " --local"
+    X = os.popen(cmd).read().split('\n')[:-1]
+
+    installed     = []
+    not_installed = []
+    if version:
+        for line in X:
+            line = line.split(' ')
+            name,version = line[0],line[1]
+            if is_package_installed(name):
+                installed.append((name,version))
+            else:
+                not_installed.append((name,version))
+    else:
+        for name in X:
+            if is_package_installed(name):
+                installed.append(name)
+            else:
+                not_installed.append(name)
+
+    return installed, not_installed
+
 def standard_packages():
     """
     Return two lists. The first contains the installed and the second
@@ -199,36 +283,22 @@ def standard_packages():
 
     -  NOT installed standard packages (as a list)
 
-
     Use ``install_package(package_name)`` to install or
     re-install a given package.
 
     .. seealso:: :func:`install_package`, :func:`upgrade`
 
+    EXAMPLE::
+
+        sage: from sage.misc.package import standard_packages
+        sage: installed, not_installed = standard_packages() # optional internet
+        sage: installed[0], installed[-1]                    # optional internet
+        ('atlas', 'zn_poly')
+        sage: 'mercurial' in not_installed                   # optional internet
+        True
+
     """
-    R = os.popen('sage -standard').read()
-    X = R.split('\n')
-    try:
-        i = X.index('INSTALLED:')
-        j = X.index('NOT INSTALLED:')
-    except ValueError as msg:
-        print R
-        print "Standard package list (shown above) appears to be currently"
-        print "not available or corrupted (network error?)."
-        return [], []
-
-    installed = []
-    for k in X[i+1:]:
-        if k == '':
-            break
-        installed.append(k)
-
-    not_installed = []
-    for k in X[j+1:]:
-        if k == '':
-            break
-        not_installed.append(k)
-    return installed, not_installed
+    return _package_lists_from_sage_output('standard')
 
 def optional_packages():
     """
@@ -247,29 +317,17 @@ def optional_packages():
     re-install a given package.
 
     .. seealso:: :func:`install_package`, :func:`upgrade`
+
+    EXAMPLE::
+
+        sage: from sage.misc.package import optional_packages
+        sage: installed, not_installed = optional_packages() # optional internet
+        sage: min(installed+not_installed)                   # optional internet
+        '4ti2'
+        sage: max(installed+not_installed)                   # optional internet
+        'zeromq'
     """
-    R = os.popen('sage -optional').read()
-    X = R.split('\n')
-    try:
-        i = X.index('INSTALLED:')
-        j = X.index('NOT INSTALLED:')
-    except ValueError as msg:
-        print R
-        print "Optional package list (shown above) appears to be currently not available or corrupted (network error?)."
-        return [], []
-
-    installed = []
-    for k in X[i+1:]:
-        if k == '':
-            break
-        installed.append(k)
-
-    not_installed = []
-    for k in X[j+1:]:
-        if k == '':
-            break
-        not_installed.append(k)
-    return installed, not_installed
+    return _package_lists_from_sage_output('optional')
 
 def experimental_packages():
     """
@@ -288,29 +346,17 @@ def experimental_packages():
     re-install a given package.
 
     .. seealso:: :func:`install_package`, :func:`upgrade`
+
+    EXAMPLE::
+
+        sage: from sage.misc.package import experimental_packages
+        sage: installed, not_installed = experimental_packages() # optional internet
+        sage: min(installed+not_installed)                   # optional internet
+        'PyQt4'
+        sage: max(installed+not_installed)                   # optional internet
+        'yassl'
     """
-    R = os.popen('sage -experimental').read()
-    X = R.split('\n')
-    try:
-        i = X.index('INSTALLED:')
-        j = X.index('NOT INSTALLED:')
-    except ValueError as msg:
-        print R
-        print "experimental package list (shown above) appears to be currently not available or corrupted (network error?)."
-        return [], []
-
-    installed = []
-    for k in X[i+1:]:
-        if k == '':
-            break
-        installed.append(k)
-
-    not_installed = []
-    for k in X[j+1:]:
-        if k == '':
-            break
-        not_installed.append(k)
-    return installed, not_installed
+    return _package_lists_from_sage_output('experimental')
 
 #################################################################
 # Upgrade to latest version of Sage
@@ -333,14 +379,14 @@ def upgrade():
     """
     global __installed_packages
     if os.uname()[0][:6] == 'CYGWIN':
-        print "Upgrade may not work correctly under Microsoft Windows"
-        print "since you can't change an opened file.  Quit all"
-        print "instances of Sage and use 'sage -upgrade' instead."
+        print("Upgrade may not work correctly under Microsoft Windows")
+        print("since you can't change an opened file.  Quit all")
+        print("instances of Sage and use 'sage -upgrade' instead.")
         return
 
     os.system('sage -upgrade')
     __installed_packages = None
-    print "You should quit and restart Sage now."
+    print("You should quit and restart Sage now.")
 
 
 def package_mesg(package_name):
