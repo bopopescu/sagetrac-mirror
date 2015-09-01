@@ -577,5 +577,6 @@ class PreLieOperad(CombinatorialFreeModule):
                     0
             """
             parent = self.parent()
-            assert(parent == other.parent())
+            if parent != other.parent():
+                raise TypeError('not in the same parent')
             return parent.pre_Lie_product(self, other)

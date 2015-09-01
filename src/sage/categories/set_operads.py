@@ -13,8 +13,10 @@ from sage.categories.sets_cat import Sets
 from sage.misc.cachefunc import cached_method
 from sage.categories.cartesian_product import cartesian_product
 from sage.misc.abstract_method import abstract_method
+from sage.categories.category_singleton import Category_singleton
 
-class SetOperads(Category):
+
+class SetOperads(Category_singleton):
     """
     The category of set operads
 
