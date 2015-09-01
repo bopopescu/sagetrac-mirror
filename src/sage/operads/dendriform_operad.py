@@ -263,7 +263,7 @@ class DendriformOperad(CombinatorialFreeModule):
             B[a[b[., .], c[d[., .], .]]] + B[c[a[b[., .], d[., .]], .]]
             + B[c[d[a[b[., .], .], .], .]]
             sage: A.chosen_product(x, y, 'lie')
-            B[a[b[., .], c[d[., .], .]]] - B[c[d[., .], a[b[., .], .]]] + B[c[a[b[., .], d[., .]], .]] - B[a[c[d[., .], b[., .]], .]] + B[c[d[a[b[., .], .], .], .]] - B[a[b[c[d[., .], .], .], .]]
+            B[a[b[., .], c[d[., .], .]]] - B[c[d[., .], a[b[., .], .]]] - B[a[c[d[., .], b[., .]], .]] + B[c[a[b[., .], d[., .]], .]] + B[c[d[a[b[., .], .], .], .]] - B[a[b[c[d[., .], .], .], .]]
 
             sage: A.chosen_product(x, y, 'prelie')
             -B[a[b[., .], c[d[., .], .]]] + B[a[c[d[., .], b[., .]], .]]

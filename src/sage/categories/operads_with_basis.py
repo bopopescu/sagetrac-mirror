@@ -25,7 +25,8 @@ class OperadsWithBasis(Category_over_base_ring):
       sage: OperadsWithBasis(QQ)
       Category of operads with basis over Rational Field
       sage: OperadsWithBasis(QQ).super_categories()
-      [Category of graded vector spaces with basis over Rational Field, Category of operads over Rational Field]
+      [Category of graded modules with basis over Rational Field,
+      Category of operads over Rational Field]
 
     TESTS::
 
@@ -38,7 +39,7 @@ class OperadsWithBasis(Category_over_base_ring):
         EXAMPLES::
 
             sage: OperadsWithBasis(QQ).super_categories()
-            [Category of graded vector spaces with basis over Rational Field,
+            [Category of graded modules with basis over Rational Field,
             Category of operads over Rational Field]
         """
         R = self.base_ring()
@@ -46,10 +47,13 @@ class OperadsWithBasis(Category_over_base_ring):
 
     def example(self):
         """
-        Returns an example of operad with basis::
+        Return an example of operad with basis.
+
+        EXAMPLES::
 
             sage: OperadsWithBasis(QQ).example()
-            An example of an operad with basis: the Associative operad over Rational Field
+            An example of an operad with basis: the Associative operad
+            over Rational Field
         """
         from sage.categories.examples.operads_with_basis import Example
         return Example(self.base_ring())
@@ -92,7 +96,7 @@ class OperadsWithBasis(Category_over_base_ring):
 
              - ``k`` -- the composition label
 
-            Returns the composition of the two corresponding basis
+            Return the composition of the two corresponding basis
             elements at the chosen label
 
             If implemented, :meth:`composition` is defined from it by

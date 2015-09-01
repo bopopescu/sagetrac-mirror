@@ -58,7 +58,7 @@ class PreLieOperad(CombinatorialFreeModule):
         CombinatorialFreeModule.__init__(self, R, LabelledRootedTrees(),
                                          latex_prefix="",
                                          monomial_cmp=cmp,
-                                         category=(OperadsWithBasis(R), GradedHopfAlgebrasWithBasis(R)))
+                                         category=(OperadsWithBasis(R),))
 
     def _repr_(self):
         """
@@ -161,21 +161,20 @@ class PreLieOperad(CombinatorialFreeModule):
 
     def some_elements(self):
         """
-        Return some elements of the operad
-
-        SOME ARE NOT REALLY in THE OPERAD !
+        Return some elements of the operad.
 
         EXAMPLES::
 
             sage: A = PreLieOperad(QQ)
             sage: A.some_elements()
-            [B[@[]],
-             B[@[b[]]],
-             B[@[b[], @[b[]]]] + B[@[b[@[b[]]]]],
-             B[@[b[@[]]]] + B[@[@[], b[]]]]
+            [B[a[]],
+             B[a[b[]]],
+             B[a[b[], c[d[]]]] + B[a[b[c[d[]]]]],
+             B[a[b[d[]]]] + B[a[b[], d[]]]]
         """
-        x = self.one() < self.one("b")
-        return [self.one(), x, x < x, x < self.one()]
+        x = self.one("a") < self.one("b")
+        y = self.one("c") < self.one("d")
+        return [self.one("a"), x, x < y, x < self.one("d")]
 
     # procedures de composition
     # nota bene : these algorithms only work if all labels of y are distinct !
@@ -287,47 +286,6 @@ class PreLieOperad(CombinatorialFreeModule):
             raise ValueError("the composition index is not present")
         return sum(self.basis()[t] for t in
                    self.composition_on_basis_list(x, y, i))
-
-    def product_on_basis(self, x, y):
-        """
-        The product of the Hopf algebra is the composition at the root.
-
-        MOVE TO FREE ALGEBRAS, hard ?
-
-        EXAMPLES::
-
-            sage: A = PreLieOperad(QQ)
-            sage: LT = A.basis().keys()
-            sage: y = A(LT([LT([],'b')], label='@'))
-            sage: x = A(LT([LT([],'d')], label='@'))
-            sage: x*y          # indirect doctest
-            B[@[b[d[]]]] + B[@[b[], d[]]]
-        """
-        return sum(self.monomial(t) for t in
-                   self.composition_on_basis_in_root(x, y))
-
-    def coproduct_on_basis(self, x):
-        """
-        The coproduct of the Hopf algebra is un-shuffle.
-
-        MOVE TO FREE ALGEBRAS ? possible, easy
-
-        EXAMPLES::
-
-            sage: A = PreLieOperad(QQ)
-            sage: LT = A.basis().keys()
-            sage: y = A(LT([LT([],'a'), LT([],'b'), LT([],'c')], label='@'))
-            sage: y.coproduct()    # indirect doctest
-            B[@[]] # B[@[a[], b[], c[]]] + B[@[a[]]] # B[@[b[], c[]]] + B[@[b[], c[]]] # B[@[a[]]] + B[@[a[], b[]]] # B[@[c[]]] + B[@[a[], b[], c[]]] # B[@[]] + B[@[b[]]] # B[@[a[], c[]]] + B[@[a[], c[]]] # B[@[b[]]] + B[@[c[]]] # B[@[a[], b[]]]
-        """
-        LT = self.basis().keys()
-
-        def list_to_tree(lst):
-            return self.monomial(LT([x[i] for i in lst], label='@'))
-        return sum(tensor([list_to_tree(u), list_to_tree(v)])
-                   for k in range(len(x) + 1)
-                   for (u, v) in OrderedSetPartitions(range(len(x)),
-                                                      [k, len(x) - k]))
 
     def operad_generator_basis(self, fstlabel=0, sndlabel=1):
         """
@@ -463,7 +421,7 @@ class PreLieOperad(CombinatorialFreeModule):
 
             sage: a = PL(PLT([PLT([],label=None)],label=None))
             sage: PL.corolla(1,a,a)
-            B[None[None[None[None[]]]]] + B[None[None[], None[None[]]]]
+            B[None[None[], None[None[]]]] + B[None[None[None[None[]]]]]
 
             sage: b = PL.one()
             sage: PL.corolla(3,b,b,4)
