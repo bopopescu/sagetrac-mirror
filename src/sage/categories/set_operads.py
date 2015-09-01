@@ -20,10 +20,10 @@ class SetOperads(Category):
 
     EXAMPLES::
 
-      sage: SetOperads()
-      Category of set operads
-      sage: SetOperads().super_categories()
-      [Category of sets]
+        sage: SetOperads()
+        Category of set operads
+        sage: SetOperads().super_categories()
+        [Category of sets]
 
     TESTS::
 
@@ -43,7 +43,9 @@ class SetOperads(Category):
 
     def example(self):
         """
-        Returns an example of set operad ::
+        Return an example of set operad.
+
+        EXAMPLES::
 
             sage: SetOperads().example()
             An example of a set operad: the Associative operad
@@ -56,7 +58,7 @@ class SetOperads(Category):
         @abstract_method(optional = True)
         def composition(self, left, right, index):
             """
-            returns the composition of left with right at position index
+            Return the composition of left with right at position index.
             """
 
         @abstract_method(optional = True)
@@ -69,7 +71,7 @@ class SetOperads(Category):
 
         def global_composition(self, left, list_right):
             r"""
-            returns the global composition of left with a list of elements
+            Return the global composition of left with a list of elements.
             """
             if self.composition is not NotImplemented:
                 assert left.degree() == len(list_right), "degree of x is not equal to the length of list_right"
@@ -82,7 +84,7 @@ class SetOperads(Category):
 
         def global_composition_with_numbers(self, left, list_right):
             r"""
-            returns the global composition of left with a list of elements
+            Return the global composition of left with a list of elements.
             """
             if self.composition_with_numbers is not NotImplemented:
                 assert left.degree() == len(list_right), "degree of x is not equal to the length of list_right"
@@ -96,58 +98,55 @@ class SetOperads(Category):
         @abstract_method(optional = True)
         def operad_morphism(self, arg, codomain):
             """
-            returns the image of arg by a morphism from self to codomain
+            Return the image of arg by a morphism from self to codomain
             """
 
         @abstract_method(optional = True)
         def one(self,letter):
             """
-            returns the one of the operad
+            Return the one of the operad
             """
 
         @abstract_method(optional = True)
         def is_symmetric(self):
             r"""
-            returns `True` if the operad is symmetric
+            Return `True` if the operad is symmetric
             """
             pass
 
         @abstract_method(optional = True)
         def elements(self, n):
             """
-            returns the set of elements in degree `n`
+            Return the set of elements in degree `n`
             """
             pass
 
-        def cardinality(self, n):
+        def cardinality(self):
             """
-            returns the cardinality in degree `n`
+            Return the cardinality
             """
-            return len(self.elements(n))
+            from sage.rings.infinity import Infinity
+            return Infinity
 
 
     class ElementMethods:
 
         def compose(self, other, index):
             """
-            returns the composition of self with other at position index
-
-            EXAMPLES::
+            Return the composition of self with other at position index.
             """
             return self.parent().composition(self, other, index)
 
         def compose_with_numbers(self, other, index):
             """
-            returns the composition of self with other at position index
-
-            EXAMPLES::
+            Return the composition of self with other at position index.
             """
             return self.parent().composition_with_numbers(self, other, index)
 
         @abstract_method(optional = True)
         def degree(self, x):
             """
-            returns the degree of an element
+            Return the degree of an element.
             """
             pass
 
