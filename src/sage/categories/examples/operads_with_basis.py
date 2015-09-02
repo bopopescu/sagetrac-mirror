@@ -55,6 +55,22 @@ class AssociativeOperad(CombinatorialFreeModule):
         """
         return self.basis().keys()([letter])
 
+    def degree_on_basis(self, t):
+        """
+        Returns the degree of a word `t` in the Associative operad.
+
+        This is the length of the word.
+
+        EXAMPLES::
+
+            sage: A = AssociativeOperad(QQ)
+            sage: Words = A.basis().keys()
+            sage: m = Words([4,3,2,1])
+            sage: A.degree_on_basis(m)
+            4
+        """
+        return t.length()
+
     def map_labels(self, t, f):
         """
         Map the function `f` on the word `t`.
@@ -68,6 +84,36 @@ class AssociativeOperad(CombinatorialFreeModule):
             word: 4321
         """
         return self.basis().keys()([f(u) for u in t])
+
+    def labelling_on_basis(self, t):
+        """
+        Put canonical labels on a word in the Associative operad.
+
+        EXAMPLES::
+
+            sage: A = AssociativeOperad(QQ)
+            sage: Words = A.basis().keys()
+            sage: m = Words([4,3,2,1])
+            sage: A.labelling_on_basis(m)
+            B[word: 1234]
+        """
+        B = self.basis()
+        return B[B.keys()([1 + i for i in range(t.length())])]
+
+    def unlabelling_on_basis(self, t):
+        """
+        Removes the labels of a tree in the Associative operad.
+
+        EXAMPLES::
+
+            sage: A = AssociativeOperad(QQ)
+            sage: Words = A.basis().keys()
+            sage: m = Words([4,3,2,1])
+            sage: A.unlabelling_on_basis(m)
+            B[word: 1111]
+        """
+        B = self.basis()
+        return B[B.keys()([1 for i in range(t.length())])]
 
     def grafts(self, x, y, i):
         """
@@ -98,8 +144,7 @@ class AssociativeOperad(CombinatorialFreeModule):
             B[word: adeb]
         """
         if not(i in x):
-            return "the composition index is not present"
+            raise ValueError("the composition index is not present")
         return self.basis()[self.grafts(x, y, i)]
-
 
 Example = AssociativeOperad

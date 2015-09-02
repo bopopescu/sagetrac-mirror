@@ -44,7 +44,7 @@ class AssociativeOperad(CombinatorialFreeModule):
     @cached_method
     def one_basis(self, letter):
         """
-        Returns the word of length one, which index the one of this operad,
+        Return the word of length one, which index the one of this operad,
         as per :meth:`OperadsWithBasis.ParentMethods.one_basis`.
 
         EXAMPLES::
@@ -73,7 +73,7 @@ class AssociativeOperad(CombinatorialFreeModule):
 
     def map_labels(self, t, f):
         """
-        Maps the function `f` on the word `t`.
+        Map the function `f` on the word `t`.
 
         EXAMPLES::
 
@@ -117,8 +117,9 @@ class AssociativeOperad(CombinatorialFreeModule):
 
     def grafts(self, x, y, i):
         """
-        Auxiliary procedure: inserts a word y at position i in a word x
-        and returns a word
+        Insert a word y at position i in a word x and return a word
+
+        This is the composition of the set-theoretic Associative operad.
 
         EXAMPLES::
 
