@@ -328,7 +328,7 @@ class OperadsWithBasis(Category_over_base_ring):
                 B[o[]]
                 sage: t = (o<o)+((o<o)<o)
                 sage: PL.suspension(t,2)
-                2*B[o[o[]]] + 4*B[o[o[], o[]]] + 4*B[o[o[o[]]]]
+                4*B[o[o[], o[]]] + 4*B[o[o[o[]]]] + 2*B[o[o[]]]
             """
             susp = lambda i, c: (i, q ** (self.degree_on_basis(i) - 1) * c)
             return s.map_item(susp)
@@ -395,7 +395,7 @@ class OperadsWithBasis(Category_over_base_ring):
 
                 sage: x = PL.one(1)+(PL.one(1)<PL.one(2))
                 sage: inv = PL.inverse_with_numbers(x,3); inv
-                B[1[]] - B[2[1[]]]
+                -B[2[1[]]] + B[1[]]
                 sage: PL.group_product_with_numbers(x,inv,3)
                 B[1[]]
             """
