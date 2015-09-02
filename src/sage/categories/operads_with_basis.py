@@ -70,6 +70,12 @@ class OperadsWithBasis(Category_over_base_ring):
             INPUT:
 
             ``letter`` -- the chosen labelling.
+
+            EXAMPLES::
+
+                sage: A = OperadsWithBasis(QQ).example()
+                sage: A.one('x')
+                B[word: x]
             """
             if self.one_basis is not NotImplemented:
                 return self.basis()[self.one_basis(letter)]

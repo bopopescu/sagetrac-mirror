@@ -40,7 +40,7 @@ class NapOperad(CombinatorialFreeModule):
 
     def _repr_(self):
         """
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -51,7 +51,7 @@ class NapOperad(CombinatorialFreeModule):
 
     def species(self):
         """
-        The species of rooted trees
+        Return the species of rooted trees.
 
         This is the species underlying the Nap operad.
 
@@ -73,7 +73,7 @@ class NapOperad(CombinatorialFreeModule):
     @cached_method
     def one_basis(self, letter='@'):
         """
-        Returns the tree with one vertex, which index the one of this operad,
+        Return the tree with one vertex, which index the one of this operad,
         as per :meth:`OperadsWithBasis.ParentMethods.one_basis`.
 
         INPUT:
@@ -90,7 +90,7 @@ class NapOperad(CombinatorialFreeModule):
 
     def composition_on_basis_in_root(self, x, y):
         r"""
-        This returns a rooted tree
+        Return the rooted tree
         obtained from a rooted tree `x` and a rooted tree `y` by the
         composition `x o_i y` where `i` is the root of `x`.
 
@@ -113,7 +113,7 @@ class NapOperad(CombinatorialFreeModule):
 
     def composition_on_basis_as_tree(self, x, y, i):
         r"""
-        This returns a rooted tree obtained from a rooted tree `x`
+        Return the rooted tree obtained from a rooted tree `x`
         and a rooted tree `y` by the composition `x o_i y`.
 
         The composition index `i` should be a label of `x`.
@@ -146,7 +146,7 @@ class NapOperad(CombinatorialFreeModule):
 
     def composition_on_basis(self, x, y, i):
         r"""
-        This returns a monomial obtained from a rooted tree `x`
+        Return a monomial obtained from a rooted tree `x`
         and a rooted tree `y` by the composition `x o_i y`.
 
         The composition index `i` should be a label of `x`.

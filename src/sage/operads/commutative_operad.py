@@ -1,3 +1,6 @@
+"""
+The Commutative Operad
+"""
 from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
@@ -12,12 +15,12 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     EXAMPLES::
 
-            sage: A = CommutativeOperad(QQ)
-            sage: W = A.basis().keys()
-            sage: x = A(W('ab'))
-            sage: y = A(W('dc'))
-            sage: x.compose(y, 'a')
-            B[word: bcd]
+        sage: A = CommutativeOperad(QQ)
+        sage: W = A.basis().keys()
+        sage: x = A(W('ab'))
+        sage: y = A(W('dc'))
+        sage: x.compose(y, 'a')
+        B[word: bcd]
 
     REFERENCES:
 
@@ -36,7 +39,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def _repr_(self):
         """
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -47,7 +50,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def species(self):
         """
-        The species of non-empty sets
+        Return the species of non-empty sets.
 
         This is the species underlying the Commutative operad.
 
@@ -62,12 +65,12 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def _coerce_end(self, st):
         """
-        Allows for the shortcut ``A(<string>)``.
+        Allow for the shortcut ``A(<string>)``.
 
         EXAMPLES::
 
             sage: A = CommutativeOperad(QQ)
-            sage: A("abc")
+            sage: A("abc")  # indirect doctest
             B[word: abc]
         """
         if isinstance(st, str):
@@ -76,7 +79,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def _from_key(self, k):
         """
-        Returns an element from a word.
+        Return an element from a word.
 
         EXAMPLES::
 
@@ -90,7 +93,7 @@ class CommutativeOperad(CombinatorialFreeModule):
     @cached_method
     def one_basis(self, letter='@'):
         """
-        Returns the word of length one, which index the one of this operad,
+        Return the word of length one, which index the one of this operad,
         as per :meth:`OperadsWithBasis.ParentMethods.one_basis`.
 
         INPUT:
@@ -107,7 +110,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def degree_on_basis(self, t):
         """
-        Returns the degree of a word `t` in the Commutative operad.
+        Return the degree of a word `t` in the Commutative operad.
 
         This is the length of the word.
 
@@ -123,7 +126,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def map_labels(self, t, f):
         """
-        Maps the function `f` on the word `t`.
+        Map the function `f` on the word `t`.
 
         EXAMPLES::
 
@@ -152,7 +155,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def unlabelling_on_basis(self, t):
         """
-        Removes the labels of a word in the Commutative operad.
+        Remove the labels of a word in the Commutative operad.
 
         EXAMPLES::
 
@@ -167,8 +170,8 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def grafts(self, x, y, i):
         r"""
-        Auxiliary procedure: inserts a word `y` at position `i` in a word `x`
-        and returns a word
+        Return the word obtained by inserting a word `y` at position `i`
+        in a word `x`.
 
         EXAMPLES::
 
@@ -199,7 +202,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def commutative_product(self, x, y):
         """
-        This computes the commutative product.
+        Compute the commutative product.
 
         EXAMPLES::
 
@@ -215,7 +218,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def operad_generators(self):
         """
-        Returns the generators of the operad.
+        Return the generators of the operad.
 
         EXAMPLES::
 
@@ -228,7 +231,7 @@ class CommutativeOperad(CombinatorialFreeModule):
 
     def operad_morphism_on_basis(self, t, codomain):
         """
-        Defines a morphism from the Commutative operad to the target operad
+        Define a morphism from the Commutative operad to the target operad
 
         The target operad has to possess a method called
         ``commutative_product``.

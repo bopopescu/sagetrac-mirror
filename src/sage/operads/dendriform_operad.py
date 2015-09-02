@@ -47,7 +47,7 @@ class DendriformOperad(CombinatorialFreeModule):
 
     def _repr_(self):
         """
-        Returns a string representation of ``self``.
+        Return a string representation of ``self``.
 
         EXAMPLES::
 
@@ -80,7 +80,7 @@ class DendriformOperad(CombinatorialFreeModule):
     @cached_method
     def one_basis(self, letter='@'):
         """
-        Returns the planar binary tree with one vertex, which indexes
+        Return the planar binary tree with one vertex, which indexes
         the one of this operad, as per
         :meth:`OperadsWithBasis.ParentMethods.one_basis`.
 
@@ -98,7 +98,7 @@ class DendriformOperad(CombinatorialFreeModule):
 
     def degree_on_basis(self, t):
         """
-        Returns the degree of a tree in the Dendriform operad.
+        Return the degree of a tree in the Dendriform operad.
 
         This is the number of nodes (inner vertices).
 
@@ -139,7 +139,7 @@ class DendriformOperad(CombinatorialFreeModule):
 
     def shuffle_on_basis_list(self, x, y):
         """
-        Returns the shuffle product (associative) of two planar binary
+        Return the shuffle product (associative) of two planar binary
         trees as a list of planar binary trees.
 
         EXAMPLES::
@@ -158,7 +158,7 @@ class DendriformOperad(CombinatorialFreeModule):
 
     def composition_on_basis_list(self, x, y, i):
         """
-        Returns the composition of two planar binary
+        Return the composition of two planar binary
         trees in the dendriform operad as a list of planar binary trees.
 
         EXAMPLES::

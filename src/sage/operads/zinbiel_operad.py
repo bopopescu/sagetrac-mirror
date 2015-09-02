@@ -75,7 +75,7 @@ class ZinbielOperad(CombinatorialFreeModule):
         EXAMPLES::
 
             sage: A = ZinbielOperad(QQ)
-            sage: A("abc")
+            sage: A("abc")  # indirect doctest
             B[word: abc]
         """
         if isinstance(st, str):

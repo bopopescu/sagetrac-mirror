@@ -121,6 +121,12 @@ class SetOperads(Category_singleton):
             INPUT:
 
             ``letter`` -- the chosen labelling.
+
+            EXAMPLES::
+
+                sage: A = SetOperads().example()
+                sage: A.one('x')
+                word: x
             """
 
         @abstract_method(optional=True)
@@ -142,6 +148,12 @@ class SetOperads(Category_singleton):
             Return the cardinality.
 
             This is usually infinity.
+
+            EXAMPLES::
+
+                sage: A = SetOperads().example()
+                sage: A.cardinality()
+                +Infinity
             """
             from sage.rings.infinity import Infinity
             return Infinity
@@ -152,6 +164,13 @@ class SetOperads(Category_singleton):
             """
             Return the composition of ``self`` with ``other`` at position
             ``index``.
+
+            EXAMPLES::
+
+                sage: A = SetOperads().example()
+                sage: x = A.element_class('123')
+                sage: x.degree()
+                1
             """
             return self.parent().composition(self, other, index)
 

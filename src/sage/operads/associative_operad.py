@@ -34,7 +34,7 @@ class AssociativeOperad(CombinatorialFreeModule):
 
         EXAMPLES::
 
-            sage: f=AssociativeOperad(QQ).species()
+            sage: f = AssociativeOperad(QQ).species()
             sage: f.generating_series().coefficients(5)
             [0, 1, 1, 1, 1]
         """
@@ -57,7 +57,7 @@ class AssociativeOperad(CombinatorialFreeModule):
 
     def degree_on_basis(self, t):
         """
-        Returns the degree of a word `t` in the Associative operad.
+        Return the degree of a word `t` in the Associative operad.
 
         This is the length of the word.
 
