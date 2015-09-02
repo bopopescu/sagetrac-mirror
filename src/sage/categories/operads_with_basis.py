@@ -49,6 +49,8 @@ class OperadsWithBasis(Category_over_base_ring):
         """
         Return an example of operad with basis.
 
+        Here, the associative operad.
+
         EXAMPLES::
 
             sage: OperadsWithBasis(QQ).example()
@@ -63,6 +65,11 @@ class OperadsWithBasis(Category_over_base_ring):
         @cached_method
         def one(self, letter):
             """
+            Return the one of the operad.
+
+            INPUT:
+
+            ``letter`` -- the chosen labelling.
             """
             if self.one_basis is not NotImplemented:
                 return self.basis()[self.one_basis(letter)]
@@ -96,7 +103,7 @@ class OperadsWithBasis(Category_over_base_ring):
             - `k` -- the composition label
 
             Return the composition of the two corresponding basis
-            elements at the chosen label
+            elements at the chosen label.
 
             If implemented, :meth:`composition` is defined from it by
             bilinearity.
@@ -112,8 +119,7 @@ class OperadsWithBasis(Category_over_base_ring):
         def composition_on_basis_truncated(self, i, j, k, N):
             """
             The composition of the operad on the basis (optional)
-
-            up to degree N (included) only
+            up to degree `N` (included) only.
 
             INPUT:
 
@@ -123,8 +129,8 @@ class OperadsWithBasis(Category_over_base_ring):
 
             - `N` -- an integer, the order of truncation
 
-            Returns the composition of the two corresponding basis
-            elements at the chosen label, up to order N
+            Return the composition of the two corresponding basis
+            elements at the chosen label, up to order `N`.
 
             If implemented, :meth:`composition_truncated` is defined
             from it by bilinearity.
@@ -145,7 +151,7 @@ class OperadsWithBasis(Category_over_base_ring):
         def composition_on_basis_with_numbers(self, i, j, k):
             """
             This is variant of composition where one assumes that
-            labels are integers from 1 to n.
+            labels are integers from `1` to `n`.
 
             EXAMPLES::
 
@@ -187,7 +193,6 @@ class OperadsWithBasis(Category_over_base_ring):
         def composition_truncated(self):
             """
             The composition of the operad, as per ``Operads.ParentMethods.composition``
-
             up to some degree only.
 
             By default, this is implemented from
@@ -210,7 +215,7 @@ class OperadsWithBasis(Category_over_base_ring):
         def composition_with_numbers(self):
             """
             This is a variant of composition, where one assumes that
-            the objects are labelled by integers from 1 to n.
+            the objects are labelled by integers from `1` to `n`.
 
             The result is labelled in the same way.
 
@@ -274,8 +279,8 @@ class OperadsWithBasis(Category_over_base_ring):
         @lazy_attribute
         def labelling(self):
             """
-            This ensures that basis elements are labelled by integers
-            between 1 and their size, in a bijective way.
+            This ensures that elements are labelled by integers
+            between `1` and their size, in a bijective way.
 
             EXAMPLES::
 
@@ -316,7 +321,7 @@ class OperadsWithBasis(Category_over_base_ring):
             - `q` -- an element of the base ring of `s`
 
             For the element `s = \sum_n s_n`, this is defined as
-            `\sum_\n q**(n-1) s_n`.
+            `\sum_\n q^(n-1) s_n`.
 
             EXAMPLES::
 
