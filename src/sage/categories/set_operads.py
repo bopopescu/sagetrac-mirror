@@ -126,7 +126,7 @@ class SetOperads(Category_singleton):
 
                 sage: A = SetOperads().example()
                 sage: A.one('x')
-                word: x
+                'x'
             """
 
         @abstract_method(optional=True)
@@ -168,9 +168,10 @@ class SetOperads(Category_singleton):
             EXAMPLES::
 
                 sage: A = SetOperads().example()
-                sage: x = A.element_class('123')
-                sage: x.degree()
-                1
+                sage: x = A('fou')
+                sage: y = A('pi')
+                sage: x.compose(y,'u')
+                'fopi'
             """
             return self.parent().composition(self, other, index)
 
@@ -180,13 +181,28 @@ class SetOperads(Category_singleton):
             ``index``.
 
             The elements are supposed to be labelled by consecutive integers.
+
+            EXAMPLES::
+
+                sage: A = SetOperads().example()
+                sage: x = A('123')
+                sage: y = A('12')
+                sage: x.compose_with_numbers(y,3)
+                '1234'
             """
             return self.parent().composition_with_numbers(self, other, index)
 
         @abstract_method(optional=True)
-        def degree(self, x):
+        def degree(self):
             """
             Return the degree of an element.
+
+            EXAMPLES::
+
+                sage: A = SetOperads().example()
+                sage: y = A('12')
+                sage: y.degree()
+                2
             """
             pass
 
@@ -194,5 +210,12 @@ class SetOperads(Category_singleton):
         def map_labels(self, f):
             """
             Apply the function `f` to the labels of an element.
+
+            EXAMPLES::
+
+                sage: A = SetOperads().example()
+                sage: y = A('R2D2')
+                sage: y.map_labels(lambda u: u.lower())
+                'r2d2'
             """
             pass

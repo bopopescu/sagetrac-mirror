@@ -10,11 +10,12 @@ Examples of set operads
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 from sage.categories.all import SetOperads
-from sage.combinat.words.words import Words
+from sage.structure.unique_representation import UniqueRepresentation
+from sage.structure.element_wrapper import ElementWrapper
 from sage.structure.parent import Parent
 
 
-class AssociativeOperad(Parent):
+class AssociativeOperad(UniqueRepresentation, Parent):
     r"""
     An example of a set operad: the Associative operad
 
@@ -28,7 +29,6 @@ class AssociativeOperad(Parent):
             An example of a set operad: the Associative operad
             sage: TestSuite(A).run()
         """
-        self.element_class = Words()
         Parent.__init__(self, category=SetOperads())
 
     def _repr_(self):
@@ -51,21 +51,33 @@ class AssociativeOperad(Parent):
 
             sage: A = SetOperads().example()
             sage: A.one("a")
-            word: a
+            'a'
         """
-        return self.element_class([letter])
+        return self(letter)
 
-    def _an_element_(self):
+    def an_element(self):
         """
         Return a word.
 
         EXAMPLES::
 
             sage: A = SetOperads().example()
-            sage: A._an_element_()
-            word: abcd
+            sage: A.an_element()
+            'abcd'
         """
-        return self.element_class("abcd")
+        return self('abcd')
+
+    def some_elements(self):
+        """
+        Return a few words.
+
+        EXAMPLES::
+
+            sage: A = SetOperads().example()
+            sage: A.some_elements()
+            ['abcd', 'aa', '', 'baba']
+        """
+        return [self(u) for u in ['abcd', 'aa', '', 'baba']]
 
     def composition(self, x, y, i):
         """
@@ -76,11 +88,88 @@ class AssociativeOperad(Parent):
         EXAMPLES::
 
             sage: A = SetOperads().example()
-            sage: A.composition(Word("acb"), Word("de"),"c")
-            word: adeb
+            sage: A.composition(A("acb"), A("de"),"c")
+            'adeb'
         """
-        if x[0] == i:
-            return self.element_class(y + x[1:])
-        return self.element_class(x[:1] + self.composition(x[1:], y, i))
+        if x.value[0] == i:
+            return self(y.value + x.value[1:])
+        return self(x.value[:1] + self.composition(self(x.value[1:]), y, i).value)
+
+    def composition(self, x, y, i):
+        """
+        Insert a word y at position i in a word x and return a word.
+
+        This is the composition of the set-theoretic Associative operad.
+
+        EXAMPLES::
+
+            sage: A = SetOperads().example()
+            sage: A.composition(A("acb"), A("de"),"c")
+            'adeb'
+        """
+        pos = x.value.index(i)
+        return self(x.value[:pos] + y.value + x.value[pos + 1:])
+        # if x.value[0] == i:
+        #     return self(y.value + x.value[1:])
+        # return self(x.value[:1] + self.composition(self(x.value[1:]), y, i).value)
+
+    def composition_with_numbers(self, x, y, i):
+        """
+        Insert a word y at position i in a word x and return a word.
+
+        This is the composition of the set-theoretic Associative operad.
+
+        INPUT:
+
+        - `i` -- an integer
+
+        EXAMPLES::
+
+            sage: A = SetOperads().example()
+            sage: A.composition_with_numbers(A("123"), A("21"),1)
+            '2134'
+        """
+        pos = x.value.index(str(i))
+        m = len(x.value)
+        n = len(y.value)
+        k = int(x.value[pos])
+
+        def shift(z):
+            if z < k:
+                return str(z)
+            else:
+                return str(z + n - 1)
+        newx = ''.join(shift(int(v)) for v in x.value)
+        newy = ''.join(str(int(v) + k - 1) for v in y.value)
+        return self(newx[:pos] + newy + newx[pos + 1:])
+
+    class Element(ElementWrapper):
+        wrapped_class = str
+
+        def degree(self):
+            """
+            Return the degree of an element.
+
+            EXAMPLES::
+
+                sage: A = SetOperads().example()
+                sage: y = A('12')
+                sage: y.degree()
+                2
+            """
+            return len(self.value)
+
+        def map_labels(self, f):
+            """
+            Apply the function `f` to the labels of an element.
+
+            EXAMPLES::
+
+                sage: A = SetOperads().example()
+                sage: y = A('Z3')
+                sage: y.map_labels(lambda v:v.lower())
+                'z3'
+            """
+            return self.parent()(''.join(str(f(v)) for v in self.value))
 
 Example = AssociativeOperad
