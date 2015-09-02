@@ -22,11 +22,11 @@ class OperadsWithBasis(Category_over_base_ring):
 
     EXAMPLES::
 
-      sage: OperadsWithBasis(QQ)
-      Category of operads with basis over Rational Field
-      sage: OperadsWithBasis(QQ).super_categories()
-      [Category of graded modules with basis over Rational Field,
-      Category of operads over Rational Field]
+        sage: OperadsWithBasis(QQ)
+        Category of operads with basis over Rational Field
+        sage: OperadsWithBasis(QQ).super_categories()
+        [Category of graded modules with basis over Rational Field,
+        Category of operads over Rational Field]
 
     TESTS::
 
@@ -63,7 +63,6 @@ class OperadsWithBasis(Category_over_base_ring):
         @cached_method
         def one(self, letter):
             """
-            EXAMPLES::
             """
             if self.one_basis is not NotImplemented:
                 return self.basis()[self.one_basis(letter)]
@@ -92,9 +91,9 @@ class OperadsWithBasis(Category_over_base_ring):
 
             INPUT:
 
-             - ``i``, ``j`` -- the indices of two elements of the basis of self
+            - `i`, `j` -- the indices of two elements of the basis of ``self``
 
-             - ``k`` -- the composition label
+            - `k` -- the composition label
 
             Return the composition of the two corresponding basis
             elements at the chosen label
@@ -118,11 +117,11 @@ class OperadsWithBasis(Category_over_base_ring):
 
             INPUT:
 
-             - ``i``, ``j`` -- the indices of two elements of the basis of self
+            - `i`, `j` -- the indices of two elements of the basis of ``self``
 
-             - ``k`` -- the composition label
+            - `k` -- the composition label
 
-             - ``N`` -- the order of truncation
+            - `N` -- an integer, the order of truncation
 
             Returns the composition of the two corresponding basis
             elements at the chosen label, up to order N
@@ -189,7 +188,7 @@ class OperadsWithBasis(Category_over_base_ring):
             """
             The composition of the operad, as per ``Operads.ParentMethods.composition``
 
-            up to some degree only
+            up to some degree only.
 
             By default, this is implemented from
             :meth:`.composition_on_basis_truncated`, if available.
@@ -229,18 +228,18 @@ class OperadsWithBasis(Category_over_base_ring):
         @abstract_method(optional=True)
         def operad_morphism_on_basis(self, i, codomain):
             """
-            Morphism from the operad `self` to the operad ``P``
-            defined on the basis of `self` (optional)
+            Morphism from the operad ``self`` to the operad `P`
+            defined on the basis of ``self`` (optional)
 
             INPUT:
 
-             - ``i`` -- the index of an element of the basis of `self`
+            - `i` -- the index of an element of the basis of ``self``
 
-             - ``P`` -- an operad with the method for `self`
+            - `P` -- an operad with the method for ``self``
 
-             Returns an element of the operad ``P``
+            OUTPUT:
 
-             EXAMPLES::
+            an element of the operad `P`
             """
 
         def operad_morphism(self, codomain, *args, **opts):
@@ -314,11 +313,10 @@ class OperadsWithBasis(Category_over_base_ring):
 
             INPUT:
 
-            - `q` an element of the base ring of `s`
+            - `q` -- an element of the base ring of `s`
 
             For the element `s = \sum_n s_n`, this is defined as
-
-            `\sum_\n q**(n-1) s_n`
+            `\sum_\n q**(n-1) s_n`.
 
             EXAMPLES::
 
@@ -335,16 +333,20 @@ class OperadsWithBasis(Category_over_base_ring):
 
         def group_product_with_numbers(self, s, t, N):
             """
-            Returns the group product of ``s`` by ``t`` up to order ``N``.
+            Return the group product of `s` by `t` up to order `N`.
 
-            Here ``s`` and ``t`` are assumed to be labelled by
+            INPUT:
+
+            - `s` and `t` are elements of the operad, assumed to be labelled by
             consecutive integers.
+
+            - `N` -- an integer, the truncation order
 
             EXAMPLES::
 
                 sage: PL = PreLieOperad(QQ)
                 sage: x = PL.one(1)
-                sage: PL.group_product_with_numbers(x,x,2)
+                sage: PL.group_product_with_numbers(x, x, 2)
                 B[1[]]
             """
             dom = s.parent()
@@ -359,9 +361,13 @@ class OperadsWithBasis(Category_over_base_ring):
 
         def group_product_without_numbers(self, s, t, N):
             """
-            Returns the group product of ``s`` by ``t`` up to order ``N``.
+            Return the group product of `s` by `t` up to order `N`.
 
-            Here ``s`` and ``t`` are assumed to be unlabelled.
+            INPUT:
+
+            - `s` and `t` are elements of the operad, assumed to be unlabelled.
+
+            - `N` -- an integer, the truncation order
 
             EXAMPLES::
 
@@ -374,13 +380,17 @@ class OperadsWithBasis(Category_over_base_ring):
 
         def inverse_with_numbers(self, s, N):
             r"""
-            Returns the inverse of `s` up to order `N`.
+            Return the inverse of `s` up to order `N`.
 
             This takes place in the group associated with the
             composition of the operad.
 
-            The coefficient of the unit must be non-zero for the
-            series to be invertible.
+            INPUT:
+
+            - `s` -- an element of the operad, in which the coefficient of
+              the unit must be non-zero
+
+            - `N` -- an integer, the truncation order
 
             EXAMPLES::
 
@@ -398,6 +408,14 @@ class OperadsWithBasis(Category_over_base_ring):
                 -B[2[1[]]] + B[1[]]
                 sage: PL.group_product_with_numbers(x,inv,3)
                 B[1[]]
+
+            TESTS::
+
+                sage: x = (PL.one(1)<PL.one(2))
+                sage: PL.inverse_with_numbers(x,3)
+                Traceback?
+                ...
+                ValueError("this series is not invertible"
             """
             coeff_o = s.homogeneous_component(1).coefficients()[0]
             if coeff_o == 0:
@@ -411,7 +429,14 @@ class OperadsWithBasis(Category_over_base_ring):
 
         def right_division_with_numbers(self, s, t, N):
             r"""
-            Computes the product of `s` by `t^{-1}` up to order `N`.
+            Compute the product of `s` by `t^{-1}` up to order `N`.
+
+            INPUT:
+
+            - `s` and `t` are elements of the operad, assumed to be labelled by
+            consecutive integers.
+
+            - `N` -- an integer, the truncation order
 
             EXAMPLES::
 
@@ -430,7 +455,7 @@ class OperadsWithBasis(Category_over_base_ring):
 
         def eval(self, *args, **kwds):
             """
-            Evaluates the coefficients of the element ``self`` of some operad.
+            Evaluate the coefficients of the element ``self`` of some operad.
 
             EXAMPLES::
 
@@ -445,7 +470,7 @@ class OperadsWithBasis(Category_over_base_ring):
 
         def canonical_labelling(self):
             """
-            Returns the canonical labelling of ``self``
+            Return the canonical labelling of ``self``
 
             EXAMPLES::
 

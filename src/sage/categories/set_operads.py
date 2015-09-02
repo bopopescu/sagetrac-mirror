@@ -18,7 +18,7 @@ from sage.categories.category_singleton import Category_singleton
 
 class SetOperads(Category_singleton):
     """
-    The category of set operads
+    The category of set operads.
 
     EXAMPLES::
 
@@ -36,6 +36,8 @@ class SetOperads(Category_singleton):
     @cached_method
     def super_categories(self):
         """
+        Return the super-categories of ``self``.
+
         EXAMPLES::
 
             sage: SetOperads().super_categories()
@@ -47,6 +49,8 @@ class SetOperads(Category_singleton):
         """
         Return an example of set operad.
 
+        Here, the associative operad.
+
         EXAMPLES::
 
             sage: SetOperads().example()
@@ -57,26 +61,28 @@ class SetOperads(Category_singleton):
 
     class ParentMethods:
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def composition(self, left, right, index):
             """
-            Return the composition of left with right at position index.
+            Return the composition of ``left`` with ``right`` at position
+            ``index``.
             """
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def composition_with_numbers(self):
             """
             This is a variant of composition, where one assumes that
-            the objects are labelled by integers from 1 to n. The
+            the objects are labelled by integers from `1` to `n`. The
             result is labelled in the same way.
             """
 
         def global_composition(self, left, list_right):
             r"""
-            Return the global composition of left with a list of elements.
+            Return the global composition of ``left`` with a list of elements.
             """
             if self.composition is not NotImplemented:
-                assert left.degree() == len(list_right), "degree of x is not equal to the length of list_right"
+                if left.degree() != len(list_right):
+                    raise ValueError("the degree of x is not equal to the length of list_right")
                 res = left
                 for i in xrange(left.degree(), 0, -1):
                     res = res.compose(list_right[i - 1], i)
@@ -86,10 +92,13 @@ class SetOperads(Category_singleton):
 
         def global_composition_with_numbers(self, left, list_right):
             r"""
-            Return the global composition of left with a list of elements.
+            Return the global composition of ``left`` with a list of elements.
+
+            The elements are supposed to be labelled by consecutive integers.
             """
             if self.composition_with_numbers is not NotImplemented:
-                assert left.degree() == len(list_right), "degree of x is not equal to the length of list_right"
+                if left.degree() != len(list_right):
+                    raise ValueError("the degree of x is not equal to the length of list_right")
                 res = left
                 for i in xrange(left.degree(), 0, -1):
                     res = res.compose_with_numbers(list_right[i - 1], i)
@@ -97,64 +106,74 @@ class SetOperads(Category_singleton):
             else:
                 return NotImplemented
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def operad_morphism(self, arg, codomain):
             """
-            Return the image of arg by a morphism from self to codomain
+            Return the image of ``arg`` by a morphism from ``self`` to
+            ``codomain``.
             """
 
-        @abstract_method(optional = True)
-        def one(self,letter):
+        @abstract_method(optional=True)
+        def one(self, letter):
             """
-            Return the one of the operad
+            Return the one of the operad.
+
+            INPUT:
+
+            ``letter`` -- the chosen labelling.
             """
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def is_symmetric(self):
             r"""
-            Return `True` if the operad is symmetric
+            Return ``True`` if the operad is symmetric.
             """
             pass
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def elements(self, n):
             """
-            Return the set of elements in degree `n`
+            Return the set of elements in degree `n`.
             """
             pass
 
         def cardinality(self):
             """
-            Return the cardinality
+            Return the cardinality.
+
+            This is usually infinity.
             """
             from sage.rings.infinity import Infinity
             return Infinity
-
 
     class ElementMethods:
 
         def compose(self, other, index):
             """
-            Return the composition of self with other at position index.
+            Return the composition of ``self`` with ``other`` at position
+            ``index``.
             """
             return self.parent().composition(self, other, index)
 
         def compose_with_numbers(self, other, index):
             """
-            Return the composition of self with other at position index.
+            Return the composition of ``self`` with ``other`` at position
+            ``index``.
+
+            The elements are supposed to be labelled by consecutive integers.
             """
             return self.parent().composition_with_numbers(self, other, index)
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def degree(self, x):
             """
             Return the degree of an element.
             """
             pass
 
-        @abstract_method(optional = True)
+        @abstract_method(optional=True)
         def map_labels(self, f):
             """
-            applies the function `f` to the labels of an element
+            Apply the function `f` to the labels of an element.
             """
             pass

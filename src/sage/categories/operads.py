@@ -16,14 +16,14 @@ from sage.misc.cachefunc import cached_method
 
 class Operads(Category_over_base_ring):
     """
-    The category of operads
+    The category of operads.
 
     EXAMPLES::
 
-      sage: Operads(ZZ)
-      Category of operads over Integer Ring
-      sage: Operads(ZZ).super_categories()
-      [Category of modules over Integer Ring, Category of set operads]
+        sage: Operads(ZZ)
+        Category of operads over Integer Ring
+        sage: Operads(ZZ).super_categories()
+        [Category of modules over Integer Ring, Category of set operads]
 
     TESTS::
 
@@ -33,6 +33,8 @@ class Operads(Category_over_base_ring):
     @cached_method
     def super_categories(self):
         """
+        Return the super-categories.
+
         EXAMPLES::
 
             sage: Operads(QQ).super_categories()
