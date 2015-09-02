@@ -13,8 +13,10 @@ from sage.categories.all import SetOperads
 from sage.misc.cachefunc import cached_method
 from sage.categories.cartesian_product import cartesian_product
 from sage.misc.abstract_method import abstract_method
+from sage.categories.category_singleton import Category_singleton
 
-class SymmetricSetOperads(Category):
+
+class SymmetricSetOperads(Category_singleton):
     """
     The category of symmetric operads
 
