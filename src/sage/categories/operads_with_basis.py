@@ -251,6 +251,14 @@ class OperadsWithBasis(Category_over_base_ring):
             OUTPUT:
 
             an element of the operad `P`
+
+            EXAMPLES::
+
+                sage: PL = PreLieOperad(QQ)
+                sage: PLT = PL.basis().keys()
+                sage: t0 = PLT([],'a')
+                sage: PL.operad_morphism_on_basis(t0,PL)
+                B[a[]]
             """
 
         def operad_morphism(self, codomain, *args, **opts):

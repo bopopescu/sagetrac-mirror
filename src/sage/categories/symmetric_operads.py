@@ -21,10 +21,11 @@ class SymmetricOperads(Category_over_base_ring):
 
     EXAMPLES::
 
-      sage: SymmetricOperads(ZZ)
-      Category of symmetric operads over Integer Ring
-      sage: SymmetricOperads(ZZ).super_categories()
-      [Category of operads over Integer Ring, Category of symmetric set operads]
+        sage: SymmetricOperads(ZZ)
+        Category of symmetric operads over Integer Ring
+        sage: SymmetricOperads(ZZ).super_categories()
+        [Category of operads over Integer Ring,
+        Category of symmetric set operads]
 
     TESTS::
 
@@ -35,6 +36,8 @@ class SymmetricOperads(Category_over_base_ring):
     @cached_method
     def super_categories(self):
         """
+        Return the super-categories.
+
         EXAMPLES::
 
             sage: SymmetricOperads(QQ).super_categories()
@@ -49,13 +52,13 @@ class SymmetricOperads(Category_over_base_ring):
         @abstract_method(optional = True)
         def symmetric_group_action_on_basis(self, basis_elem, perm):
             """
-            returns the action of ``perm`` over ``elem``
+            Return the action of ``perm`` over ``elem``.
             """
 
         @lazy_attribute
         def symmetric_group_action(self):
             """
-            returns the action of ``perm`` over ``elem``
+            Return the action of ``perm`` over ``elem``.
             """
             if self.composition_on_basis is not NotImplemented:
                 return self_module_morphism(
@@ -63,5 +66,3 @@ class SymmetricOperads(Category_over_base_ring):
                     position = 0, codomain = self)
             else:
                 return NotImplemented
-
-

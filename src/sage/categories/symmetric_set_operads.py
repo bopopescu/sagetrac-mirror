@@ -18,14 +18,14 @@ from sage.categories.category_singleton import Category_singleton
 
 class SymmetricSetOperads(Category_singleton):
     """
-    The category of symmetric operads
+    The category of symmetric set operads
 
     EXAMPLES::
 
-      sage: SymmetricSetOperads()
-      Category of symmetric set operads
-      sage: SymmetricSetOperads().super_categories()
-      [Category of set operads]
+        sage: SymmetricSetOperads()
+        Category of symmetric set operads
+        sage: SymmetricSetOperads().super_categories()
+        [Category of set operads]
 
     TESTS::
 
@@ -36,6 +36,8 @@ class SymmetricSetOperads(Category_singleton):
     @cached_method
     def super_categories(self):
         """
+        Return the super-categories.
+
         EXAMPLES::
 
             sage: SymmetricSetOperads().super_categories()
@@ -48,33 +50,33 @@ class SymmetricSetOperads(Category_singleton):
         @abstract_method(optional = True)
         def symmetric_group_action(self, elem, perm):
             """
-            returns the action of ``perm`` over ``elem``
+            Return the action of ``perm`` over ``elem``.
             """
 
     @cached_method
     def operad_orbits(self, n, generators):
         """
-        Return the orbits in degree ``n``
-
-        EXAMPLES::
+        Return the orbits in degree ``n``.
         """
-        if n == 2: return generators
+        if n == 2:
+            return generators
         perms = Permutations(n)
-        levn1 = list(operad_orbits(generators, n-1))
+        levn1 = list(operad_orbits(generators, n - 1))
         total = set()
         res = dict()
         for j, x in enumerate(levn1):
-            print "Progress: (%s/%s) #total=%s #orbits=%s"%(
-                j,len(levn1), len(total), len(res))
+            print "Progress: (%s/%s) #total=%s #orbits=%s" % (
+                j, len(levn1), len(total), len(res))
             for g in generators:
                 for i in range(1, n):
                     new = x.compose(g, i)
-                    if new in total: continue
+                    if new in total:
+                        continue
                     #orb = set(new.permute(p) for p in perms)
                     orb = orbit(new)
                     total.update(orb)
                     res[new] = list(orb)
-        print "Done: (%s/%s) #total=%s  #orbits=%s"%(
+        print "Done: (%s/%s) #total=%s  #orbits=%s" % (
             len(levn1), len(levn1), len(total), len(res))
         return res
 
@@ -82,15 +84,13 @@ class SymmetricSetOperads(Category_singleton):
 
         def permute(self, perm):
             """
-            EXAMPLES::
+            Return the image under the permutation ``perm``.
             """
             return self.parent().symmetric_group_action(self, perm)
 
         def orbit(self):
             """
-            Return the orbit of ``self`` under the group action
-
-            EXAMPLES::
+            Return the orbit of ``self`` under the group action.
             """
             # importing this earlier leads to segfault !!
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -98,14 +98,14 @@ class SymmetricSetOperads(Category_singleton):
             if n == 1:
                 return [self]
             GR = SymmetricGroup(n)
-            trans = GR([2,1]+range(3, n+1))
+            trans = GR([2, 1] + range(3, n + 1))
             self_permut = self.permute(trans)
             if n == 2:
                 if self_permut == self:
                     return [self]
                 else:
                     return [self, self_permut]
-            cycle = GR([n]+range(1, n))
+            cycle = GR([n] + range(1, n))
             done = set()
             todo = set([self, self_permut])
             while todo:
