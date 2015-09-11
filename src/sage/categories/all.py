@@ -72,9 +72,6 @@ from hopf_algebras import HopfAlgebras
 # operads
 from set_operads import SetOperads
 from operads import Operads
-from symmetric_set_operads import SymmetricSetOperads
-from symmetric_operads import SymmetricOperads
-
 
 # specific algebras
 from monoid_algebras import MonoidAlgebras
