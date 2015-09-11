@@ -229,7 +229,7 @@ class OperadsWithBasis(Category_over_base_ring):
 
                 sage: A = OperadsWithBasis(QQ).example()
                 sage: Word = A.basis().keys()
-                sage: A.composition_with_numbers(A(Word("231")),A(Word("21")),"2")
+                sage: A.composition_with_numbers(A(Word("231")),A(Word("21")),2)
                 B[word: 3241]
             """
             if self.composition_on_basis_with_numbers is not NotImplemented:

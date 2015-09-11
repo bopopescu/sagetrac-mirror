@@ -75,6 +75,12 @@ class AssociativeOperad(CombinatorialFreeModule):
         """
         Map the function `f` on the word `t`.
 
+        INPUT:
+
+        - t -- the index of a basis element
+
+        - f -- a map that can be applied to the labels of t
+
         EXAMPLES::
 
             sage: A = AssociativeOperad(QQ)

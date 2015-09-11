@@ -10,7 +10,8 @@ Examples of operads with basis
 from sage.misc.cachefunc import cached_method
 from sage.sets.family import Family
 from sage.categories.all import OperadsWithBasis
-from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.free_module import (CombinatorialFreeModule,
+                                       CombinatorialFreeModuleElement)
 from sage.combinat.words.words import Words
 
 
