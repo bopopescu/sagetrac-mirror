@@ -66,6 +66,14 @@ class SetOperads(Category_singleton):
             """
             Return the composition of ``left`` with ``right`` at position
             ``index``.
+
+            EXAMPLES::
+
+                sage: P = SetOperads().example()
+                sage: x = P.one('i')
+                sage: y = P.one('j')
+                sage: P.composition(x, y, 'i')
+                'j'
             """
 
         @abstract_method(optional=True)
