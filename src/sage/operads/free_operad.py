@@ -123,6 +123,24 @@ class FreeOperad(CombinatorialFreeModule):
 
         return self.basis()[self.composition_on_basis_as_tree(x, y, i)]
 
+    def magmatic_product(self, x, y):
+        """
+        This computes the binary magmatic product inside the operad.
+
+        EXAMPLES::
+
+            sage: A = FreeOperad(QQ)
+            sage: LT = A.basis().keys()
+            sage: x = A(LT([LT([],'b')], label='a'))
+            sage: y = A(LT([LT([],'d')], label='c'))
+            sage: A.magmatic_product(x, y)
+            B[@[a[b[]], c[d[]]]]
+        """
+        LT = self.basis().keys()
+        t = LT([LT([], label=0), LT([], label=1)], label='@')
+        gen = self.monomial(t)
+        return gen.compose(x, 0).compose(y, 1)
+
     def operad_morphism_on_basis(self, t, cod, fun=None):
         """
         Define a morphism from the free operad to the target operad.
