@@ -82,6 +82,12 @@ class SetOperads(Category_singleton):
             This is a variant of composition, where one assumes that
             the objects are labelled by integers from `1` to `n`. The
             result is labelled in the same way.
+
+            EXAMPLES::
+
+                sage: A = SetOperads().example()
+                sage: A.composition_with_numbers(A('4321'),A('123'),1)
+                '654123'
             """
 
         def global_composition(self, left, list_right):
@@ -94,7 +100,7 @@ class SetOperads(Category_singleton):
                 res = left
                 for i in xrange(left.degree(), 0, -1):
                     res = res.compose(list_right[i - 1], i)
-                    return res
+                return res
             else:
                 return NotImplemented
 
@@ -103,14 +109,21 @@ class SetOperads(Category_singleton):
             Return the global composition of ``left`` with a list of elements.
 
             The elements are supposed to be labelled by consecutive integers.
+
+            EXAMPLES::
+
+                sage: A = SetOperads().example()
+                sage: A.global_composition_with_numbers(A('21'),[A('123'),A('312')])
+                '645123'
             """
             if self.composition_with_numbers is not NotImplemented:
                 if left.degree() != len(list_right):
                     raise ValueError("the degree of x is not equal to the length of list_right")
                 res = left
                 for i in xrange(left.degree(), 0, -1):
-                    res = res.compose_with_numbers(list_right[i - 1], i)
-                    return res
+                    res = self.composition_with_numbers(res,
+                                                        list_right[i - 1], i)
+                return res
             else:
                 return NotImplemented
 
@@ -136,13 +149,6 @@ class SetOperads(Category_singleton):
                 sage: A.one('x')
                 'x'
             """
-
-        @abstract_method(optional=True)
-        def is_symmetric(self):
-            r"""
-            Return ``True`` if the operad is symmetric.
-            """
-            pass
 
         @abstract_method(optional=True)
         def elements(self, n):
