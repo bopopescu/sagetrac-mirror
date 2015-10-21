@@ -90,20 +90,6 @@ class SetOperads(Category_singleton):
                 '654123'
             """
 
-        def global_composition(self, left, list_right):
-            r"""
-            Return the global composition of ``left`` with a list of elements.
-            """
-            if self.composition is not NotImplemented:
-                if left.degree() != len(list_right):
-                    raise ValueError("the degree of x is not equal to the length of list_right")
-                res = left
-                for i in xrange(left.degree(), 0, -1):
-                    res = res.compose(list_right[i - 1], i)
-                return res
-            else:
-                return NotImplemented
-
         def global_composition_with_numbers(self, left, list_right):
             r"""
             Return the global composition of ``left`` with a list of elements.
@@ -132,6 +118,16 @@ class SetOperads(Category_singleton):
             """
             Return the image of ``arg`` by a morphism from ``self`` to
             ``codomain``.
+
+            EXAMPLES::
+
+                sage: A = SetOperads().example()
+                sage: e = A('a')
+                sage: A.operad_morphism(e, A) == e
+                True
+                sage: x = A('abc')
+                sage: A.operad_morphism(x, A) == x
+                True
             """
 
         @abstract_method(optional=True)
@@ -149,13 +145,6 @@ class SetOperads(Category_singleton):
                 sage: A.one('x')
                 'x'
             """
-
-        @abstract_method(optional=True)
-        def elements(self, n):
-            """
-            Return the set of elements in degree `n`.
-            """
-            pass
 
         def cardinality(self):
             """

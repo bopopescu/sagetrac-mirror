@@ -143,6 +143,49 @@ class AssociativeOperad(UniqueRepresentation, Parent):
         newy = ''.join(str(int(v) + k - 1) for v in y.value)
         return self(newx[:pos] + newy + newx[pos + 1:])
 
+    def assoc_product(self, a, b):
+        """
+        Return the associative product.
+
+        Here, this is just concatenation.
+
+        EXAMPLES::
+
+            sage: A = SetOperads().example()
+            sage: A.assoc_product(A("123"), A("45"))
+            '12345'
+        """
+        return self(a.value + b.value)
+
+    def operad_morphism(self, t, cod):
+        """
+        Define a morphism from the Associative set operad to the target operad.
+
+        The target operad has to possess a method called ``assoc_product``.
+
+        The argument t (an element of A) should not have repeated labels.
+
+        EXAMPLES::
+
+            sage: A = SetOperads().example()
+            sage: e = A('a')
+            sage: A.operad_morphism(e, A) == e
+            True
+            sage: x = A('abc')
+            sage: A.operad_morphism(x, A) == x
+            True
+        """
+        try:
+            targetAssocProduct = cod.assoc_product
+        except AttributeError:
+            raise
+        if len(t.value) == 1:
+            return cod.one(t.value[0])
+        else:
+            return targetAssocProduct(cod.one(t.value[0]),
+                                      self.operad_morphism(self(t.value[1:]),
+                                                           cod))
+
     class Element(ElementWrapper):
         wrapped_class = str
 
