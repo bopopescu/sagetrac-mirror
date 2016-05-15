@@ -17,12 +17,15 @@ AUTHORS:
 
 - William A. Stein (February 5, 2012)
 """
+from __future__ import print_function
+
 from sage.rings.all import Integer, QQ, QuadraticField
 from sage.functions.all import ceil, sign
 from sage.misc.all import prod
 from sage.libs.pari.all import pari
 from sage.matrix.all import zero_matrix
-from sage.rings.arith import euler_phi, dedekind_psi, sigma
+from sage.arith.all import euler_phi, sigma
+from sage.arith.misc import dedekind_psi
 from sage.rings.finite_rings.constructor import FiniteField
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.finite_rings.integer_mod_ring import Zmod
@@ -297,7 +300,7 @@ def sum_s(n, k, N):
     return type_p(n, k, N) + type_h(n, k, N) + type_e(n, k, N)
 
 
-def test_trace_hecke_operator(n_range, k_range, N_range, verbose=True):
+def test_trace_hecke_operator(n_range, k_range, N_range, verbose=False):
     r"""
     Verify that the trace_hecke_operator command gives the same output
     as the trace computed using modular symbols.  If not, a RuntimeError
@@ -317,20 +320,18 @@ def test_trace_hecke_operator(n_range, k_range, N_range, verbose=True):
 
     Test that level 1 traces are correct::
 
-        sage: hijikata.test_trace_hecke_operator([1..20], [2, 4, .., 50],
-        ....: [1], verbose=False)
+        sage: hijikata.test_trace_hecke_operator([1..14],[2, 4, .., 40],[1]) # long time
 
-    Test levels up to 32 and weights 2, 4::
+    Test levels up to 20 and weights 2, 4::
 
-        sage: hijikata.test_trace_hecke_operator([1..20], [2, 4], [1..32],
-        ....: verbose=False)
+        sage: hijikata.test_trace_hecke_operator([1..14],[2,4],[1..20],) # long time
     """
     from sage.modular.modsym.all import ModularSymbols
     for N in N_range:
         for k in k_range:
             if k % 2 == 0:
                 if verbose:
-                    print "(N, k) =", (N, k),
+                    print("(N, k) =", (N, k), end="")
                 S = ModularSymbols(N, k, sign=1).cuspidal_submodule()
                 for n in n_range:
                     n = Integer(n)
@@ -338,7 +339,7 @@ def test_trace_hecke_operator(n_range, k_range, N_range, verbose=True):
                         if S.hecke_operator(n).trace() != trace_hecke_operator(n, k, N):
                             raise RuntimeError("trace_hecke_operator(n=%s,k=%s,N=%s) disagrees with modular symbols trace" % (n, k, N))
                 if verbose:
-                    print " (good)"
+                    print(" (good)")
 
 
 def trace_hecke_operator(n, k, N=1):
