@@ -4,7 +4,7 @@ The Pre-Lie Operad
 
 AUTHORS:
 
-- Florent Hivert, Frédéric Chapoton (2011-2015)
+- Florent Hivert, Frédéric Chapoton (2011-2016)
 """
 #*****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@lri.fr>,
@@ -21,7 +21,7 @@ from sage.categories.all import (OperadsWithBasis,
 from sage.combinat.free_module import (CombinatorialFreeModule,
                                        CombinatorialFreeModuleElement)
 from sage.combinat.rooted_tree import LabelledRootedTrees
-from sage.combinat.cartesian_product import CartesianProduct
+from sage.categories.cartesian_product import cartesian_product
 from sage.combinat.set_partition_ordered import OrderedSetPartitions
 
 # PreLie operad : rooted trees
@@ -54,10 +54,21 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: TestSuite(A).run()
         """
         # cmp = LabelledRootedTrees()._cmp_
+        # rather use a comparison key ! cf #17229
         CombinatorialFreeModule.__init__(self, R, LabelledRootedTrees(),
                                          latex_prefix="",
                                          # monomial_cmp=cmp,
                                          category=(OperadsWithBasis(R),))
+
+    def _sort_key(self, x):
+        """
+        Return the key used to sort the terms.
+
+        INPUT:
+
+        x -- a labelled rooted tree
+        """
+        return x.sort_key()
 
     def _repr_(self):
         """
@@ -241,7 +252,7 @@ class PreLieOperad(CombinatorialFreeModule):
         """
         return [self.singleGraft(y, x, graftingFunction)
                 for graftingFunction in
-                CartesianProduct(*([list(y.paths())] * len(x)))]
+                cartesian_product([list(y.paths())] * len(x))]
 
     def composition_on_basis_list(self, x, y, i):
         """
