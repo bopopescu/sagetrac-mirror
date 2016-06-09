@@ -53,11 +53,9 @@ class PreLieOperad(CombinatorialFreeModule):
             The Pre-Lie operad over Rational Field
             sage: TestSuite(A).run()
         """
-        # cmp = LabelledRootedTrees()._cmp_
-        # rather use a comparison key ! cf #17229
         CombinatorialFreeModule.__init__(self, R, LabelledRootedTrees(),
                                          latex_prefix="",
-                                         # monomial_cmp=cmp,
+                                         sorting_key=lambda x: x.sort_key(),
                                          category=(OperadsWithBasis(R),))
 
     def _sort_key(self, x):
@@ -192,8 +190,8 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: A.some_elements()
             [B[a[]],
              B[a[b[]]],
-             B[a[b[], c[d[]]]] + B[a[b[c[d[]]]]],
-             B[a[b[], d[]]] + B[a[b[d[]]]]]
+             B[a[b[c[d[]]]]] + B[a[b[], c[d[]]]],
+             B[a[b[d[]]]] + B[a[b[], d[]]]]
         """
         x = self.one("a") < self.one("b")
         y = self.one("c") < self.one("d")
@@ -303,7 +301,7 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: A.composition(A(x), A(y), 'd')
             B[c[a[b[]]]]
             sage: A.composition(A(x), A(y), 'c')
-            B[a[b[], d[]]] + B[a[b[d[]]]]
+            B[a[b[d[]]]] + B[a[b[], d[]]]
         """
         if not(i in x.labels()):
             raise ValueError("the composition index is not present")
@@ -366,7 +364,7 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: x = A(LT([LT([],'b')], label='a'))
             sage: y = A(LT([LT([],'d')], label='c'))
             sage: A.pre_Lie_product(x, y)
-            B[a[b[], c[d[]]]] + B[a[b[c[d[]]]]]
+            B[a[b[c[d[]]]]] + B[a[b[], c[d[]]]]
         """
         return self.operad_generator().compose(x, 0).compose(y, 1)
 
@@ -444,14 +442,14 @@ class PreLieOperad(CombinatorialFreeModule):
 
             sage: a = PL(PLT([PLT([],label=None)],label=None))
             sage: PL.corolla(1,a,a)
-            B[None[None[], None[None[]]]] + B[None[None[None[None[]]]]]
+            B[None[None[None[None[]]]]] + B[None[None[], None[None[]]]]
 
             sage: b = PL.one()
             sage: PL.corolla(3,b,b,4)
             B[@[@[], @[], @[]]]
 
             sage: PL.corolla(2,a,b,4)
-            B[None[None[], @[], @[]]] + 2*B[None[@[], None[@[]]]] + B[None[None[@[], @[]]]]
+            B[None[None[@[], @[]]]] + 2*B[None[@[], None[@[]]]] + B[None[None[], @[], @[]]]
         """
         PL = x.parent()
         if n + 1 > N:
@@ -533,7 +531,7 @@ class PreLieOperad(CombinatorialFreeModule):
             sage: PL.diese_product(a,a,2)
             2*B[@[@[]]]
             sage: PL.diese_product(a,a,4)
-            2*B[@[@[]]] + B[@[@[], @[@[]]]] + B[@[@[@[@[]]]]]
+            2*B[@[@[]]] + B[@[@[@[@[]]]]] + B[@[@[], @[@[]]]]
             sage: b = PL.one("O")
             sage: PL.diese_product(b,a,5)
             B[O[]] + B[@[@[]]] + B[O[@[@[]]]] + 1/2*B[O[@[@[]], @[@[]]]]

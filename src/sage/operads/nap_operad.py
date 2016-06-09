@@ -1,7 +1,7 @@
 from sage.misc.cachefunc import cached_method
 from sage.categories.all import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.ordered_tree import LabelledOrderedTrees
+from sage.combinat.rooted_tree import LabelledRootedTrees
 
 
 class NapOperad(CombinatorialFreeModule):
@@ -22,9 +22,9 @@ class NapOperad(CombinatorialFreeModule):
         sage: t = LT([LT([],label='b'),LT([],label='c')], label='a')
         sage: s = LT([LT([],label='d'),LT([],label='e')], label='f')
         sage: NAP.composition(B[t],B[s],"b")
-        B[a[f[d[], e[]], c[]]]
+        B[a[c[], f[d[], e[]]]]
         sage: NAP.composition(B[s],B[t],"d")
-        B[f[a[b[], c[]], e[]]]
+        B[f[e[], a[b[], c[]]]]
     """
     def __init__(self, R):
         """
@@ -34,9 +34,10 @@ class NapOperad(CombinatorialFreeModule):
             The Nap operad over Rational Field
             sage: TestSuite(A).run()
         """
-        # one should rather use LabelledRootedTrees
-        CombinatorialFreeModule.__init__(self, R, LabelledOrderedTrees(),
-                                         category=OperadsWithBasis(R))
+        CombinatorialFreeModule.__init__(self, R, LabelledRootedTrees(),
+                                         latex_prefix="",
+                                         sorting_key=lambda x: x.sort_key(),
+                                         category=(OperadsWithBasis(R),))
 
     def _repr_(self):
         """
@@ -125,7 +126,7 @@ class NapOperad(CombinatorialFreeModule):
             sage: t = LT([LT([],label='b'),LT([],label='c')], label='a')
             sage: s = LT([LT([],label='d'),LT([],label='e')], label='f')
             sage: NAP.composition_on_basis_as_tree(t,s,"b")
-            a[f[d[], e[]], c[]]
+            a[c[], f[d[], e[]]]
 
         TESTS::
 
@@ -158,7 +159,7 @@ class NapOperad(CombinatorialFreeModule):
             sage: t = LT([LT([],label='b'),LT([],label='c')], label='a')
             sage: s = LT([LT([],label='d'),LT([],label='e')], label='f')
             sage: NAP.composition_on_basis(t,s,"b")
-            B[a[f[d[], e[]], c[]]]
+            B[a[c[], f[d[], e[]]]]
 
         TESTS::
 
