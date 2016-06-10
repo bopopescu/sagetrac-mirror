@@ -42,8 +42,10 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: x.compose(y, 'v')
             B[i[u[., .], j[., .]]]
         """
+        key = lambda t: (t.to_hexacode(), t.labels())
         CombinatorialFreeModule.__init__(self, R, LabelledBinaryTrees(),
-                                         category=OperadsWithBasis(R))
+                                         category=OperadsWithBasis(R),
+                                         sorting_key=key)
 
     def _repr_(self):
         """
@@ -190,7 +192,7 @@ class DendriformOperad(CombinatorialFreeModule):
             sage: A = DendriformOperad(QQ)
             sage: Trees = A.basis().keys()
             sage: A.composition_on_basis(Trees([None,Trees([],label="b")],label="a"), Trees([None,Trees([],label="c")],label="d"),"a")
-            B[d[., c[., b[., .]]]] + B[d[., b[c[., .], .]]]
+            B[d[., b[c[., .], .]]] + B[d[., c[., b[., .]]]]
 
         TESTS::
 
@@ -263,7 +265,7 @@ class DendriformOperad(CombinatorialFreeModule):
             B[a[b[., .], c[d[., .], .]]] + B[c[a[b[., .], d[., .]], .]]
             + B[c[d[a[b[., .], .], .], .]]
             sage: A.chosen_product(x, y, 'lie')
-            B[a[b[., .], c[d[., .], .]]] - B[c[d[., .], a[b[., .], .]]] - B[a[c[d[., .], b[., .]], .]] + B[c[a[b[., .], d[., .]], .]] + B[c[d[a[b[., .], .], .], .]] - B[a[b[c[d[., .], .], .], .]]
+            B[a[b[., .], c[d[., .], .]]] - B[c[d[., .], a[b[., .], .]]] - B[a[c[d[., .], b[., .]], .]] + B[c[a[b[., .], d[., .]], .]] - B[a[b[c[d[., .], .], .], .]] + B[c[d[a[b[., .], .], .], .]]
 
             sage: A.chosen_product(x, y, 'prelie')
             -B[a[b[., .], c[d[., .], .]]] + B[a[c[d[., .], b[., .]], .]]

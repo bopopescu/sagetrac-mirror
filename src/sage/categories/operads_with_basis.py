@@ -281,7 +281,7 @@ class OperadsWithBasis(Category_over_base_ring):
                 sage: PL2DO(t0)
                 B[a[., .]]
                 sage: PL2DO(t0 < t0)
-                -B[a[., a[., .]]] + B[a[a[., .], .]]
+                B[a[a[., .], .]] - B[a[., a[., .]]]
             """
             if self.operad_morphism_on_basis is not NotImplemented:
                 return self._module_morphism(
@@ -345,7 +345,7 @@ class OperadsWithBasis(Category_over_base_ring):
                 B[o[]]
                 sage: t = (o<o)+((o<o)<o)
                 sage: PL.suspension(t,2)
-                2*B[o[o[]]] + 4*B[o[o[], o[]]] + 4*B[o[o[o[]]]]
+                2*B[o[o[]]] + 4*B[o[o[o[]]]] + 4*B[o[o[], o[]]]
             """
             susp = lambda i, c: (i, q ** (self.degree_on_basis(i) - 1) * c)
             return s.map_item(susp)
