@@ -1903,7 +1903,6 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             ker = matrix(edges).right_kernel().matrix()
         return tuple(vertices)
 
-
     def placing_triangulation(self, point_order=None):
         r"""
         Construct the placing (pushing) triangulation.
@@ -1923,13 +1922,13 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             sage: pc.placing_triangulation()
             (<0,1,2>, <0,2,4>, <2,3,4>)
 
-            sage: U=matrix([
-            ...      [ 0, 0, 0, 0, 0, 2, 4,-1, 1, 1, 0, 0, 1, 0],
-            ...      [ 0, 0, 0, 1, 0, 0,-1, 0, 0, 0, 0, 0, 0, 0],
-            ...      [ 0, 2, 0, 0, 0, 0,-1, 0, 1, 0, 1, 0, 0, 1],
-            ...      [ 0, 1, 1, 0, 0, 1, 0,-2, 1, 0, 0,-1, 1, 1],
-            ...      [ 0, 0, 0, 0, 1, 0,-1, 0, 0, 0, 0, 0, 0, 0]
-            ...   ])
+            sage: U = matrix([
+            ....:      [ 0, 0, 0, 0, 0, 2, 4,-1, 1, 1, 0, 0, 1, 0],
+            ....:      [ 0, 0, 0, 1, 0, 0,-1, 0, 0, 0, 0, 0, 0, 0],
+            ....:      [ 0, 2, 0, 0, 0, 0,-1, 0, 1, 0, 1, 0, 0, 1],
+            ....:      [ 0, 1, 1, 0, 0, 1, 0,-2, 1, 0, 0,-1, 1, 1],
+            ....:      [ 0, 0, 0, 0, 1, 0,-1, 0, 0, 0, 0, 0, 0, 0]
+            ....:   ])
             sage: p = PointConfiguration(U.columns())
             sage: triangulation = p.placing_triangulation();  triangulation
             (<0,2,3,4,6,7>, <0,2,3,4,6,12>, <0,2,3,4,7,13>, <0,2,3,4,12,13>,
@@ -1940,23 +1939,37 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
              <3,4,6,7,11,12>, <3,4,7,11,12,13>, <3,6,7,11,12,13>, <4,6,7,11,12,13>)
             sage: sum(p.volume(t) for t in triangulation)
             42
+
+        TESTS:
+
+        A test for inexact rings (:trac:`18214`)::
+
+            sage: D = polytopes.dodecahedron(base_ring=RDF)
+            sage: pc = PointConfiguration((v.vector() for v in D.vertex_generator()))
+            sage: pc.triangulate()
+            (<0,1,2,15>, ...)
         """
-        facet_normals = dict()
+        facet_normals = {}
+
         def facets_of_simplex(simplex):
             """
-            Return the facets of the simplex and store the normals in facet_normals
+            Return the facets of the simplex and store the normals in
+            ``facet_normals``
             """
             simplex = list(simplex)
             origin = simplex[0]
             rest = simplex[1:]
-            span = matrix([ origin.reduced_affine_vector()-p.reduced_affine_vector()
-                            for p in rest ])
-            # span.inverse() linearly transforms the simplex into the unit simplex
+            span = matrix([origin.reduced_affine_vector() -
+                           p.reduced_affine_vector()
+                           for p in rest])
+            # span.inverse() linearly transforms the simplex into the
+            # unit simplex
             normals = span.inverse().columns()
             facets = []
             # The facets incident to the chosen vertex "origin"
             for opposing_vertex, normal in zip(rest, normals):
-                facet = frozenset([origin] + [ p for p in rest if p is not opposing_vertex ])
+                facet = frozenset([origin] + [p for p in rest
+                                              if p is not opposing_vertex])
                 facets.append(facet)
                 normal.set_immutable()
                 facet_normals[facet] = normal
@@ -1974,19 +1987,25 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             point_order = list(self.points())
         elif isinstance(point_order[0], Point):
             point_order = list(point_order)
-            assert all(p.point_configuration()==self for p in point_order)
+            assert all(p.point_configuration() == self for p in point_order)
         else:
-            point_order = [ self.point(i) for i in point_order ]
+            point_order = [self.point(i) for i in point_order]
         assert all(p in self.points() for p in point_order)
 
         # construct the initial simplex
-        simplices = [ frozenset(self.contained_simplex()) ]
+        simplices = [frozenset(self.contained_simplex())]
         for s in simplices[0]:
             try:
                 point_order.remove(s)
             except ValueError:
                 pass
         facets = facets_of_simplex(simplices[0])
+
+        # to handle inexact ring computations
+        if self.base_ring().is_exact():
+            epsilon = 0
+        else:
+            epsilon = 10 ** (-8)
 
         # successively place the remaining points
         for point in point_order:
@@ -1996,7 +2015,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 origin = next(iter(facet))
                 normal = facet_normals[facet]
                 v = point.reduced_affine_vector() - origin.reduced_affine_vector()
-                if v*normal>0:
+                if v * normal > epsilon:
                     visible_facets.append(facet)
 
             # construct simplices over each visible facet
@@ -2005,7 +2024,8 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
                 simplex = frozenset(list(facet) + [point])
                 simplices.append(simplex)
                 for facet in facets_of_simplex(simplex):
-                    if facet in visible_facets: continue
+                    if facet in visible_facets:
+                        continue
                     if facet in new_facets:
                         new_facets.remove(facet)
                         continue
@@ -2014,8 +2034,7 @@ class PointConfiguration(UniqueRepresentation, PointConfiguration_base):
             facets.update(new_facets)
 
         # construct the triangulation
-        triangulation = [ [p.index() for p in simplex] for simplex in simplices ]
-        return self(triangulation)
+        return self([[p.index() for p in simplex] for simplex in simplices])
 
     pushing_triangulation = placing_triangulation
 
