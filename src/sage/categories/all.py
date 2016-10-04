@@ -74,8 +74,8 @@ from .bialgebras import Bialgebras
 from .hopf_algebras import HopfAlgebras
 
 # operads
-from set_operads import SetOperads
-from operads import Operads
+from .set_operads import SetOperads
+from .operads import Operads
 
 # specific algebras
 from .monoid_algebras import MonoidAlgebras
