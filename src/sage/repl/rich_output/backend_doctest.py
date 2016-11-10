@@ -175,7 +175,8 @@ class BackendDoctest(BackendBase):
         """
         self.validate(rich_output)
         if any(isinstance(rich_output, cls)
-               for cls in [OutputPlainText, OutputAsciiArt, OutputLatex]):
+               for cls in [OutputPlainText, OutputAsciiArt, OutputUnicodeArt,
+                           OutputLatex]):
             rich_output.print_to_stdout()
         else:
             plain_text.print_to_stdout()

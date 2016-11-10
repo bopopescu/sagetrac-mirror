@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Accurate timing information for Sage commands
 
@@ -13,15 +14,16 @@ EXAMPLES::
 
 AUTHOR:
 
-    -- William Stein, based on code by Fernando Perez included in IPython
+- William Stein, based on code by Fernando Perez included in IPython
 """
+from __future__ import unicode_literals
 
 
 class SageTimeitResult(object):
     r"""
     Represent the statistics of a timeit() command.
 
-    Prints as a string so that it can be easily returned to a user.
+    Prints as a unicode string so that it can be easily returned to a user.
 
     INPUT:
 
@@ -41,13 +43,18 @@ class SageTimeitResult(object):
 
     ::
 
-        sage: units = ["s", "ms", "\xc2\xb5s", "ns"]
+        sage: units = [u"s", u"ms", u"µs", u"ns"]
         sage: scaling = [1, 1e3, 1e6, 1e9]
         sage: number = 7
         sage: repeat = 13
         sage: precision = int(5)
         sage: best = pi / 10 ^ 9
         sage: order = 3
+        sage: stats = (number, repeat, precision, best * scaling[order], units[order])
+        sage: SageTimeitResult(stats)
+        7 loops, best of 13: 3.1416 ns per loop
+
+        sage: order = 2
         sage: stats = (number, repeat, precision, best * scaling[order], units[order])
         sage: SageTimeitResult(stats)
         7 loops, best of 13: 3.1416 ns per loop
@@ -75,11 +82,13 @@ class SageTimeitResult(object):
             [1.00000000000000, 1.10000000000000, 0.500000000000000]
         """
         self.stats = stats
-        self.series = series if not None else []
+        self.series = series if series is not None else []
 
     def __repr__(self):
         r"""
         String representation.
+
+        This is of type "str" in both Python2 and Python3.
 
         EXAMPLES::
 
@@ -87,8 +96,18 @@ class SageTimeitResult(object):
             sage: stats = (1, 2, int(3), pi, 'ns')
             sage: SageTimeitResult(stats)           #indirect doctest
             1 loops, best of 2: 3.14 ns per loop
+            sage: stats = (1, 2, int(3), pi, u'µs')
+            sage: SageTimeitResult(stats)           #indirect doctest
+            1 loops, best of 2: 3.14 µs per loop
         """
-        return "%d loops, best of %d: %.*g %s per loop" % self.stats
+        txt = u"%d loops, best of %d: %.*g %s per loop" % self.stats
+        try:
+            str(u"µs")
+        except UnicodeEncodeError:
+            return txt.encode('utf-8')   # python2
+        else:
+            return txt  # python3
+
 
 def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, precision=3, seconds=False):
     """nodetex
@@ -208,7 +227,7 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
     if stmt == "":
         return ''
 
-    units = ["s", "ms", "\xc2\xb5s", "ns"]
+    units = [u"s", u"ms", u"µs", u"ns"]
     scaling = [1, 1e3, 1e6, 1e9]
 
     timer = timeit_.Timer()
@@ -225,7 +244,6 @@ def sage_timeit(stmt, globals_dict=None, preparse=None, number=0, repeat=3, prec
         globals_dict = globals()
     exec(code, globals_dict, ns)
     timer.inner = ns["inner"]
-
 
     try:
         import sys

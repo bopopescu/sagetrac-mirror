@@ -24,6 +24,7 @@ AUTHORS:
 #*****************************************************************************
 from __future__ import print_function, absolute_import
 from sage.misc.six import u
+from six import text_type
 
 import re
 import sys
@@ -97,8 +98,8 @@ def remove_unicode_u(string):
 
     This deals correctly with nested quotes::
 
-        sage: str = '''[u"Singular's stuff", u'good']'''
-        sage: print(remu(str))
+        sage: bla = '''[u"Singular's stuff", u'good']'''
+        sage: print(remu(bla))
         ["Singular's stuff", 'good']
 
     TESTS:
@@ -291,7 +292,7 @@ def reduce_hex(fingerprints):
     return "%032x" % res
 
 
-class MarkedOutput(str):
+class MarkedOutput(text_type):
     """
     A subclass of string with context for whether another string
     matches it.
@@ -306,6 +307,9 @@ class MarkedOutput(str):
         'abc'
         sage: s.rel_tol
         0.0500000000000000
+
+        sage: MarkedOutput(u"56 µs")
+        u'56 \xb5s'
     """
     random = False
     rel_tol = 0
@@ -896,8 +900,10 @@ class SageOutputChecker(doctest.OutputChecker):
                 # The doctest is successful if the "want" and "got"
                 # intervals have a non-empty intersection
                 return all(a.overlaps(b) for a, b in zip(want_intervals, got_values))
-
-        ok = doctest.OutputChecker.check_output(self, want, got, optionflags)
+        try:
+            ok = doctest.OutputChecker.check_output(self, want, got, optionflags)
+        except UnicodeDecodeError:
+            raise TypeError("{} {}".format(type(want), type(got)))
         if ok or 'u' not in got:
             return ok
 

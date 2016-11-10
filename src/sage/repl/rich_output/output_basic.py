@@ -158,7 +158,7 @@ class OutputPlainText(OutputBase):
             sage: plain_text.print_to_stdout()
             Example plain text output
         """
-        print(self.text.get())
+        print(self.text.get_unicode())
 
 
 class OutputAsciiArt(OutputBase):
