@@ -65,6 +65,17 @@ class PreLieOperad(CombinatorialFreeModule):
         INPUT:
 
         x -- a labelled rooted tree
+
+        EXAMPLES::
+
+            sage: A = PreLieOperad(QQ)
+            sage: LT = A.basis().keys()
+            sage: x = LT([LT([],'b')], label='a')
+            sage: y = LT([LT([],'d'), LT([],'e')], label='c')
+            sage: A._sort_key(x)
+            ((1, 'a'), (0, 'b'))
+            sage: A._sort_key(y)
+            ((2, 'c'), (0, 'd'), (0, 'e'))
         """
         return x.sort_key()
 

@@ -7,6 +7,7 @@ Set Operads
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  http://www.gnu.org/licenses/
 #******************************************************************************
+from six.moves import range
 
 from category_types import Category
 from sage.categories.sets_cat import Sets
@@ -106,7 +107,7 @@ class SetOperads(Category_singleton):
                 if left.degree() != len(list_right):
                     raise ValueError("the degree of x is not equal to the length of list_right")
                 res = left
-                for i in xrange(left.degree(), 0, -1):
+                for i in range(left.degree(), 0, -1):
                     res = self.composition_with_numbers(res,
                                                         list_right[i - 1], i)
                 return res
