@@ -281,7 +281,7 @@ class OperadsWithBasis(Category_over_base_ring):
                 sage: PL2DO(t0)
                 B[a[., .]]
                 sage: PL2DO(t0 < t0)
-                B[a[a[., .], .]] - B[a[., a[., .]]]
+                -B[a[., a[., .]]] + B[a[a[., .], .]]
             """
             if self.operad_morphism_on_basis is not NotImplemented:
                 return self._module_morphism(
