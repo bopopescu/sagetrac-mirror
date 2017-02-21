@@ -33,10 +33,12 @@ from __future__ import print_function
 
 from sage.env import DOT_SAGE
 import os
+from cpython.bytes cimport *
+
 cdef extern from "Python.h":
-    object PyString_FromStringAndSize(char *s, Py_ssize_t len)
-    char* PyString_AsString(object string)
-MtxLibDir = PyString_AsString(os.path.join(DOT_SAGE,'meataxe'))
+    object PyBytes_FromStringAndSize(char *s, Py_ssize_t len)
+    char* PyBytes_AsString(object string)
+MtxLibDir = PyBytes_AsString(os.path.join(DOT_SAGE,'meataxe'))
 
 ####################
 #
@@ -593,7 +595,7 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             FfSetField(self.Data.Field)
             FfSetNoc(self.Data.Noc)
             return mtx_unpickle, (self._parent, self.Data.Nor, self.Data.Noc,
-                        PyString_FromStringAndSize(<char*>self.Data.Data,self.Data.RowSize * self.Data.Nor),
+                        PyBytes_FromStringAndSize(<char*>self.Data.Data,self.Data.RowSize * self.Data.Nor),
                         not self._is_immutable) # for backward compatibility with the group cohomology package
         else:
             return mtx_unpickle, (0, 0, 0, '', not self._is_immutable)
@@ -846,8 +848,8 @@ cdef class Matrix_gfpn_dense(Matrix_dense):
             return -1
         d1 = <char*>(self.Data.Data)
         d2 = <char*>(N.Data.Data)
-        cdef str s1 = PyString_FromStringAndSize(d1,self.Data.RowSize * self.Data.Nor)
-        cdef str s2 = PyString_FromStringAndSize(d2,N.Data.RowSize * N.Data.Nor)
+        cdef str s1 = PyBytes_FromStringAndSize(d1,self.Data.RowSize * self.Data.Nor)
+        cdef str s2 = PyBytes_FromStringAndSize(d2,N.Data.RowSize * N.Data.Nor)
         if s1 != s2:
             if s1 > s2:
                 return 1
@@ -1607,6 +1609,6 @@ def mtx_unpickle(f, int nr, int nc, str Data, bint m):
     OUT._converter = FieldConverter(OUT._base_ring)
     cdef char *x
     if Data:
-        x = PyString_AsString(Data)
+        x = PyBytes_AsString(Data)
         memcpy(OUT.Data.Data, x, OUT.Data.RowSize*OUT.Data.Nor)
     return OUT

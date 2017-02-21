@@ -16,6 +16,7 @@ Pynac interface
 from __future__ import absolute_import
 
 from cpython cimport *
+from cpython.bytes cimport *
 from libc cimport math
 
 from sage.ext.stdsage cimport PY_NEW
@@ -366,7 +367,7 @@ cdef stdstring* string_from_pystr(object py_str):
 
     WARNING: You *must* call this with py_str a str type, or it will segfault.
     """
-    cdef char *t_str = PyString_AsString(py_str)
+    cdef char *t_str = PyBytes_AsString(py_str)
     cdef Py_ssize_t slen = len(py_str)
     cdef stdstring* sout = stdstring_construct_cstr(t_str, slen)
     return sout
@@ -413,7 +414,7 @@ def py_latex_variable_for_doctests(x):
         \sigma
     """
     assert isinstance(x, str)
-    cdef stdstring* ostr = py_latex_variable(PyString_AsString(x))
+    cdef stdstring* ostr = py_latex_variable(PyBytes_AsString(x))
     print(ostr.c_str())
     stdstring_delete(ostr)
 
