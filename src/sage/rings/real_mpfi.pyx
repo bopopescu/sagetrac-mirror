@@ -3565,7 +3565,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(2) == RIF(2)
             True
             sage: RIF(0, 1) == RIF(0, 1)
-            False
+            True
             sage: RIF(0, 2) < RIF(2, 3)
             False
             sage: RIF(0, 2) > RIF(2, 3)
@@ -3680,7 +3680,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: 1 == RIF(0, 1)
             False
             sage: RIF(0, 1) == RIF(0, 1)
-            False
+            True
             sage: RIF(1) == 0
             False
             sage: RIF(1) == 1
@@ -3688,7 +3688,7 @@ cdef class RealIntervalFieldElement(RingElement):
             sage: RIF(0) == RIF(0)
             True
             sage: RIF(pi) == RIF(pi)
-            False
+            True
             sage: RIF(0, 1) == RIF(1, 2)
             False
             sage: RIF(1, 2) == RIF(0, 1)
@@ -3723,22 +3723,22 @@ cdef class RealIntervalFieldElement(RingElement):
         lt = left
         rt = right
 
-        if op == Py_LT:  # <
+        if op == Py_LT:
             return mpfr_less_p(&lt.value.right, &rt.value.left)
-        elif op == Py_EQ:  # ==
+        elif op == Py_EQ:
             # a == b iff a <= b and b <= a
             # (this gives a result with two comparisons, where the
             # obvious approach would use three)
-            return mpfr_lessequal_p(&lt.value.right, &rt.value.left) \
-                and mpfr_lessequal_p(&rt.value.right, &lt.value.left)
-        elif op == Py_GT:  # >
+            return (mpfr_equal_p(&lt.value.left, &rt.value.left)
+                    and mpfr_equal_p(&lt.value.right, &rt.value.right))
+        elif op == Py_GT:
             return mpfr_less_p(&rt.value.right, &lt.value.left)
-        elif op == Py_LE:  # <=
+        elif op == Py_LE:
             return mpfr_lessequal_p(&lt.value.right, &rt.value.left)
-        elif op == Py_NE:  # !=
+        elif op == Py_NE:
             return mpfr_less_p(&lt.value.right, &rt.value.left) \
                 or mpfr_less_p(&rt.value.right, &lt.value.left)
-        elif op == Py_GE:  # >=
+        elif op == Py_GE:
             return mpfr_lessequal_p(&rt.value.right, &lt.value.left)
 
     def __nonzero__(self):
