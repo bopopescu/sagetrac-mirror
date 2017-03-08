@@ -176,14 +176,6 @@ EXAMPLES::
     True
     sage: not(0 < RIF(0, 1))
     True
-    sage: cmp(RIF(0), RIF(0, 1))
-    -1
-    sage: cmp(RIF(0, 1), RIF(0))
-    1
-    sage: cmp(RIF(0, 1), RIF(1))
-    -1
-    sage: cmp(RIF(0, 1), RIF(0, 1))
-    0
 
 Comparison with infinity is defined through coercion to the infinity
 ring where semi-infinite intervals are sent to their central value
@@ -3759,53 +3751,6 @@ cdef class RealIntervalFieldElement(RingElement):
             True
         """
         return not (mpfr_zero_p(&self.value.left) and mpfr_zero_p(&self.value.right))
-
-    cpdef int _cmp_(left, right) except -2:
-        """
-        Compare two intervals lexicographically.
-
-        Return 0 if they are the same interval, -1 if the second is larger,
-        or 1 if the first is larger.
-
-        EXAMPLES::
-
-            sage: cmp(RIF(0), RIF(1))
-            -1
-            sage: cmp(RIF(0, 1), RIF(1))
-            -1
-            sage: cmp(RIF(0, 1), RIF(1, 2))
-            -1
-            sage: cmp(RIF(0, 0.99999), RIF(1, 2))
-            -1
-            sage: cmp(RIF(1, 2), RIF(0, 1))
-            1
-            sage: cmp(RIF(1, 2), RIF(0))
-            1
-            sage: cmp(RIF(0, 1), RIF(0, 2))
-            -1
-            sage: cmp(RIF(0, 1), RIF(0, 1))
-            0
-            sage: cmp(RIF(0, 1), RIF(0, 1/2))
-            1
-        """
-        cdef RealIntervalFieldElement lt, rt
-
-        lt = left
-        rt = right
-
-        cdef int i
-        i = mpfr_cmp(&lt.value.left, &rt.value.left)
-        if i < 0:
-            return -1
-        elif i > 0:
-            return 1
-        i = mpfr_cmp(&lt.value.right, &rt.value.right)
-        if i < 0:
-            return -1
-        elif i > 0:
-            return 1
-        else:
-            return 0
 
     def __contains__(self, other):
         """
