@@ -1411,6 +1411,7 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
     cpdef _richcmp_(left, right, int op):
         r"""
         As with the real interval fields this never returns false positives.
+
         Thus, `a == b` is ``True`` iff both `a` and `b` represent the same
         one-point interval. Likewise `a != b` is ``True`` iff `x != y` for all
         `x \in a, y \in b`.
@@ -1430,10 +1431,10 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             sage: -CIF(-3).sqrt() != CIF(-3).sqrt()
             True
 
-        These intervals overlap, but contain unequal points::
+        These intervals have the same bounds, but contain unequal points::
 
             sage: CIF(3).sqrt() == CIF(3).sqrt()
-            False
+            True
             sage: CIF(3).sqrt() != CIF(3).sqrt()
             False
 
@@ -1452,10 +1453,10 @@ cdef class ComplexIntervalFieldElement(sage.structure.element.FieldElement):
             # intervals a == b iff a<=b and b <= a
             # (this gives a result with two comparisons, where the
             # obvious approach would use three)
-            return mpfr_lessequal_p(&lt.__re.right, &rt.__re.left) \
-                and mpfr_lessequal_p(&rt.__re.right, &lt.__re.left) \
-                and mpfr_lessequal_p(&lt.__im.right, &rt.__im.left) \
-                and mpfr_lessequal_p(&rt.__im.right, &lt.__im.left)
+            return mpfr_equal_p(&lt.__re.right, &rt.__re.right) \
+                and mpfr_equal_p(&lt.__re.left, &rt.__re.left) \
+                and mpfr_equal_p(&lt.__im.right, &rt.__im.right) \
+                and mpfr_equal_p(&lt.__im.left, &rt.__im.left)
         elif op == 3: #!=
             return mpfr_less_p(&lt.__re.right, &rt.__re.left) \
                 or mpfr_less_p(&rt.__re.right, &lt.__re.left) \

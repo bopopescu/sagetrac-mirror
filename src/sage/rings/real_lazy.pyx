@@ -916,7 +916,7 @@ def make_element(parent, *args):
     EXAMPLES::
 
         sage: a = RLF(pi) + RLF(sqrt(1/2)) # indirect doctest
-        sage: loads(dumps(a)) == a
+        sage: float(loads(dumps(a))) == float(a)
         True
     """
     return parent(*args)
