@@ -159,12 +159,17 @@ class OperadsWithBasis(Category_over_base_ring):
             This is variant of composition where one assumes that
             labels are integers from `1` to `n`.
 
+            The basis indices must have a method `map_labels`.
+
             EXAMPLES::
 
-                sage: A = OperadsWithBasis(QQ).example()
-                sage: Word = A.basis().keys()
-                sage: A.composition_on_basis_with_numbers(Word("321"),Word("12"),3)
-                B[word: 3421]
+                sage: from sage.combinat.abstract_tree import from_hexacode
+                sage: A = PreLieOperad(QQ)
+                sage: RT = A.basis().keys()
+                sage: x = from_hexacode('200',RT).canonical_labelling()
+                sage: y = from_hexacode('10',RT).canonical_labelling()
+                sage: A.composition_on_basis_with_numbers(x,y,3)
+                ?
             """
             # the operad must define map_labels !
             shifted_j = j.map_labels(lambda z: z + k - 1)
@@ -225,12 +230,17 @@ class OperadsWithBasis(Category_over_base_ring):
 
             The result is labelled in the same way.
 
+            The basis indices must have a method `map_labels`.
+
             EXAMPLES::
 
-                sage: A = OperadsWithBasis(QQ).example()
-                sage: Word = A.basis().keys()
-                sage: A.composition_with_numbers(A(Word("231")),A(Word("21")),2)
-                B[word: 3241]
+                sage: from sage.combinat.abstract_tree import from_hexacode
+                sage: A = PreLieOperad(QQ)
+                sage: RT = A.basis().keys()
+                sage: x = from_hexacode('200',RT).canonical_labelling()
+                sage: y = from_hexacode('10',RT).canonical_labelling()
+                sage: A.composition_with_numbers(A(x),A(y),2)
+                ?
             """
             if self.composition_on_basis_with_numbers is not NotImplemented:
                 return self._module_morphism(self._module_morphism(self.composition_on_basis_with_numbers, position=0, codomain=self), position=1)

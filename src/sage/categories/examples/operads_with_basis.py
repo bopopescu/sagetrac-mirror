@@ -58,7 +58,7 @@ class AssociativeOperad(CombinatorialFreeModule):
 
     def degree_on_basis(self, t):
         """
-        Returns the degree of a word `t` in the Associative operad.
+        Return the degree of a word `t` in the Associative operad.
 
         This is the length of the word.
 
@@ -75,6 +75,12 @@ class AssociativeOperad(CombinatorialFreeModule):
     def map_labels(self, t, f):
         """
         Map the function `f` on the word `t`.
+
+        INPUT:
+
+        - t -- the index of a basis element
+
+        - f -- a map that can be applied to the labels of t
 
         EXAMPLES::
 
