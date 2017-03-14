@@ -169,7 +169,7 @@ class OperadsWithBasis(Category_over_base_ring):
                 sage: x = from_hexacode('200',RT).canonical_labelling()
                 sage: y = from_hexacode('10',RT).canonical_labelling()
                 sage: A.composition_on_basis_with_numbers(x,y,3)
-                ?
+                B[1[2[], 3[4[]]]]
             """
             # the operad must define map_labels !
             shifted_j = j.map_labels(lambda z: z + k - 1)
@@ -240,7 +240,7 @@ class OperadsWithBasis(Category_over_base_ring):
                 sage: x = from_hexacode('200',RT).canonical_labelling()
                 sage: y = from_hexacode('10',RT).canonical_labelling()
                 sage: A.composition_with_numbers(A(x),A(y),2)
-                ?
+                B[1[4[], 2[3[]]]]
             """
             if self.composition_on_basis_with_numbers is not NotImplemented:
                 return self._module_morphism(self._module_morphism(self.composition_on_basis_with_numbers, position=0, codomain=self), position=1)
