@@ -26,7 +26,7 @@ from sage.libs.pari.all import pari
 from sage.matrix.all import zero_matrix
 from sage.arith.all import euler_phi, sigma
 from sage.arith.misc import dedekind_psi
-from sage.rings.finite_rings.constructor import FiniteField
+from sage.rings.finite_rings.finite_field_constructor import FiniteField
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.rings.finite_rings.integer_mod_ring import Zmod
 
