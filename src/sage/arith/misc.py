@@ -5125,3 +5125,24 @@ def dedekind_sum(p, q, algorithm='default'):
 
     raise ValueError('unknown algorithm')
 
+
+def dedekind_psi(N):
+    r"""
+    Return the Dedekind psi function.
+
+    This is the multiplicative function defined by
+
+    .. MATH::
+
+        `n \prod_{p|n, p prime} (1 + 1/p)`
+
+    See :wikipedia:`Dedekind_psi_function` and :oeis:`A001615`.
+
+    EXAMPLES::
+
+        sage: from sage.modular.modform.hijikata import dedekind_psi
+        sage: [dedekind_psi(d) for d in range(1, 12)]
+        [1, 3, 4, 6, 6, 12, 8, 12, 12, 18, 12]
+    """
+    N = Integer(N)
+    return Integer(N * prod(1 + 1 / p for p in N.prime_divisors()))
