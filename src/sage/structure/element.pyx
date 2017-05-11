@@ -1058,9 +1058,9 @@ cdef class Element(SageObject):
                 tl = type(left)
                 tr = type(right)
                 assert tl is tr
-                if tl < tr:
+                if left < right:
                     return -1
-                elif tl > tr:
+                elif left > right:
                     return 1
                 else:
                     return 0
