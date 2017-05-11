@@ -1055,9 +1055,7 @@ cdef class Element(SageObject):
             if not isinstance(left, Element):
                 # avoid call to cmp for compatibility with python3
                 # until we get rid of this __cmp__ here completely
-                tl = type(left)
-                tr = type(right)
-                assert tl is tr
+                assert type(left) is type(right)
                 if left < right:
                     return -1
                 elif left > right:
