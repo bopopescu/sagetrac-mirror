@@ -1053,8 +1053,17 @@ cdef class Element(SageObject):
                     return -1
 
             if not isinstance(left, Element):
-                assert type(left) is type(right)
-                return cmp(left, right)
+                # avoid call to cmp for compatibility with python3
+                # until we get rid of this __cmp__ here completely
+                tl = type(left)
+                tr = type(right)
+                assert tl is tr
+                if tl < tr:
+                    return -1
+                elif tl > tr:
+                    return 1
+                else:
+                    return 0
 
         # Now we have two Sage Elements with the same parent
         try:
