@@ -432,6 +432,7 @@ from sage.graphs.independent_sets import IndependentSets
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.misc.decorators import rename_keyword
+from exceptions import StopIteration
 
 class Graph(GenericGraph):
     r"""
@@ -1452,7 +1453,7 @@ class Graph(GenericGraph):
     @doc_index("Connectivity, orientations, trees")
     def bridges(self, labels=True):
         r"""
-        Returns a list of the bridges (or cut edges).
+        Returns an iterator over the bridges (or cut edges).
 
         A bridge is an edge so that deleting it disconnects the graph.
         A disconnected graph has no bridge.
@@ -1468,31 +1469,45 @@ class Graph(GenericGraph):
              sage: g.add_edge(1,10)
              sage: g.is_connected()
              True
-             sage: g.bridges()
+             sage: list(g.bridges())
              [(1, 10, None)]
+
+        Every edge of a tree is a bridge::
+
+            sage: g = graphs.RandomTree(100)
+            sage: sum(1 for _ in g.bridges()) == 99
+            True
+
+        TESTS:
+
+        Disconnected graphs have no bridges::
+
+            sage: g = 2*graphs.PetersenGraph()
+            sage: g.bridges().next()
+            Traceback (most recent call last):
+            ...
+            StopIteration
         """
         # Small graphs and disconnected graphs have no bridge
         if self.order() < 2 or not self.is_connected():
-            return []
+            raise StopIteration
 
         B,C = self.blocks_and_cut_vertices()
 
         # A graph without cut-vertex has no bridge
         if not C:
-            return []
+            raise StopIteration
 
         # A block of size 2 is a bridge, unless the vertices are connected with
         # multiple edges.
         ME = set(self.multiple_edges(labels=False))
-        my_bridges = []
         for b in B:
             if len(b) == 2 and not tuple(b) in ME:
                 if labels:
-                    my_bridges.append((b[0], b[1], self.edge_label(b[0], b[1])))
+                    yield (b[0], b[1], self.edge_label(b[0], b[1]))
                 else:
-                    my_bridges.append(tuple(b))
+                    yield tuple(b)
 
-        return my_bridges
 
     @doc_index("Connectivity, orientations, trees")
     def spanning_trees(self):
