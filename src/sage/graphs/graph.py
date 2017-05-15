@@ -1482,7 +1482,7 @@ class Graph(GenericGraph):
         Disconnected graphs have no bridges::
 
             sage: g = 2*graphs.PetersenGraph()
-            sage: g.bridges().next()
+            sage: next(g.bridges())
             Traceback (most recent call last):
             ...
             StopIteration
