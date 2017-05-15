@@ -432,7 +432,6 @@ from sage.graphs.independent_sets import IndependentSets
 from sage.combinat.combinatorial_map import combinatorial_map
 from sage.misc.rest_index_of_methods import doc_index, gen_thematic_rest_table_index
 from sage.misc.decorators import rename_keyword
-from exceptions import StopIteration
 
 class Graph(GenericGraph):
     r"""
@@ -1453,7 +1452,7 @@ class Graph(GenericGraph):
     @doc_index("Connectivity, orientations, trees")
     def bridges(self, labels=True):
         r"""
-        Returns an iterator over the bridges (or cut edges).
+        Return an iterator over the bridges (or cut edges).
 
         A bridge is an edge so that deleting it disconnects the graph.
         A disconnected graph has no bridge.
@@ -1490,13 +1489,13 @@ class Graph(GenericGraph):
         """
         # Small graphs and disconnected graphs have no bridge
         if self.order() < 2 or not self.is_connected():
-            raise StopIteration
+            return
 
         B,C = self.blocks_and_cut_vertices()
 
         # A graph without cut-vertex has no bridge
         if not C:
-            raise StopIteration
+            return
 
         # A block of size 2 is a bridge, unless the vertices are connected with
         # multiple edges.
