@@ -18,8 +18,7 @@ from sage.misc.cachefunc import cached_method
 from sage.functions.other import factorial
 from sage.categories.all import (OperadsWithBasis,
                                  GradedHopfAlgebrasWithBasis, tensor)
-from sage.combinat.free_module import (CombinatorialFreeModule,
-                                       CombinatorialFreeModuleElement)
+from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.rooted_tree import LabelledRootedTrees
 from sage.categories.cartesian_product import cartesian_product
 from sage.combinat.set_partition_ordered import OrderedSetPartitions
@@ -582,7 +581,7 @@ class PreLieOperad(CombinatorialFreeModule):
             inverse -= PL.diese_product(x, inverse, i)
         return inverse
 
-    class Element(CombinatorialFreeModuleElement):
+    class Element(CombinatorialFreeModule.Element):
         def __lt__(self, other):
             r"""
             Shortcut for the prelie product
