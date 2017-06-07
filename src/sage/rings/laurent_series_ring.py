@@ -432,7 +432,7 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             and A.has_coerce_map_from(P.base_ring())):
             return True
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Compare this Laurent series ring to something else.
 
@@ -459,15 +459,30 @@ class LaurentSeriesRing_generic(ring.CommutativeRing):
             False
         """
         if not isinstance(other, LaurentSeriesRing_generic):
-            return cmp(type(self),type(other))
-        c = cmp(self.base_ring(), other.base_ring())
-        if c: return c
-        c = cmp(self.variable_name(), other.variable_name())
-        if c: return c
-        c = cmp(self.default_prec(), other.default_prec())
-        if c: return c
-        return 0
+            return False
+        return (self.base_ring() == other.base_ring() and
+                self.variable_name() == other.variable_name() and
+                self.default_prec() == other.default_prec())
 
+    def __ne__(self, other):
+        """
+        Check that ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: R.<t> = LaurentSeriesRing(ZZ)
+            sage: S.<t> = LaurentSeriesRing(ZZ)
+            sage: R != S
+            False
+            sage: S.<t> = LaurentSeriesRing(ZZ, default_prec=10)
+            sage: R != S
+            True
+            sage: LaurentSeriesRing(ZZ,'t') != LaurentSeriesRing(QQ,'t')
+            True
+            sage: LaurentSeriesRing(QQ,'t') != 5
+            True
+        """
+        return not (self == other)
 
     def _is_valid_homomorphism_(self, codomain, im_gens):
         """

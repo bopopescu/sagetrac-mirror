@@ -791,7 +791,7 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
                 prec = infinity
         return self.element_class(parent=self, x=f, prec=prec)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Compare this multivariate power series ring to something else.
 
@@ -819,14 +819,30 @@ class MPowerSeriesRing_generic(PowerSeriesRing_generic, Nonexact):
             False
         """
         if not isinstance(other, MPowerSeriesRing_generic):
-            return -1
-        c = cmp(self.base_ring(), other.base_ring())
-        if c: return c
-        c = cmp(self.variable_names(), other.variable_names())
-        if c: return c
-        c = cmp(self.default_prec(), other.default_prec())
-        if c: return c
-        return 0
+            return False
+        return (self.base_ring() == other.base_ring() and
+                self.variable_names() == other.variable_names() and
+                self.default_prec() == other.default_prec())
+
+    def __ne__(self, other):
+        """
+        Check that ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: R.<t,u> = PowerSeriesRing(ZZ)
+            sage: S.<t,u> = PowerSeriesRing(ZZ)
+            sage: R != S
+            False
+            sage: S.<t,u> = PowerSeriesRing(ZZ, default_prec=30)
+            sage: R != S
+            True
+            sage: PowerSeriesRing(QQ,3,'t') != PowerSeriesRing(ZZ,3,'t')
+            True
+            sage: PowerSeriesRing(QQ,5,'t') != 5
+            True
+        """
+        return not (self == other)
 
     def laurent_series_ring(self):
         """

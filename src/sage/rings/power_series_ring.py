@@ -1129,9 +1129,10 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
         """
         if prec is None:
             prec = self.default_prec()
-        return self(self.__poly_ring.random_element(prec-1, *args, **kwds), prec)
+        return self(self.__poly_ring.random_element(prec-1, *args, **kwds),
+                    prec)
 
-    def __cmp__(self, other):
+    def __eq__(self, other):
         """
         Compare this power series ring to something else.
 
@@ -1158,14 +1159,30 @@ class PowerSeriesRing_generic(UniqueRepresentation, ring.CommutativeRing, Nonexa
             False
         """
         if not isinstance(other, PowerSeriesRing_generic):
-            return -1
-        c = cmp(self.base_ring(), other.base_ring())
-        if c: return c
-        c = cmp(self.variable_name(), other.variable_name())
-        if c: return c
-        c = cmp(self.default_prec(), other.default_prec())
-        if c: return c
-        return 0
+            return False
+        return (self.base_ring() == other.base_ring() and
+                self.variable_name() == other.variable_name() and
+                self.default_prec() == other.default_prec())
+
+    def __ne__(self, other):
+        """
+        Check that ``self`` is not equal to ``other``.
+
+        EXAMPLES::
+
+            sage: R.<t> = PowerSeriesRing(ZZ)
+            sage: S.<t> = PowerSeriesRing(ZZ)
+            sage: R != S
+            False
+            sage: S.<t> = PowerSeriesRing(ZZ, default_prec=10)
+            sage: R != S
+            True
+            sage: PowerSeriesRing(QQ,'t') != PowerSeriesRing(ZZ,'t')
+            True
+            sage: PowerSeriesRing(QQ,'t') != 5
+            True
+        """
+        return not (self == other)
 
     def __contains__(self, x):
         """
