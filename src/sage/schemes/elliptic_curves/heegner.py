@@ -4,9 +4,9 @@ Heegner points on elliptic curves over the rational numbers
 
 AUTHORS:
 
-    - William Stein (August 2009)-- most of the initial version
+- William Stein (August 2009)-- most of the initial version
 
-    - Robert Bradshaw (July 2009) -- an early version of some specific code
+- Robert Bradshaw (July 2009) -- an early version of some specific code
 
 EXAMPLES::
 
@@ -98,6 +98,10 @@ from sage.misc.all import verbose, prod
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.sage_object import SageObject
+from sage.structure.parent import Parent
+from sage.structure.element import Element
+from sage.categories.groups import Groups
+from sage.rings.ring import Field
 
 import sage.rings.number_field.number_field_element
 import sage.rings.number_field.number_field as number_field
@@ -119,7 +123,7 @@ from sage.modular.modsym.p1list import P1List
 # The exported functions, which are in most cases enough to get the
 # user going working with Heegner points:
 #
-#    heegner_points -- all of them with given level, discriminant, conducto
+#    heegner_points -- all of them with given level, discriminant, conductor
 #    heegner_point -- a specific one
 #
 ##################################################################################
@@ -154,6 +158,7 @@ def heegner_points(N, D=None, c=None):
     if D is not None and c is not None:
         return HeegnerPoints_level_disc_cond(N,D,c)
     raise TypeError
+
 
 def heegner_point(N, D=None, c=1):
     """
@@ -197,7 +202,7 @@ def heegner_point(N, D=None, c=1):
 #
 ##################################################################################
 
-class RingClassField(SageObject):
+class RingClassField(Field):
     """
     A Ring class field of a quadratic imaginary field of given conductor.
 
@@ -220,7 +225,7 @@ class RingClassField(SageObject):
 
         sage: K_c = heegner_point(37,-7).ring_class_field()
         sage: type(K_c)
-        <class 'sage.schemes.elliptic_curves.heegner.RingClassField'>
+        <class 'sage.schemes.elliptic_curves.heegner.RingClassField_with_category'>
         sage: loads(dumps(K_c)) == K_c
         True
     """
@@ -228,23 +233,24 @@ class RingClassField(SageObject):
         """
         INPUT:
 
-            - `D` -- discriminant of quadratic imaginary field
+        - `D` -- discriminant of quadratic imaginary field
 
-            - `c` -- conductor (positive integer coprime to `D`)
+        - `c` -- conductor (positive integer coprime to `D`)
 
-            - ``check`` -- bool (default: ``True``); whether to check
-              validity of input
+        - ``check`` -- bool (default: ``True``); whether to check
+          validity of input
 
         EXAMPLES::
 
             sage: sage.schemes.elliptic_curves.heegner.RingClassField(-7,5, False)
             Ring class field extension of QQ[sqrt(-7)] of conductor 5
-
         """
         if check:
-            D = ZZ(D); c = ZZ(c)
+            D = ZZ(D)
+            c = ZZ(c)
         self.__D = D
         self.__c = c
+        super(Field, self).__init__(ZZ)
 
     def __eq__(self, other):
         """
@@ -490,8 +496,8 @@ class RingClassField(SageObject):
             Number Field in sqrt_minus_7 with defining polynomial x^2 + 7
         """
         D   = self.__D
-        var = 'sqrt_minus_%s'%(-D)
-        return number_field.QuadraticField(D,var)
+        var = 'sqrt_minus_%s' % (-D)
+        return number_field.QuadraticField(D, var)
 
     @cached_method
     def galois_group(self, base=QQ):
@@ -500,7 +506,7 @@ class RingClassField(SageObject):
 
         INPUT:
 
-            - ``base`` -- (default: `\QQ`) a subfield of ``self`` or `\QQ`
+        - ``base`` -- (default: `\QQ`) a subfield of ``self`` or `\QQ`
 
         EXAMPLES::
 
@@ -522,7 +528,6 @@ class RingClassField(SageObject):
             Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 15 over Ring class field extension of QQ[sqrt(-7)] of conductor 5
             sage: C.galois_group(A).cardinality()
             4
-
         """
         return GaloisGroup(self, base)
 
@@ -562,7 +567,64 @@ class RingClassField(SageObject):
 #
 ##################################################################################
 
-class GaloisGroup(SageObject):
+class GaloisAutomorphism(Element):
+    """
+    An abstract automorphism of a ring class field.
+
+    .. TODO::
+
+        make :class:`GaloisAutomorphism` derive from GroupElement, so
+        that one gets powers for free, etc.
+
+    EXAMPLES::
+
+        sage: E = EllipticCurve('389a')
+        sage: s = E.heegner_point(-7,5).ring_class_field().galois_group().complex_conjugation()
+        sage: s.parent()
+        Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+    """
+    def __init__(self, parent):
+        """
+        INPUT:
+
+        - ``parent`` -- a group of automorphisms of a ring class field
+
+        EXAMPLES::
+
+            sage: G = heegner_points(389,-7,5).ring_class_field().galois_group(); G
+            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+            sage: sage.schemes.elliptic_curves.heegner.GaloisAutomorphism(G)
+            Galois automorphism of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+        """
+        Element.__init__(self, parent)
+
+    def domain(self):
+        """
+        Return the domain of this automorphism.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('389a')
+            sage: s = E.heegner_point(-7,5).ring_class_field().galois_group().complex_conjugation()
+            sage: s.domain()
+            Ring class field extension of QQ[sqrt(-7)] of conductor 5
+        """
+        return self.parent().field()
+
+    def _repr_(self):
+        """
+        Return a string representation.
+
+        EXAMPLES::
+
+            sage: G = heegner_points(389,-7,5).ring_class_field().galois_group()
+            sage: sage.schemes.elliptic_curves.heegner.GaloisAutomorphism(G)
+            Galois automorphism of Ring class field extension of QQ[sqrt(-7)] of conductor 5
+        """
+        return "Galois automorphism of {}".format(self.parent().field())
+
+
+class GaloisGroup(Parent):
     """
     A Galois group of a ring class field.
 
@@ -584,15 +646,17 @@ class GaloisGroup(SageObject):
         sage: loads(dumps(G)) == G
         True
         sage: type(G)
-        <class 'sage.schemes.elliptic_curves.heegner.GaloisGroup'>
+        <class 'sage.schemes.elliptic_curves.heegner.GaloisGroup_with_category'>
     """
+    Element = GaloisAutomorphism
+
     def __init__(self, field, base=QQ):
         r"""
         INPUT:
 
-           - ``field`` -- a ring class field
+        - ``field`` -- a ring class field
 
-           - ``base`` -- subfield of field (default: `\QQ`)
+        - ``base`` -- subfield of field (default: `\QQ`)
 
         EXAMPLES::
 
@@ -612,6 +676,7 @@ class GaloisGroup(SageObject):
                 raise TypeError("base must be a subfield of field")
         self.__field = field
         self.__base = base
+        Parent.__init__(self, category=Groups().Finite())
 
     def __eq__(self, G):
         """
@@ -626,7 +691,7 @@ class GaloisGroup(SageObject):
             sage: G == H
             False
         """
-        return isinstance(G, GaloisGroup) and (G.__field,G.__base) == (self.__field,self.__base)
+        return isinstance(G, GaloisGroup) and (G.__field, G.__base) == (self.__field, self.__base)
 
     def __hash__(self):
         """
@@ -642,7 +707,7 @@ class GaloisGroup(SageObject):
         """
         return hash((self.__field, self.__base))
 
-    def __call__(self, x):
+    def _element_constructor_(self, x):
         """
         Coerce `x` into ``self``, where `x` is a Galois group element, or
         in case ``self`` has base field the Hilbert class field, `x` can
@@ -650,11 +715,11 @@ class GaloisGroup(SageObject):
 
         INPUT:
 
-            - `x` -- automorphism or quadratic field element
+        - `x` -- automorphism or quadratic field element
 
         OUTPUT:
 
-            - automorphism (or TypeError)
+        - automorphism (or TypeError)
 
         EXAMPLES::
 
@@ -697,10 +762,10 @@ class GaloisGroup(SageObject):
             'Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5'
         """
         if self.base_field() != QQ:
-            s = " over %s"%self.base_field()
+            s = " over %s" % self.base_field()
         else:
             s = ''
-        return "Galois group of %s%s"%(self.field(), s)
+        return "Galois group of %s%s" % (self.field(), s)
 
     def field(self):
         """
@@ -762,7 +827,7 @@ class GaloisGroup(SageObject):
 
         OUTPUT:
 
-            - list of elements of ``self``
+        - list of elements of ``self``
 
         EXAMPLES::
 
@@ -802,7 +867,7 @@ class GaloisGroup(SageObject):
 
         OUTPUT:
 
-            - tuple of elements of self
+        - tuple of elements of self
 
         EXAMPLES::
 
@@ -834,7 +899,7 @@ class GaloisGroup(SageObject):
         r"""
         Enumerate the elements of ``self``.
 
-        EXAMPLES::
+        EXAMPLES:
 
         Example with order 1 (a special case)::
 
@@ -1187,62 +1252,14 @@ class GaloisGroup(SageObject):
         return GaloisAutomorphismComplexConjugation(self)
 
 
+
+
 ##################################################################################
 #
 # Elements of Galois groups
 #
 ##################################################################################
 
-class GaloisAutomorphism(SageObject):
-    """
-    An abstract automorphism of a ring class field.
-
-    .. TODO::
-
-        make :class:`GaloisAutomorphism` derive from GroupElement, so
-        that one gets powers for free, etc.
-    """
-    def __init__(self, parent):
-        """
-        INPUT:
-
-            - ``parent`` -- a group of automorphisms of a ring class field
-
-        EXAMPLES::
-
-            sage: G = heegner_points(389,-7,5).ring_class_field().galois_group(); G
-            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
-            sage: sage.schemes.elliptic_curves.heegner.GaloisAutomorphism(G)
-            <class 'sage.schemes.elliptic_curves.heegner.GaloisAutomorphism'>
-        """
-        self.__parent = parent
-
-    def parent(self):
-        """
-        Return the parent of this automorphism, which is a Galois
-        group of a ring class field.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve('389a')
-            sage: s = E.heegner_point(-7,5).ring_class_field().galois_group().complex_conjugation()
-            sage: s.parent()
-            Galois group of Ring class field extension of QQ[sqrt(-7)] of conductor 5
-        """
-        return self.__parent
-
-    def domain(self):
-        """
-        Return the domain of this automorphism.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve('389a')
-            sage: s = E.heegner_point(-7,5).ring_class_field().galois_group().complex_conjugation()
-            sage: s.domain()
-            Ring class field extension of QQ[sqrt(-7)] of conductor 5
-        """
-        return self.parent().field()
 
 class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
     """
@@ -1267,7 +1284,7 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
         """
         INPUT:
 
-            - ``parent`` -- a group of automorphisms of a ring class field
+        - ``parent`` -- a group of automorphisms of a ring class field
 
         EXAMPLES::
 
@@ -1316,19 +1333,7 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
             sage: conj._repr_()
             'Complex conjugation automorphism of Ring class field extension of QQ[sqrt(-7)] of conductor 5'
         """
-        return "Complex conjugation automorphism of %s"%self.domain()
-
-##     def __mul__(self, right):
-##         """
-##         Return the composition of two automorphisms.
-
-##         EXAMPLES::
-
-##             sage: ?
-##         """
-##         if self.parent() != right.__parent():
-##             raise TypeError, "automorphisms must be of the same class field"
-##         raise NotImplementedError
+        return "Complex conjugation automorphism of %s" % self.domain()
 
     def __invert__(self):
         """
@@ -1351,6 +1356,7 @@ class GaloisAutomorphismComplexConjugation(GaloisAutomorphism):
             2
         """
         return ZZ(2)
+
 
 class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
     """
@@ -1544,15 +1550,16 @@ class GaloisAutomorphismQuadraticForm(GaloisAutomorphism):
             'Class field automorphism defined by x^2 + 45*y^2'
 
         """
-        return "Class field automorphism defined by %s"%self.__quadratic_form
+        return "Class field automorphism defined by %s" % self.__quadratic_form
 
-    def __mul__(self, right):
+    def _mul_(self, right):
         """
         Return the composition of two automorphisms.
 
         EXAMPLES::
 
-            sage: H = heegner_points(389,-20,3); s = H.ring_class_field().galois_group(H.quadratic_field())[0]
+            sage: H = heegner_points(389,-20,3)
+            sage: s = H.ring_class_field().galois_group(H.quadratic_field())[0]
             sage: s * s
             Class field automorphism defined by x^2 + 45*y^2
             sage: G = s.parent(); list(G)
@@ -1965,7 +1972,7 @@ class HeegnerPoints_level(HeegnerPoints):
             sage: heegner_points(389)._repr_()
             'Set of all Heegner points on X_0(389)'
         """
-        return "Set of all Heegner points on X_0(%s)"%self.level()
+        return "Set of all Heegner points on X_0(%s)" % self.level()
 
     def reduce_mod(self, ell):
         r"""
