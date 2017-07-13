@@ -646,7 +646,7 @@ class Homset(Set_generic):
             (<function Hom at ...>,
              (Vector space of dimension 2 over Rational Field,
               Vector space of dimension 3 over Rational Field,
-              Category of finite dimensional vector spaces with basis over (quotient fields and metric spaces),
+              Category of finite dimensional vector spaces with basis over (quotient fields and infinite sets and metric spaces),
               False))
 
         TESTS::

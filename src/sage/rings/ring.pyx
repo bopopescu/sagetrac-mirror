@@ -133,19 +133,25 @@ cdef class Ring(ParentWithGens):
         sage: TestSuite(ZZ['x','y']).run()
         sage: TestSuite(ZZ['x','y']['t']).run()
 
-    Test agaings another bug fixed in :trac:`9944`::
+    Test against another bug fixed in :trac:`9944`::
 
         sage: QQ['x'].category()
-        Join of Category of euclidean domains
-             and Category of commutative algebras over (quotient fields and metric spaces)
+        Join of Category of euclidean domains and Category of commutative
+        algebras over (quotient fields and infinite sets and metric spaces)
+
         sage: QQ['x','y'].category()
-        Join of Category of unique factorization domains
-             and Category of commutative algebras over (quotient fields and metric spaces)
+        Join of Category of unique factorization domains and Category of
+        commutative algebras over (quotient fields and infinite sets and
+        metric spaces)
+
         sage: PolynomialRing(MatrixSpace(QQ,2),'x').category()
-        Category of algebras over (finite dimensional algebras with basis over
-         (quotient fields and metric spaces) and infinite sets)
+        Category of algebras over (finite dimensional algebras with basis
+        over (quotient fields and infinite sets and metric spaces) and
+        infinite sets)
+
         sage: PolynomialRing(SteenrodAlgebra(2),'x').category()
-        Category of algebras over graded hopf algebras with basis over Finite Field of size 2
+        Category of algebras over graded hopf algebras with basis over
+        Finite Field of size 2
 
      TESTS::
 

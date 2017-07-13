@@ -35,7 +35,7 @@ Let's request the category of some objects::
 
     sage: V = VectorSpace(RationalField(), 3)
     sage: V.category()
-    Category of finite dimensional vector spaces with basis over (quotient fields and metric spaces)
+    Category of finite dimensional vector spaces with basis over (quotient fields and infinite sets and metric spaces)
     sage: G = SymmetricGroup(9)
     sage: G.category()
     Join of Category of finite enumerated permutation groups and Category of finite weyl groups
@@ -2764,7 +2764,7 @@ class CategoryWithParameters(Category):
         Similarly for ``QQ`` and ``RR``::
 
             sage: QQ.category()
-            Join of Category of quotient fields and Category of metric spaces
+            Join of Category of quotient fields and Category of infinite sets and Category of metric spaces
             sage: RR.category()
             Join of Category of fields and Category of complete metric spaces
             sage: Modules(QQ).parent_class is Modules(RR).parent_class
@@ -2834,7 +2834,7 @@ class CategoryWithParameters(Category):
         of the left and right base rings::
 
             sage: Bimodules(QQ, ZZ)._make_named_class_key("morphism_class")
-            (Join of Category of quotient fields and Category of metric spaces,
+            (Join of Category of quotient fields and Category of infinite sets and Category of metric spaces,
              Join of Category of euclidean domains
                  and Category of infinite enumerated sets
                  and Category of metric spaces)
@@ -2968,11 +2968,11 @@ class JoinCategory(CategoryWithParameters):
                  and Category of infinite enumerated sets
                  and Category of metric spaces
             sage: Modules(QQ)._make_named_class_key('parent_class')
-            Join of Category of quotient fields and Category of metric spaces
+            Join of Category of quotient fields and Category of infinite sets and Category of metric spaces
             sage: Schemes(Spec(ZZ))._make_named_class_key('parent_class')
             Category of schemes
             sage: ModularAbelianVarieties(QQ)._make_named_class_key('parent_class')
-            Join of Category of quotient fields and Category of metric spaces
+            Join of Category of quotient fields and Category of infinite sets and Category of metric spaces
         """
         return tuple(getattr(cat, name) for cat in self._super_categories)
 
@@ -3018,7 +3018,7 @@ class JoinCategory(CategoryWithParameters):
 
         EXAMPLES::
 
-            sage: cat = Category.join([Rings(), VectorSpaces(QuotientFields().Metric())])
+            sage: cat = Category.join([Rings(), VectorSpaces(QuotientFields().Metric().Infinite())])
             sage: QQ['x'].category().is_subcategory(cat)  # indirect doctest
             True
         """
