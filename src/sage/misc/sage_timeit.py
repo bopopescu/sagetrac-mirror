@@ -23,7 +23,7 @@ class SageTimeitResult(object):
     r"""
     Represent the statistics of a timeit() command.
 
-    Prints as a unicode string so that it can be easily returned to a user.
+    Prints as a string so that it can be easily returned to a user.
 
     INPUT:
 
@@ -57,7 +57,7 @@ class SageTimeitResult(object):
         sage: order = 2
         sage: stats = (number, repeat, precision, best * scaling[order], units[order])
         sage: SageTimeitResult(stats)
-        7 loops, best of 13: 3.1416 ns per loop
+        7 loops, best of 13: 0.0031416 µs per loop
 
     If the third argument is not a Python integer, a ``TypeError`` is raised::
 
