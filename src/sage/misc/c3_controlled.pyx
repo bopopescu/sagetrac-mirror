@@ -347,7 +347,8 @@ doctest::
      Category of finite enumerated permutation groups,
      Category of finite weyl groups,
      Category of graded hopf algebras with basis over Rational Field,
-     Category of group algebras over Rational Field]
+     Category of group algebras over Rational Field,
+     Category of operads with basis over Rational Field]
 
 AUTHOR:
 
