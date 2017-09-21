@@ -14,6 +14,7 @@ Number fields
 from sage.categories.category_singleton import Category_singleton
 from sage.categories.basic import Fields
 
+
 class NumberFields(Category_singleton):
     r"""
     The category of number fields.
@@ -58,9 +59,9 @@ class NumberFields(Category_singleton):
         EXAMPLES::
 
             sage: NumberFields().super_categories()
-            [Category of fields]
+            [Category of infinite fields]
         """
-        return[Fields()]
+        return[Fields().Infinite()]
 
     def __contains__(self, x):
         r"""
@@ -111,8 +112,7 @@ class NumberFields(Category_singleton):
         try:
             return x.number_field()
         except AttributeError:
-            raise  TypeError("unable to canonically associate a number field to %s"%x)
-
+            raise TypeError("unable to canonically associate a number field to %s" % x)
 
     class ParentMethods:
         pass

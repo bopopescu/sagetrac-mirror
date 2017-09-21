@@ -39,6 +39,8 @@ TESTS::
     True
     sage: RationalField() is RationalField()
     True
+    sage: Q in Fields().Infinite()
+    True
 
 AUTHORS:
 
@@ -159,8 +161,8 @@ class RationalField(Singleton, number_field_base.NumberField):
             True
             sage: Q.category()
             Join of Category of number fields
-             and Category of quotient fields
-             and Category of metric spaces
+            and Category of quotient fields
+            and Category of infinite sets and Category of metric spaces
             sage: Q.zeta()
             -1
 
@@ -223,9 +225,13 @@ class RationalField(Singleton, number_field_base.NumberField):
             ('x',)
         """
         from sage.categories.basic import QuotientFields
+<<<<<<< HEAD
         from sage.categories.number_fields import NumberFields
         ParentWithGens.__init__(self, self, category=[QuotientFields().Metric(),
                                                       NumberFields()])
+=======
+        ParentWithGens.__init__(self, self, category=QuotientFields().Metric().Infinite())
+>>>>>>> 2f98551bf0aa8fc99f98cf2cdecf2fdaf584e5df
         self._assign_names(('x',),normalize=False) # ???
         self._populate_coercion_lists_(element_constructor=Rational, init_no_parent=True)
 
