@@ -225,13 +225,9 @@ class RationalField(Singleton, number_field_base.NumberField):
             ('x',)
         """
         from sage.categories.basic import QuotientFields
-<<<<<<< HEAD
         from sage.categories.number_fields import NumberFields
-        ParentWithGens.__init__(self, self, category=[QuotientFields().Metric(),
+        ParentWithGens.__init__(self, self, category=[QuotientFields().Metric().Infinite(),
                                                       NumberFields()])
-=======
-        ParentWithGens.__init__(self, self, category=QuotientFields().Metric().Infinite())
->>>>>>> 2f98551bf0aa8fc99f98cf2cdecf2fdaf584e5df
         self._assign_names(('x',),normalize=False) # ???
         self._populate_coercion_lists_(element_constructor=Rational, init_no_parent=True)
 
