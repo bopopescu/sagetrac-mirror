@@ -63,10 +63,11 @@ Check a fix for :trac:`16074`::
 # (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 from __future__ import absolute_import
-
 from six import *
+
+import sys
+DEFAULT_ENCODING = sys.getfilesystemencoding()
 
 
 def u(x):
@@ -98,3 +99,100 @@ def u(x):
     if isinstance(x, bytes):
         return x.decode("utf-8")
     raise TypeError('input has no conversion to unicode')
+
+
+string_to_unicode = u
+
+
+def string_to_bytes(x, encoding=DEFAULT_ENCODING):
+    r"""
+    Convert ``x`` to bytes using the given encoding if necessary.
+
+    INPUT:
+
+    - ``x`` -- a string (bytes or unicode)
+
+    - ``encoding`` -- optional (default is the system encoding)
+
+    OUTPUT:
+
+    an object of type ``bytes``
+
+    Python2 behaviour:
+
+    If input is str, returns the input.
+
+    If input is unicode, convert to bytes using given encoding.
+
+    Python3 behaviour:
+
+    If input is str, convert to bytes using given encoding.
+
+    If input is bytes, returns the input.
+
+    EXAMPLES::
+
+        sage: from sage.misc.six import string_to_bytes
+        sage: string_to_bytes("500 euros")
+        '500 euros'
+        sage: string_to_bytes("500 €")
+        '500 \xe2\x82\xac'
+        sage: string_to_bytes(u"500 \u20ac")
+        '500 \xe2\x82\xac'
+        sage: string_to_bytes(b'abc')
+        'abc'
+        sage: string_to_bytes(b'\xe2\x98\x83')
+        '\xe2\x98\x83'
+    """
+    if isinstance(x, text_type):  # py2 unicode and py3 str
+        return x.encode(encoding, errors='surrogateescape')
+    if isinstance(x, bytes):
+        return x
+    raise TypeError('input has no conversion to bytes')
+
+
+def string_to_str(x, encoding=DEFAULT_ENCODING):
+    r"""
+    Convert ``x`` to ``str`` using the given encoding if necessary.
+
+    INPUT:
+
+    - ``x`` -- a string (bytes or unicode)
+
+    - ``encoding`` -- optional (default is the system encoding)
+
+    OUTPUT:
+
+    an object of type ``str``
+
+    Python2 behaviour:
+
+    If input is str, returns the input.
+
+    If input is unicode, convert to str using given encoding.
+
+    Python3 behaviour:
+
+    If input is str, returns the input
+
+    If input is bytes, convert to str using given encoding.
+
+    EXAMPLES::
+
+        sage: from sage.misc.six import string_to_str
+        sage: string_to_str("500 €")
+        '500 \xe2\x82\xac'
+        sage: string_to_str(u"500 \u20ac")
+        '500 \xe2\x82\xac'
+        sage: string_to_str(b'abc')
+        'abc'
+        sage: string_to_str(b'\xe2\x98\x83')
+        '\xe2\x98\x83'
+    """
+    if isinstance(x, str):  # PY2 str or PY3 str
+        return x
+    if isinstance(x, binary_type):  # PY3 bytes
+        return x.decode(encoding, errors='surrogateescape')
+    if isinstance(x, text_type):  # PY2 unicode
+        return x.encode(encoding, errors='surrogateescape')
+    raise TypeError('input has no conversion to str')
