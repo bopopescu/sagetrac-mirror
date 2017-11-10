@@ -121,5 +121,5 @@ def unicode_art(*obj, **kwds):
         return _unicode_art_factory.build(obj[0])
     if not isinstance(separator, UnicodeArt):
         separator = _unicode_art_factory.build(separator)
-    obj = map(_unicode_art_factory.build, obj)
+    obj = list(map(_unicode_art_factory.build, obj))
     return _unicode_art_factory.concatenate(obj, separator, empty_unicode_art)

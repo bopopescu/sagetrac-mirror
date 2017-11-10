@@ -253,5 +253,5 @@ def ascii_art(*obj, **kwds):
         return _ascii_art_factory.build(obj[0])
     if not isinstance(separator, AsciiArt):
         separator = _ascii_art_factory.build(separator)
-    obj = map(_ascii_art_factory.build, obj)
+    obj = list(map(_ascii_art_factory.build, obj))
     return _ascii_art_factory.concatenate(obj, separator, empty_ascii_art)
