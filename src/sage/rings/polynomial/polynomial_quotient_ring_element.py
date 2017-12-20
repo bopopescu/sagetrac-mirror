@@ -402,23 +402,6 @@ class PolynomialQuotientRingElement(polynomial_singular_interface.Polynomial_sin
         c = g[0]
         return self.__class__(self.parent(), (~c)*a, check=False)
 
-    def __long__(self):
-        """
-        Coerce this element to a long if possible.
-
-        EXAMPLES::
-
-            sage: R.<x> = PolynomialRing(QQ)
-            sage: S.<a> = R.quotient(x^3-2)
-            sage: long(S(10))
-            10L
-            sage: long(a)
-            Traceback (most recent call last):
-            ...
-            TypeError: cannot coerce nonconstant polynomial to long
-        """
-        return long(self._polynomial)
-
     def field_extension(self, names):
         r"""
         Given a polynomial with base ring a quotient ring, return a
