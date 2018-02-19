@@ -12,6 +12,7 @@ from os import path
 
 import six
 
+from sage.cpython.string import str_to_bytes
 
 try:
     from hashlib import md5
@@ -30,9 +31,8 @@ class InventoryBuilder(StandaloneHTMLBuilder):
         cfgdict = dict((name, self.config[name])
                        for (name, desc) in six.iteritems(self.config.values)
                        if desc[1] == 'html')
-        self.config_hash = md5(unicode(cfgdict).encode('utf-8')).hexdigest()
-        self.tags_hash = md5(unicode(sorted(self.tags)).encode('utf-8')) \
-                .hexdigest()
+        self.config_hash = md5(str_to_bytes(str(cfgdict)).hexdigest()
+        self.tags_hash = md5(str_to_bytes(str(sorted(self.tags))).hexdigest()
         old_config_hash = old_tags_hash = ''
         try:
             fp = open(path.join(self.outdir, '.buildinfo'))
