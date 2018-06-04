@@ -2050,12 +2050,13 @@ class BinaryQuintic(AlgebraicForm):
             <BUGGY>
 
         """
+        R = self._ring
         clebsch = self.clebsch_invariants()
         invariants = {}
-        invariants['I4'] = 2**-1*5**4*clebsch['A']
-        invariants['I8'] = 5**5 * (2**-1*47*clebsch['A']**2-2**2*clebsch['B'])
-        invariants['I12'] = 5**10 * (2**-1*3*clebsch['A']**3-2**5*3**-1*clebsch['C'])
-        invariants['I18'] = 2**8*3**-1*5**15*clebsch['R']
+        invariants['I4'] = R(2)**-1*5**4*clebsch['A']
+        invariants['I8'] = 5**5 * (R(2)**-1*47*clebsch['A']**2-2**2*clebsch['B'])
+        invariants['I12'] = R(5**10) * (R(2)**-1*3*clebsch['A']**3-2**5*R(3)**-1*clebsch['C'])
+        invariants['I18'] = 2**8*R(3)**-1*5**15 * clebsch['R']
         return invariants
     
     def canonical_form(self):
@@ -2072,15 +2073,16 @@ class BinaryQuintic(AlgebraicForm):
             sage: R.<x0, x1> = QQ[]
             sage: p = 2*x1^5 + 4*x1^4*x0 + 5*x1^3*x0^2 + 7*x1^2*x0^3 - 11*x1*x0^4 + x0^5
             sage: f = invariant_theory.binary_quintic(p, x0, x1)
-            sage: g = random_matrix(QQ, 2, algorithm='unimodular', upper_bound=50)
+            sage: g = random_matrix(QQ, 2, algorithm='unimodular', upper_bound=10)
             sage: gf = f.transformed(g)
-            sage: f.canonical_form() = gf.canonical_form()
+            sage: f.canonical_form() == gf.canonical_form()
             True
         """
         from sage.rings.invariants.reconstruction import binary_quintic_from_invariants
         K = self._ring.base_ring()
-        invs = self.clebsch_invariants()
-        coeffs = binary_quintic_from_invariants([invs['A'],invs['B'],invs['C'],invs['R']], 'clebsch', K)
+        clebsch = self.clebsch_invariants()
+        invs = [clebsch[x] for x in clebsch]
+        coeffs = binary_quintic_from_invariants(invs, 'clebsch', K, scaled=True)
         x, y = self._variables
         form = sum([coeffs[i]*x**i*y**(5-i) for i in range(6)])
         return invariant_theory.binary_quintic(form, x, y)

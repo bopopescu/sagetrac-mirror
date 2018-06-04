@@ -50,6 +50,8 @@ def binary_form_from_invariants(degree, invariants, type='default'):
         (1, 0, 0, 0, 0, 1)
         
         sage: binary_form_from_invariants(6, invariants)
+        Traceback (most recent call last):
+        ...
         NotImplementedError: No reconstruction for binary forms of degree 6 implemented.
     
     
@@ -90,7 +92,7 @@ def binary_cubic_from_invariants(discriminant):
     
 ######################################################################
 
-def binary_quintic_from_invariants(invariants, type='clebsch', K=None):
+def binary_quintic_from_invariants(invariants, type='clebsch', K=None, scaled=False):
     """
     Function to reconstruct a binary quintic from the values of its 
     (Clebsch) invariants.
@@ -105,6 +107,9 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None):
       described by Clebsch in _[Cle1872].
     
     - ``K`` -- The field over which the quintic is defined.
+    
+    - ``scaled`` -- A boolean to determine wether the coefficients should
+      be scaled so the result is independent of the scaling of the invariants.
 
     OUTPUT:
 
@@ -114,11 +119,12 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None):
     EXAMPLES::
         
         sage: from sage.rings.invariants.reconstruction import binary_quintic_from_invariants
-        sage: R.<x0, x1> = GF(7)[]
+        sage: K = GF(7)
+        sage: R.<x0, x1> = K[]
         sage: p = 3*x1^5 + 6*x1^4*x0 + 3*x1^3*x0^2 + 4*x1^2*x0^3 - 5*x1*x0^4 + 4*x0^5
         sage: quintic = invariant_theory.binary_quintic(p, x0, x1)
         sage: invs = [quintic.A_invariant(),quintic.B_invariant(),quintic.C_invariant()]
-        sage: reconstructed = binary_quintic_from_invariants(invs)
+        sage: reconstructed = binary_quintic_from_invariants(invs, K=K)
         sage: reconstructed
         (3, 1, 3, 1, 3, 5)
     
@@ -145,10 +151,11 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None):
     If the invariant M vanishes, the coefficients are computed in a
     different way::
     
-        sage: reconstructed = quintic_from_clebsch_invariants([K(3),1,2], x0, x1)
+        sage: reconstructed = binary_quintic_from_invariants([3,1,2], K=K)
         sage: reconstructed
-        x0^5 + 2*x0^4*x1 - 2*x0^3*x1^2 - x0*x1^4 - x1^5
-        sage: newquintic = invariant_theory.binary_quintic(reconstructed, x0, x1)
+        (6, 6, 0, 5, 2, 1)
+        sage: newform = sum([ reconstructed[i]*x0^i*x1^(5-i) for i in range(6) ])
+        sage: newquintic = invariant_theory.binary_quintic(newform, x0, x1)
         sage: scale = 3/newquintic.A_invariant()
         sage: [3, newquintic.B_invariant()*scale^2, newquintic.C_invariant()*scale^3]
         [3, 1, 2]
@@ -157,18 +164,20 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None):
     
         sage: quintic = invariant_theory.binary_quintic(x0^5 - x1^5, x0, x1)
         sage: invs = [quintic.A_invariant(),quintic.B_invariant(),quintic.C_invariant()]
-        sage: reconstructed = quintic_from_clebsch_invariants(invs, x0, x1)
+        sage: reconstructed = binary_quintic_from_invariants(invs,  K=K)
         sage: reconstructed
-        x0^5 - x1^5
+        (1, 0, 0, 0, 0, 1)
         sage: quintic = invariant_theory.binary_quintic(x0*x1*(x0^3-x1^3), x0, x1)
         sage: invs = [quintic.A_invariant(),quintic.B_invariant(),quintic.C_invariant()]
-        sage: reconstructed = quintic_from_clebsch_invariants(invs, x0, x1)
+        sage: reconstructed = binary_quintic_from_invariants(invs,  K=K)
         sage: reconstructed
-        x0^4*x1 - x0*x1^4
+         (0, 1, 0, 0, 1, 0)
         
     For fields of characteristic 2, 3 or 5, there is no reconstruction implemented::
     
         sage: binary_quintic_from_invariants([3,1,2], K=GF(5))
+        Traceback (most recent call last):
+        ...
         NotImplementedError: No reconstruction implemented for fields of characteristic 2, 3 or 5.
     
     """
@@ -243,4 +252,8 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None):
     A4 = D**2*C0 + D*Delta*B0 + K(4)**-1*Delta**2*A0
     A5 = D**2*C1 + D*Delta*B1 + K(4)**-1*Delta**2*A1
     # D**(-5)*(A5*x**5 - 5*A4*x**4*y + 10*A3*x**3*y**2 - 10*A2*x**2*y**3 + 5*A1*x*y**4 - A0*y**5)
-    return tuple([K((-1)**(i+1)*D**(-5)*binomial(5,i)*eval('A%d' %i)*scale[i]) for i in range(6)]) 
+    coeffs = tuple([K((-1)**(i+1)*D**(-5)*binomial(5,i)*eval('A%d' %i)) for i in range(6)])
+    if scaled:
+        return tuple([coeffs[i]*scale[i] for i in range(6)])
+    else:
+        return coeffs
