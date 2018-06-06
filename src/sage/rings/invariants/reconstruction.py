@@ -27,34 +27,34 @@ AUTHORS:
 
 def binary_form_from_invariants(degree, invariants, type='default'):
     """
-    Function to reconstruct a binary form from the values of its 
+    Function to reconstruct a binary form from the values of its
     invariants.
 
     INPUT:
 
     - ``degree`` --  The degree of the binary form.
-    
+
     - ``invariants`` --  The values of the invariants of the binary form.
 
-    - ``type`` -- The type of invariants given. 
+    - ``type`` -- The type of invariants given.
 
     OUTPUT:
 
-    A set of coefficients of a binary form, whose invariants are equal 
+    A set of coefficients of a binary form, whose invariants are equal
     to the given ``invariants`` up to a scaling.
 
     EXAMPLES::
-        
+
         sage: invariants = [1, 0, 0]
         sage: binary_form_from_invariants(5, invariants)
         (1, 0, 0, 0, 0, 1)
-        
+
         sage: binary_form_from_invariants(6, invariants)
         Traceback (most recent call last):
         ...
         NotImplementedError: No reconstruction for binary forms of degree 6 implemented.
-    
-    
+
+
     """
     if degree == 5:
         return binary_quintic_from_invariants(invariants, type)
@@ -65,59 +65,59 @@ def binary_form_from_invariants(degree, invariants, type='default'):
 ######################################################################
 
 def binary_quadratic_from_invariants(discriminant):
-    """       
-    Function to reconstruct a binary quadratic from the value of its 
-    discriminant.    
-        
-    """   
+    """
+    Function to reconstruct a binary quadratic from the value of its
+    discriminant.
+
+    """
     if discriminant == 0:
         return (1, 0, 0)
     else:
         return (1, 1, 0)
-    
+
 
 ######################################################################
 
 def binary_cubic_from_invariants(discriminant):
-    """       
-    Function to reconstruct a binary cubic from the value of its 
+    """
+    Function to reconstruct a binary cubic from the value of its
     discriminant.
-        
-    """   
+
+    """
     if discriminant == 0:
         raise NotImplementedError('No distinction implemented for binary cubics with a double root.')
     else:
         return (1, 0, 0, 1)
 
-    
+
 ######################################################################
 
 def binary_quintic_from_invariants(invariants, type='clebsch', K=None, scaled=False):
     """
-    Function to reconstruct a binary quintic from the values of its 
+    Function to reconstruct a binary quintic from the values of its
     (Clebsch) invariants.
 
     INPUT:
 
-    - ``invariants`` --  The values of the three or four invariants 
+    - ``invariants`` --  The values of the three or four invariants
       of the binary quintic.
 
     - ``type`` -- The type of invariants given. By default the
       given invariants are the invariants A, B, C (and R) as
       described by Clebsch in _[Cle1872].
-    
+
     - ``K`` -- The field over which the quintic is defined.
-    
+
     - ``scaled`` -- A boolean to determine wether the coefficients should
       be scaled so the result is independent of the scaling of the invariants.
 
     OUTPUT:
 
-    A set of coefficients of a binary quintic, whose Clebsch invariants 
+    A set of coefficients of a binary quintic, whose Clebsch invariants
     are equal to ``invariants`` up to a scaling.
 
     EXAMPLES::
-        
+
         sage: from sage.rings.invariants.reconstruction import binary_quintic_from_invariants
         sage: K = GF(7)
         sage: R.<x0, x1> = K[]
@@ -127,19 +127,19 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None, scaled=Fa
         sage: reconstructed = binary_quintic_from_invariants(invs, K=K)
         sage: reconstructed
         (3, 1, 3, 1, 3, 5)
-    
+
     The form obtained corresponds with the one found when setting the coordinates
     equal to the covariants alpha and beta::
-    
+
         sage: alpha = quintic.alpha_covariant()
         sage: beta = quintic.beta_covariant()
         sage: g = matrix([[alpha(x0=1,x1=0),alpha(x0=0,x1=1)],[beta(x0=1,x1=0),beta(x0=0,x1=1)]])^-1
         sage: quintic.transformed(g).coeffs() == reconstructed
         True
-        
+
     We can check that the invariants match by scaling the invariants
     B and C to see if they match::
-    
+
         sage: newform = sum([ reconstructed[i]*x0^i*x1^(5-i) for i in range(6) ])
         sage: newquintic = invariant_theory.binary_quintic(newform, x0, x1)
         sage: scale = invs[0]/newquintic.A_invariant()
@@ -147,10 +147,10 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None, scaled=Fa
         True
         sage: invs[2] == newquintic.C_invariant()*scale^3
         True
-    
+
     If the invariant M vanishes, the coefficients are computed in a
     different way::
-    
+
         sage: reconstructed = binary_quintic_from_invariants([3,1,2], K=K)
         sage: reconstructed
         (6, 6, 0, 5, 2, 1)
@@ -159,9 +159,9 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None, scaled=Fa
         sage: scale = 3/newquintic.A_invariant()
         sage: [3, newquintic.B_invariant()*scale^2, newquintic.C_invariant()*scale^3]
         [3, 1, 2]
-        
+
     Several special cases::
-    
+
         sage: quintic = invariant_theory.binary_quintic(x0^5 - x1^5, x0, x1)
         sage: invs = [quintic.A_invariant(),quintic.B_invariant(),quintic.C_invariant()]
         sage: reconstructed = binary_quintic_from_invariants(invs,  K=K)
@@ -172,14 +172,14 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None, scaled=Fa
         sage: reconstructed = binary_quintic_from_invariants(invs,  K=K)
         sage: reconstructed
          (0, 1, 0, 0, 1, 0)
-        
+
     For fields of characteristic 2, 3 or 5, there is no reconstruction implemented::
-    
+
         sage: binary_quintic_from_invariants([3,1,2], K=GF(5))
         Traceback (most recent call last):
         ...
         NotImplementedError: No reconstruction implemented for fields of characteristic 2, 3 or 5.
-    
+
     """
     A, B, C = invariants[0:3]
     if K is None:
@@ -190,7 +190,7 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None, scaled=Fa
     N = K(2)**-1 * (A*C-B**2)
     R2 = -K(2)**-1 * K(A*N**2-2*B*M*N+C*M**2)
     from sage.functions.all import binomial, sqrt
-    try: 
+    try:
         if R2.is_square():
             R = sqrt(R2)
         else:
@@ -215,7 +215,7 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None, scaled=Fa
             # case corresponding to using alpha and gamma as coordinates
             if A == 0:
                 return (1,0,0,0,1,0) # x*(x**4+y**4)
-            else:      
+            else:
                 scale = [ A**6*(R/A**3)**i for i in range(6) ] # subs = {y:(R/A**3)*y}
                 D = -N
                 Delta = C
@@ -229,15 +229,15 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None, scaled=Fa
         if R == 0:
             if A == 0:
                 return (1,0,10,0,-15,0) # x**5 + 10*x**3*y**2 - 15*x*y**4
-            else:    
+            else:
                 scale = [ A**11*sqrt(A)**(i-10) for i in range(6) ] # subs = {x:x/A, y:y/sqrt(A)}
-        else:    
+        else:
             if A == 0:
                 if B == 0:
                     return (1,0,0,1,0,0) # x**2*(x**3+y**3)
-                else: 
-                    scale = [ M**2*(R/B**2)**i for i in range(6) ] # subs = {y:(R/B**2)*y}                  
-            else:              
+                else:
+                    scale = [ M**2*(R/B**2)**i for i in range(6) ] # subs = {y:(R/B**2)*y}
+            else:
                 scale = [ M**2*(R/A**4)**i for i in range(6) ] # subs = {y:(R/A**4)*y}
         D = -M
         Delta = A
@@ -257,3 +257,4 @@ def binary_quintic_from_invariants(invariants, type='clebsch', K=None, scaled=Fa
         return tuple([coeffs[i]*scale[i] for i in range(6)])
     else:
         return coeffs
+

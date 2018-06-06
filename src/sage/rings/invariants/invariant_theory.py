@@ -116,7 +116,7 @@ from sage.matrix.constructor import matrix
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.misc.cachefunc import cached_method
-from sage.functions.other import binomial, factorial, sqrt
+
 
 
 ######################################################################
@@ -214,6 +214,7 @@ def transvectant(f, g, h=1):
     if h > f._d or h > g._d:
         tv = R(0)
     else:
+        from sage.functions.other import binomial, factorial
         if R.characteristic() > max(f._d,g._d) or R.characteristic() == 0:
             scalar = factorial(f._d-h) * factorial(g._d-h) * R(factorial(f._d)*factorial(g._d))**(-1)
         elif R.characteristic() > h:
@@ -635,8 +636,8 @@ class AlgebraicForm(FormsBase):
         return self._polynomial
 
     polynomial = form
- 
-    
+
+
     def homogenized(self, var='h'):
         """
         Return form as defined by a homogeneous polynomial.
@@ -1466,7 +1467,7 @@ class BinaryQuintic(AlgebraicForm):
 
     REFERENCES:
 
-    For a description of all invariants and covariants of a binary 
+    For a description of all invariants and covariants of a binary
     quintic, see section 73 of _[Cle1872].
 
     TESTS::
@@ -1998,7 +1999,7 @@ class BinaryQuintic(AlgebraicForm):
         gamma = self.gamma_covariant(asform=True)
         cov = transvectant(beta, gamma, 1)
         return cov.polynomial()
-        
+
     @cached_method
     def clebsch_invariants(self):
         """
@@ -2030,7 +2031,7 @@ class BinaryQuintic(AlgebraicForm):
             invariants['C'] = self.C_invariant()
             invariants['R'] = self.R_invariant()
         return invariants
-        
+
     @cached_method
     def scaled_invariants(self):
         """
@@ -2051,10 +2052,10 @@ class BinaryQuintic(AlgebraicForm):
              'I18': -12712872348048797642752,
              'I4': -138016,
              'I8': 14164936192}
-            
+
         We can check that the coefficients of the invariants have no common divisor
         for a general quintic form::
-            
+
             sage: R.<a0,a1,a2,a3,a4,a5,x0,x1> = QQ[]
             sage: p = a0*x1^5 + a1*x1^4*x0 + a2*x1^3*x0^2 + a3*x1^2*x0^3 + a4*x1*x0^4 + a5*x0^5
             sage: quintic = invariant_theory.binary_quintic(p, x0, x1)
@@ -2071,7 +2072,7 @@ class BinaryQuintic(AlgebraicForm):
         invariants['I12'] = 5**10 * (R(2)**-1*3*clebsch['A']**3-2**5*R(3)**-1*clebsch['C'])
         invariants['I18'] = 2**8*R(3)**-1*5**15 * clebsch['R']
         return invariants
-    
+
     def canonical_form(self):
         r"""
         Returns a canonical representative of the `GL(2,K)`-orbit of
@@ -3885,7 +3886,7 @@ can then be queried for invariant and covariants. For example,
         REFERENCES:
 
         - :wikipedia:`Invariant_of_a_binary_form`
-        - [Cle1872]_ 
+        - [Cle1872]_
 
         EXAMPLES::
 
@@ -3893,7 +3894,7 @@ can then be queried for invariant and covariants. For example,
             sage: quintic = invariant_theory.binary_quintic(x^5+y^5)
             sage: quintic
             Binary quintic with coefficients (1, 0, 0, 0, 0, 1)
-            
+
             sage: type(quintic)
             <class 'sage.rings.invariants.invariant_theory.BinaryQuintic'>
         """
