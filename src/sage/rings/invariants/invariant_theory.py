@@ -2046,8 +2046,21 @@ class BinaryQuintic(AlgebraicForm):
             sage: R.<x0, x1> = QQ[]
             sage: p = 2*x1^5 + 4*x1^4*x0 + 5*x1^3*x0^2 + 7*x1^2*x0^3 - 11*x1*x0^4 + x0^5
             sage: quintic = invariant_theory.binary_quintic(p, x0, x1)
-            sage: quintic.scaled_invariants() # DOES NOT WORK YET AS INTENDED
-            <BUGGY>
+            sage: quintic.scaled_invariants()
+            {'I12': -1156502613073152,
+             'I18': -12712872348048797642752,
+             'I4': -138016,
+             'I8': 14164936192}
+            
+        We can check that the coefficients of the invariants have no common divisor
+        for a general quintic form::
+            
+            sage: R.<a0,a1,a2,a3,a4,a5,x0,x1> = QQ[]
+            sage: p = a0*x1^5 + a1*x1^4*x0 + a2*x1^3*x0^2 + a3*x1^2*x0^3 + a4*x1*x0^4 + a5*x0^5
+            sage: quintic = invariant_theory.binary_quintic(p, x0, x1)
+            sage: scinvs = quintic.scaled_invariants()
+            sage: [scinvs[x].content() for x in scinvs]
+            [1, 1, 1, 1]
 
         """
         R = self._ring
@@ -2055,7 +2068,7 @@ class BinaryQuintic(AlgebraicForm):
         invariants = {}
         invariants['I4'] = R(2)**-1*5**4*clebsch['A']
         invariants['I8'] = 5**5 * (R(2)**-1*47*clebsch['A']**2-2**2*clebsch['B'])
-        invariants['I12'] = R(5**10) * (R(2)**-1*3*clebsch['A']**3-2**5*R(3)**-1*clebsch['C'])
+        invariants['I12'] = 5**10 * (R(2)**-1*3*clebsch['A']**3-2**5*R(3)**-1*clebsch['C'])
         invariants['I18'] = 2**8*R(3)**-1*5**15 * clebsch['R']
         return invariants
     
