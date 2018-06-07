@@ -1914,8 +1914,12 @@ class BinaryQuintic(AlgebraicForm):
             4/5*a0*a1*a4*a5 - 2*a0^2*a5^2
         """
         i = self.i_covariant(asform=True)
-        cov = transvectant(i, i, 2)
-        return cov.polynomial()
+        A = transvectant(i, i, 2).polynomial()
+        try:
+            K = self._ring.base_ring()
+            return K(A)
+        except TypeError:
+            return A
 
     @cached_method
     def B_invariant(self):
@@ -1942,8 +1946,12 @@ class BinaryQuintic(AlgebraicForm):
         """
         i = self.i_covariant(asform=True)
         tau = self.tau_covariant(asform=True)
-        cov = transvectant(i, tau, 2)
-        return cov.polynomial()
+        B = transvectant(i, tau, 2).polynomial()
+        try:
+            K = self._ring.base_ring()
+            return K(B)
+        except TypeError:
+            return B
 
     @cached_method
     def C_invariant(self):
@@ -1969,8 +1977,12 @@ class BinaryQuintic(AlgebraicForm):
             6/625*a0^4*a2^2*a3^2*a5^4
         """
         tau = self.tau_covariant(asform=True)
-        cov = transvectant(tau, tau, 2)
-        return cov.polynomial()
+        C = transvectant(tau, tau, 2).polynomial()
+        try:
+            K = self._ring.base_ring()
+            return K(C)
+        except TypeError:
+            return C
 
     @cached_method
     def R_invariant(self):
@@ -1997,11 +2009,15 @@ class BinaryQuintic(AlgebraicForm):
         """
         beta = self.beta_covariant(asform=True)
         gamma = self.gamma_covariant(asform=True)
-        cov = transvectant(beta, gamma, 1)
-        return cov.polynomial()
+        R = transvectant(beta, gamma, 1).polynomial()
+        try:
+            K = self._ring.base_ring()
+            return K(R)
+        except TypeError:
+            return R
 
     @cached_method
-    def clebsch_invariants(self):
+    def clebsch_invariants(self, as_tuple=False):
         """
         Returns the invariants of a binary quintic as described by Clebsch.
         The following invariants are returned: A, B, C and R.
@@ -2024,12 +2040,14 @@ class BinaryQuintic(AlgebraicForm):
         if self._ring.characteristic() in [2, 3, 5]:
             raise NotImplementedError('No invariants implemented for fields of characteristic 2, 3 or 5.') # todo: add support
         else:
+            coeffs = self.coeffs()
             x0, x1 = self._variables
             invariants = {}
             invariants['A'] = self.A_invariant()
             invariants['B'] = self.B_invariant()
             invariants['C'] = self.C_invariant()
             invariants['R'] = self.R_invariant()
+            
         return invariants
 
     @cached_method
@@ -2087,7 +2105,7 @@ class BinaryQuintic(AlgebraicForm):
             sage: R.<x0, x1> = QQ[]
             sage: p = 2*x1^5 + 4*x1^4*x0 + 5*x1^3*x0^2 + 7*x1^2*x0^3 - 11*x1*x0^4 + x0^5
             sage: f = invariant_theory.binary_quintic(p, x0, x1)
-            sage: g = random_matrix(QQ, 2, algorithm='unimodular', upper_bound=10)
+            sage: g = matrix(QQ, [[11,5],[7,2]])
             sage: gf = f.transformed(g)
             sage: f.canonical_form() == gf.canonical_form()
             True
@@ -2095,8 +2113,8 @@ class BinaryQuintic(AlgebraicForm):
         from sage.rings.invariants.reconstruction import binary_quintic_from_invariants
         K = self._ring.base_ring()
         clebsch = self.clebsch_invariants()
-        invs = [clebsch[x] for x in clebsch]
-        coeffs = binary_quintic_from_invariants(invs, 'clebsch', K, scaled=True)
+        invs = [K(clebsch[x]) for x in clebsch]
+        coeffs = binary_quintic_from_invariants(invs, 'clebsch', scaled=True)
         x, y = self._variables
         form = sum([coeffs[i]*x**i*y**(5-i) for i in range(6)])
         return invariant_theory.binary_quintic(form, x, y)
