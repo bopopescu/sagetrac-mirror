@@ -1,8 +1,9 @@
 r"""
-Reconstruction of algebraic forms from invariants
+Reconstruction of Algebraic Forms
 
 This module reconstructs algebraic forms from the values of their
-invariants.
+invariants. Given a set of (classical) invariants, it returns a
+form that attains this values as invariants (up to scaling).
 
 AUTHORS:
 
@@ -20,6 +21,7 @@ AUTHORS:
 #*****************************************************************************
 
 from sage.rings.all import ZZ
+from sage.rings.fraction_field import FractionField
 
 
 def binary_form_from_invariants(degree, invariants):
@@ -185,7 +187,7 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
     If the invariant M vanishes, the coefficients are computed in a
     different way::
 
-        sage: reconstructed = binary_quintic_from_invariants([3,1,2], K=QQ)
+        sage: reconstructed = binary_quintic_from_invariants([3,1,2])
         sage: reconstructed
         (66741943359375/2097152,
          -125141143798828125/134217728,
@@ -227,7 +229,7 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
             invariants = reduce_invariants(invariants, [2,4,6,9])
     A, B, C = invariants[0:3]
     if K is None:
-        K = A.parent()
+        K = FractionField(A.parent())
     if K.characteristic() in [2, 3, 5]:
         raise NotImplementedError('No reconstruction implemented for fields of characteristic 2, 3 or 5.')
     M = 2*A*B - 3*C
@@ -242,7 +244,13 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
             # if R2 is not a square, we scale the invariants in a suitable way so that the 'new' R2 is a square
             # r = R2.squarefree_part() # slow!
             invariants = [R2*A, R2**2*B, R2**3*C]
-            return binary_quintic_from_invariants(invariants, K, scaled, reduced)
+            # we compute again with the new invariants, not reduced; else the scaling is undone
+            coeffs = binary_quintic_from_invariants(invariants, K, scaled, reduced=False)
+            if reduced:
+                from sage.arith.misc import gcd
+                return tuple([coeffs[i]/gcd(coeffs) for i in range(6)])
+            else:
+                return coeffs
     except (AttributeError, NotImplementedError):
         if len(invariants) > 3:
             R = invariants[3]

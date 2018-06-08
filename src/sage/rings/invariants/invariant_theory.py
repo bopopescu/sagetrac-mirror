@@ -2122,7 +2122,10 @@ class BinaryQuintic(AlgebraicForm):
         from sage.rings.invariants.reconstruction import binary_quintic_from_invariants
         clebsch = self.clebsch_invariants(as_tuple=True)
         K = self._ring.base_ring()
-        if K.characteristic() == 0:
+        if K == QQ:
+            # Note this method works for any number field with class number 1, but
+            # the scaled method is a lot faster as computing the class number
+            # takes a lot of time.
             coeffs = binary_quintic_from_invariants(clebsch, reduced=True)
         else:
             coeffs = binary_quintic_from_invariants(clebsch, scaled=True)
