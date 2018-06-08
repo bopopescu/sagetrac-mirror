@@ -2036,6 +2036,13 @@ class BinaryQuintic(AlgebraicForm):
              'B': 4983526016/390625,
              'C': -247056495846408/244140625,
              'R': -148978972828696847376/30517578125}
+
+            sage: quintic.clebsch_invariants(as_tuple=True)
+            (-276032/625,
+             4983526016/390625,
+             -247056495846408/244140625,
+             -148978972828696847376/30517578125)
+
         """
         if self._ring.characteristic() in [2, 3, 5]:
             raise NotImplementedError('No invariants implemented for fields of characteristic 2, 3 or 5.') # todo: add support
@@ -2047,8 +2054,10 @@ class BinaryQuintic(AlgebraicForm):
             invariants['B'] = self.B_invariant()
             invariants['C'] = self.C_invariant()
             invariants['R'] = self.R_invariant()
-            
-        return invariants
+        if as_tuple == True:
+            return (invariants['A'],invariants['B'],invariants['C'],invariants['R'])
+        else:
+            return invariants
 
     @cached_method
     def scaled_invariants(self):
@@ -2111,10 +2120,12 @@ class BinaryQuintic(AlgebraicForm):
             True
         """
         from sage.rings.invariants.reconstruction import binary_quintic_from_invariants
+        clebsch = self.clebsch_invariants(as_tuple=True)
         K = self._ring.base_ring()
-        clebsch = self.clebsch_invariants()
-        invs = [K(clebsch[x]) for x in clebsch]
-        coeffs = binary_quintic_from_invariants(invs, 'clebsch', scaled=True)
+        if K.characteristic() == 0:
+            coeffs = binary_quintic_from_invariants(clebsch, reduced=True)
+        else:
+            coeffs = binary_quintic_from_invariants(clebsch, scaled=True)
         x, y = self._variables
         form = sum([coeffs[i]*x**i*y**(5-i) for i in range(6)])
         return invariant_theory.binary_quintic(form, x, y)
