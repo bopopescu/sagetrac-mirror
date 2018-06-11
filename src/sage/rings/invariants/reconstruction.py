@@ -7,8 +7,7 @@ form that attains this values as invariants (up to scaling).
 
 AUTHORS:
 
-- Jesper Noordsij (2018-05-24): initial version
-
+- Jesper Noordsij (2018-06): initial version
 """
 
 #*****************************************************************************
@@ -51,7 +50,6 @@ def binary_form_from_invariants(degree, invariants):
         ...
         NotImplementedError: No reconstruction for binary forms of degree 6 implemented.
 
-
     """
     if degree == 2:
         return binary_quadratic_from_invariants(invariants)
@@ -73,7 +71,7 @@ def binary_quadratic_from_invariants(discriminant):
     INPUT:
 
     - ``discriminant`` --  The values of the the discriminant of the
-    binary quadratic.
+      binary quadratic.
 
     OUTPUT:
 
@@ -100,7 +98,7 @@ def binary_cubic_from_invariants(discriminant):
     INPUT:
 
     - ``discriminant`` --  The values of the the discriminant of the
-    binary cubic.
+      binary cubic.
 
     OUTPUT:
 
