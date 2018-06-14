@@ -194,20 +194,17 @@ def integral_elements_in_box(K, C):
 
     from sage.geometry.lattice_polytope import LatticePolytope
     P = LatticePolytope(M)
-    S = []
 
     try:
         pts = P.points()
     except ValueError:
         return []
 
+    S = []
     for p in pts:
-        theta = sum(zip(P.list(), B))
-        inbounds = True
-        for i in range(d):
-            inbounds = inbounds and Foo[i](theta) >= C[i][0] and Foo[i](theta) <= C[i][1]
-
-        if inbounds:
+        theta = sum(a * b for a, b in zip(p.list(), B))
+        if all((C[ii][0] <= Foo[ii](theta) <= C[ii][1])
+               for ii in range(d)):
             S.append(theta)
 
     return S
