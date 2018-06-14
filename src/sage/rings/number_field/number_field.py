@@ -10348,7 +10348,10 @@ class NumberField_cyclotomic(NumberField_absolute):
             pass
         n = self._n()
         z = CC.zeta(n)
-        X = n.coprime_integers(n)
+        if n == 1:
+            X = [0]
+        else:
+            X = n.coprime_integers(n)
         v = [self.hom([z**nn], check=False) for nn in X]
         self.__embeddings[CC] = Sequence(v, cr=True, immutable=True,
                                          check=False, universe=self.Hom(CC))
