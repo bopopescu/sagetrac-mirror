@@ -1196,7 +1196,7 @@ class RootLatticeRealizations(Category_over_base_ring):
             """
             if not self.cartan_type().is_finite():
                 raise ValueError("%s is not a finite Cartan type" % self.cartan_type())
-            return self.positive_roots().map(attrcall('__neg__'))
+            return [r.__neg__() for r in self.positive_roots()]
 
         ##########################################################################
         # coroots

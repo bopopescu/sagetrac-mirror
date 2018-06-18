@@ -813,7 +813,9 @@ from sage.structure.element import parent
 from sage.modules.free_module_element import vector
 from sage.rings.all import ZZ, QQ
 from sage.combinat.root_system.cartan_type import CartanType
-lazy_import("sage.combinat.root_system.root_lattice_realizations", "RootLatticeRealizations")
+lazy_import("sage.combinat.root_system.root_lattice_realizations",
+            "RootLatticeRealizations")
+
 
 class PlotOptions(object):
     r"""
@@ -1577,7 +1579,7 @@ def barycentric_projection_matrix(n, angle=0):
     n = ZZ(n)
     if n == 0:
         return matrix(QQ, 0, 1)
-    a = 1/n
+    a = ZZ.one() / n
     b = sqrt(1-a**2)
     result = b * barycentric_projection_matrix(n-1)
     result = result.augment(vector([0]*(n-1)))
