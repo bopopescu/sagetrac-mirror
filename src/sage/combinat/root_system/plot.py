@@ -1579,7 +1579,7 @@ def barycentric_projection_matrix(n, angle=0):
     n = ZZ(n)
     if n == 0:
         return matrix(QQ, 0, 1)
-    a = ZZ.one() / n
+    a = ~n
     b = sqrt(1-a**2)
     result = b * barycentric_projection_matrix(n-1)
     result = result.augment(vector([0]*(n-1)))
@@ -1588,7 +1588,8 @@ def barycentric_projection_matrix(n, angle=0):
     if angle and n == 2:
         from sage.functions.trig import sin
         from sage.functions.trig import cos
-        rotation = matrix([[sin(angle), cos(angle)],[-cos(angle), sin(angle)]])
+        rotation = matrix([[sin(angle), cos(angle)],
+                           [-cos(angle), sin(angle)]])
         result = rotation * result
     result.set_immutable()
     return result
