@@ -514,7 +514,7 @@ class AlgebraicForm(FormsBase):
 
 
     def _check_covariant(self, method_name, g=None, invariant=False):
-        """
+        r"""
         Test whether ``method_name`` actually returns a covariant.
 
         INPUT:
@@ -779,7 +779,7 @@ class AlgebraicForm(FormsBase):
 
 
     def transformed(self, g):
-        """
+        r"""
         Return the image under a linear transformation of the variables.
 
         INPUT:
@@ -946,7 +946,7 @@ class QuadraticForm(AlgebraicForm):
 
 
     def scaled_coeffs(self):
-        """
+        r"""
         The scaled coefficients of a quadratic form.
 
         Given
@@ -977,7 +977,7 @@ class QuadraticForm(AlgebraicForm):
 
     @cached_method
     def matrix(self):
-        """
+        r"""
         Return the quadratic form as a symmetric matrix
 
         OUTPUT:
@@ -2235,7 +2235,7 @@ class TernaryQuadratic(QuadraticForm):
 
     @cached_method
     def coeffs(self):
-        """
+        r"""
         Return the coefficients of a quadratic.
 
         Given
@@ -2263,7 +2263,7 @@ class TernaryQuadratic(QuadraticForm):
 
 
     def scaled_coeffs(self):
-        """
+        r"""
         Return the scaled coefficients of a quadratic.
 
         Given
@@ -2561,7 +2561,7 @@ class TernaryCubic(AlgebraicForm):
 
     @cached_method
     def polar_conic(self):
-        """
+        r"""
         Return the polar conic of the cubic.
 
         OUTPUT:
@@ -2644,7 +2644,7 @@ class TernaryCubic(AlgebraicForm):
 
 
     def Theta_covariant(self):
-        """
+        r"""
         Return the `\Theta` covariant.
 
         EXAMPLES::
@@ -2701,7 +2701,7 @@ class TernaryCubic(AlgebraicForm):
             [self.Theta_covariant(), 6])
 
     def syzygy(self, U, S, T, H, Theta, J):
-        """
+        r"""
         Return the syzygy of the cubic evaluated on the invariants
         and covariants.
 
@@ -2923,7 +2923,7 @@ class SeveralAlgebraicForms(FormsBase):
 
 
     def _check_covariant(self, method_name, g=None, invariant=False):
-        """
+        r"""
         Test whether ``method_name`` actually returns a covariant.
 
         INPUT:
@@ -3067,7 +3067,7 @@ class TwoTernaryQuadratics(TwoAlgebraicForms):
     """
 
     def Delta_invariant(self):
-        """
+        r"""
         Return the `\Delta` invariant.
 
         EXAMPLES::
@@ -3284,7 +3284,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
     """
 
     def Delta_invariant(self):
-        """
+        r"""
         Return the `\Delta` invariant.
 
         EXAMPLES::
@@ -3389,7 +3389,7 @@ class TwoQuaternaryQuadratics(TwoAlgebraicForms):
 
 
     def Phi_invariant(self):
-        """
+        r"""
         Return the `\Phi'` invariant.
 
         EXAMPLES::
