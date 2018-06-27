@@ -82,13 +82,13 @@ def binary_quadratic_from_invariants(discriminant):
 
         sage: from sage.rings.invariants.reconstruction import binary_quadratic_from_invariants
         sage: binary_quadratic_from_invariants(1)
-        (1, 1, 0)
+        (0, 0, 1)
 
     """
     if discriminant == 0:
-        return (1, 0, 0)
+        return (1, 0, 0) # x^2
     else:
-        return (1, 1, 0)
+        return (0, 0, 1) # x*y
 
 def binary_cubic_from_invariants(discriminant):
     """
@@ -109,7 +109,7 @@ def binary_cubic_from_invariants(discriminant):
 
         sage: from sage.rings.invariants.reconstruction import binary_cubic_from_invariants
         sage: binary_cubic_from_invariants(1)
-        (1, 0, 0, 1)
+        (0, 1, 1, 0)
         sage: binary_cubic_from_invariants(0)
         Traceback (most recent call last):
         ...
@@ -119,7 +119,7 @@ def binary_cubic_from_invariants(discriminant):
     if discriminant == 0:
         raise NotImplementedError('No distinction implemented for binary cubics with a double root.')
     else:
-        return (1, 0, 0, 1)
+        return (0, 1, 1, 0) # x * y * (x + y)
 
 def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=False):
     """
