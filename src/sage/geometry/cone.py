@@ -6457,12 +6457,11 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
         else:
             if K.lattice() is not lattice:
                 return False
-        return all([
-            K.nrays() >= min_rays,
-            K.nrays() <= max_rays or max_rays is None,
-            K.is_solid() == solid or solid is None,
-            K.is_strictly_convex() == strictly_convex or strictly_convex is None
-            ])
+        return all([K.nrays() >= min_rays,
+                    max_rays is None or K.nrays() <= max_rays,
+                    solid is None or K.is_solid() == solid,
+                    strictly_convex is None or
+                    K.is_strictly_convex() == strictly_convex])
 
     # Now we actually compute the thing. To avoid recursion (and the
     # associated "maximum recursion depth exceeded" error), we loop
@@ -6544,7 +6543,7 @@ def random_cone(lattice=None, min_ambient_dim=0, max_ambient_dim=None,
 
                     # rays has immutable elements
                     from copy import copy
-                    rays = map(copy, rays)
+                    rays = list(map(copy, rays))
 
                     for i, ray in enumerate(rays):
                         rays[i][0] = pm * (ray[0].abs() + 1)

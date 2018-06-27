@@ -17,6 +17,7 @@ build by typing ``graphs.`` in Sage and then hitting tab.
 """
 from __future__ import print_function, absolute_import, division
 from six.moves import range
+from sage.cpython.string import bytes_to_str
 
 # This method appends a list of methods to the doc as a 3xN table.
 
@@ -911,7 +912,7 @@ class GraphGenerators():
             except StopIteration:
                 # Exhausted list of graphs from nauty geng
                 return
-            G = graph.Graph(s[:-1], format='graph6')
+            G = graph.Graph(bytes_to_str(s)[:-1], format='graph6')
             yield G
 
 
