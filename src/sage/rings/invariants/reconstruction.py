@@ -25,8 +25,7 @@ from sage.rings.fraction_field import FractionField
 
 def binary_form_from_invariants(degree, invariants):
     """
-    Function to reconstruct a binary form from the values of its
-    invariants.
+    Reconstruct a binary form from the values of its invariants.
 
     INPUT:
 
@@ -49,7 +48,6 @@ def binary_form_from_invariants(degree, invariants):
         Traceback (most recent call last):
         ...
         NotImplementedError: No reconstruction for binary forms of degree 6 implemented.
-
     """
     if degree == 2:
         return binary_quadratic_from_invariants(invariants)
@@ -65,8 +63,7 @@ def binary_form_from_invariants(degree, invariants):
 
 def binary_quadratic_from_invariants(discriminant):
     """
-    Function to reconstruct a binary quadratic from the value of its
-    discriminant.
+    Reconstruct a binary quadratic from the value of its discriminant.
 
     INPUT:
 
@@ -83,7 +80,6 @@ def binary_quadratic_from_invariants(discriminant):
         sage: from sage.rings.invariants.reconstruction import binary_quadratic_from_invariants
         sage: binary_quadratic_from_invariants(1)
         (0, 0, 1)
-
     """
     if discriminant == 0:
         return (1, 0, 0) # x^2
@@ -92,8 +88,7 @@ def binary_quadratic_from_invariants(discriminant):
 
 def binary_cubic_from_invariants(discriminant):
     """
-    Function to reconstruct a binary cubic from the value of its
-    discriminant.
+    Reconstruct a binary cubic from the value of its discriminant.
 
     INPUT:
 
@@ -114,7 +109,6 @@ def binary_cubic_from_invariants(discriminant):
         Traceback (most recent call last):
         ...
         NotImplementedError: No distinction implemented for binary cubics with a double root.
-
     """
     if discriminant == 0:
         raise NotImplementedError('No distinction implemented for binary cubics with a double root.')
@@ -123,8 +117,7 @@ def binary_cubic_from_invariants(discriminant):
 
 def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=False):
     """
-    Function to reconstruct a binary quintic from the values of its
-    (Clebsch) invariants.
+    Reconstruct a binary quintic from the values of its (Clebsch) invariants.
 
     INPUT:
 
@@ -133,7 +126,7 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
 
     - ``type`` -- The type of invariants given. By default the
       given invariants are the invariants A, B, C (and R) as
-      described by Clebsch in _[Cle1872].
+      described by Clebsch in [Cle1872]_.
 
     - ``K`` -- The field over which the quintic is defined.
 
@@ -218,7 +211,6 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
         Traceback (most recent call last):
         ...
         NotImplementedError: No reconstruction implemented for fields of characteristic 2, 3 or 5.
-
     """
     if reduced:
         if len(invariants) == 3:
@@ -338,7 +330,6 @@ def reduce_invariants(invariants, weights):
         sage: weights = [1, 2, 3]
         sage: reduce_invariants(invariants, weights)
         [3, 75, 250]
-
     """
     factors = [dict(I.factor()) for I in invariants]
     scalar = ZZ(1)

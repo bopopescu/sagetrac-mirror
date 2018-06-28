@@ -110,6 +110,7 @@ AUTHORS:
 #*****************************************************************************
 
 
+from sage.rings.all import QQ
 from sage.misc.functional import is_odd
 from sage.matrix.constructor import matrix
 from sage.structure.sage_object import SageObject
@@ -171,7 +172,7 @@ def _guess_variables(polynomial, *args):
     else:
         return tuple(args)
 
-def transvectant(f, g, h=1):
+def transvectant(f, g, h=1, scale='default'):
     r"""
     Return the h-th transvectant of f and g.
 
@@ -188,7 +189,7 @@ def transvectant(f, g, h=1):
 
     .. MATH::
 
-        (f,g)_h = \frac{(d_f - h)! \cdot (d_g-h)!}{d_f! \cdot d_g!}\left(
+        (f,g)_h = \frac{(d_f-h)! \cdot (d_g-h)!}{d_f! \cdot d_g!}\left(
                   \left(\frac{\partial}{\partial x}\frac{\partial}{\partial z'}
                   - \frac{\partial}{\partial x'}\frac{\partial}{\partial z}
                   \right)^h \left(f(x,z) \cdot g(x',z')\right)
@@ -203,6 +204,20 @@ def transvectant(f, g, h=1):
         2*x^2 - 4*x*y + 2*y^2
         sage: transvectant(f, f, 8).form()
         0
+
+    The default scaling will yield an error for fields of small characteristic,
+    as the degree of f or g will not be invertible. The scale argument can be
+    used to compute the transvectant in this case.::
+
+        sage: R.<a0,a1,a2,a3,a4,a5,x0,x1> = GF(5)[]
+        sage: p = a0*x1^5 + a1*x1^4*x0 + a2*x1^3*x0^2 + a3*x1^2*x0^3 + a4*x1*x0^4 + a5*x0^5
+        sage: f = AlgebraicForm(2, 5, p, x0, x1)
+        sage: transvectant(f, f, 4).form()
+        Traceback (most recent call last):
+        ...
+        ZeroDivisionError
+        sage: transvectant(f, f, 4, scale='none').form()
+        -a3^2*x0^2 + a2*a4*x0^2 + a2*a3*x0*x1 - a1*a4*x0*x1 - a2^2*x1^2 + a1*a3*x1^2
     """
     R = f._ring
     if not g._ring is R:
@@ -214,17 +229,21 @@ def transvectant(f, g, h=1):
         tv = R(0)
     else:
         from sage.functions.other import binomial, factorial
-        if R.characteristic() > max(f._d,g._d) or R.characteristic() == 0:
+        if scale == 'default':
             scalar = factorial(f._d-h) * factorial(g._d-h) * R(factorial(f._d)*factorial(g._d))**(-1)
-        elif R.characteristic() > h:
+        elif scale == 'binomial':
             scalar = R(factorial(h))**-2
         else:
-            raise NotImplementedError('Transvectant not implemented for small characteristic.')
+            scalar = 1
         def diff(j):
             df = f.form().derivative(x,j).derivative(y,h-j)
             dg = g.form().derivative(x,h-j).derivative(y,j)
             return (-1)**j * binomial(h,j) * df * dg
         tv = scalar * sum([diff(j) for j in range(h+1)])
+        if not tv.parent() is R:
+            S = tv.parent()
+            x = S(x)
+            y = S(y)
     return AlgebraicForm(2, degree, tv, x, y)
 
 ######################################################################
@@ -1463,7 +1482,7 @@ class BinaryQuintic(AlgebraicForm):
     REFERENCES:
 
     For a description of all invariants and covariants of a binary
-    quintic, see section 73 of _[Cle1872].
+    quintic, see section 73 of [Cle1872]_.
 
     TESTS::
 
@@ -1493,7 +1512,7 @@ class BinaryQuintic(AlgebraicForm):
         The Python constructor.
 
         TESTS::
-        
+
             sage: R.<x,y> = QQ[]
             sage: from sage.rings.invariants.invariant_theory import BinaryQuintic
             sage: BinaryQuintic(2, 5, x^5+2*x^3*y^2+3*x*y^4)
@@ -1514,7 +1533,7 @@ class BinaryQuintic(AlgebraicForm):
         :meth:`coeffs`.
 
         EXAMPLES::
-        
+
             sage: R.<x,y> = QQ[]
             sage: quintic = invariant_theory.binary_quintic(x^5+y^5)
             sage: quintic.monomials()
@@ -1543,7 +1562,7 @@ class BinaryQuintic(AlgebraicForm):
         this function returns `a = (a_0, a_1, a_2, a_3, a_4, a_5)`
 
         EXAMPLES::
-        
+
             sage: R.<a0, a1, a2, a3, a4, a5, x0, x1> = QQ[]
             sage: p = a0*x1^5 + a1*x1^4*x0 + a2*x1^3*x0^2 + a3*x1^2*x0^3 + a4*x1*x0^4 + a5*x0^5
             sage: quintic = invariant_theory.binary_quintic(p, x0, x1)
@@ -1572,7 +1591,7 @@ class BinaryQuintic(AlgebraicForm):
         this function returns `a = (a_0, a_1, a_2, a_3, a_4, a_5)`
 
         EXAMPLES::
-        
+
             sage: R.<a0, a1, a2, a3, a4, a5, x0, x1> = QQ[]
             sage: p = a0*x1^5 + 5*a1*x1^4*x0 + 10*a2*x1^3*x0^2 + 10*a3*x1^2*x0^3 + 5*a4*x1*x0^4 + a5*x0^5
             sage: quintic = invariant_theory.binary_quintic(p, x0, x1)
