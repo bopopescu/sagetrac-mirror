@@ -309,8 +309,8 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
 
 def reduce_invariants(invariants, weights):
     """
-    Function to reduce a list of invariants of given weights so that
-    they have no common weighted divisor.
+    Reduce a list of invariants of given weights so that they have no common
+    weighted divisor.
 
     INPUT:
 

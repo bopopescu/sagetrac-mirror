@@ -837,7 +837,8 @@ class AlgebraicForm(FormsBase):
             g_v = vector(self._ring, g*v)
             transform = dict( (v[i], g_v[i]) for i in range(self._n) )
         # The covariant of the transformed polynomial
-        return self.__class__(self._n, self._d, self.form().subs(transform), self.variables())
+        return self.__class__(self._n, self._d,
+                              self.form().subs(transform), self.variables())
 
 
 ######################################################################
@@ -2037,7 +2038,7 @@ class BinaryQuintic(AlgebraicForm):
     @cached_method
     def clebsch_invariants(self, as_tuple=False):
         """
-        Returns the invariants of a binary quintic as described by Clebsch.
+        Return the invariants of a binary quintic as described by Clebsch.
         The following invariants are returned: A, B, C and R.
 
         OUTPUT:
@@ -2080,7 +2081,7 @@ class BinaryQuintic(AlgebraicForm):
     @cached_method
     def scaled_invariants(self):
         """
-        Returns the invariants of a binary quintic as described by Clebsch,
+        Return the invariants of a binary quintic as described by Clebsch,
         scaled so that they have well-defined reduction for all primes.
 
         OUTPUT:
@@ -2120,7 +2121,7 @@ class BinaryQuintic(AlgebraicForm):
 
     def canonical_form(self):
         r"""
-        Returns a canonical representative of the `GL(2,K)`-orbit of
+        Return a canonical representative of the `GL(2,K)`-orbit of
         the quintic.
 
         OUTPUT:
