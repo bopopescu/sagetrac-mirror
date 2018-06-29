@@ -264,7 +264,8 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
                     scale = [ A**-14*(R/A**3)**i for i in range(6) ] # subs = {y:(R/A**3)*y}
                 D = -N
                 Delta = C
-                A1 = (2*K(3)**-1*A**2-B)*N*B*K(2)**-1 - N**2*K(2)**-1
+                a = [0]
+                a.append((2*K(3)**-1*A**2-B)*N*B*K(2)**-1 - N**2*K(2)**-1)
                 B0 = 2*K(3)**-1*A*R
                 B1 = A*N*B*K(3)**-1
                 C0 = 2*K(3)**-1*R
@@ -286,18 +287,19 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
                 scale = [ A**-9*(R/A**4)**i for i in range(6) ] # subs = {y:(R/A**4)*y}
         D = -M
         Delta = A
-        A1 = (2*K(3)**-1*A**2-B)*(N*A-M*B)*K(2)**-1 - M*(N*K(2)**-1-M*A*K(3)**-1)
+        a = [0]
+        a.append((2*K(3)**-1*A**2-B)*(N*A-M*B)*K(2)**-1 - M*(N*K(2)**-1-M*A*K(3)**-1))
         B0 = R
         B1 = K(2)**-1*(N*A-M*B)
         C0 = 0
         C1 = -M
-    A0 = (2*K(3)**-1*A**2-B)*R
-    A2 = -D*B0 - K(2)**-1*Delta*A0
-    A3 = -D*B1 - K(2)**-1*Delta*A1
-    A4 = D**2*C0 + D*Delta*B0 + K(4)**-1*Delta**2*A0
-    A5 = D**2*C1 + D*Delta*B1 + K(4)**-1*Delta**2*A1
+    a[0] = (2*K(3)**-1*A**2-B)*R
+    a.append(-D*B0 - K(2)**-1*Delta*a[0])
+    a.append(-D*B1 - K(2)**-1*Delta*a[1])
+    a.append(D**2*C0 + D*Delta*B0 + K(4)**-1*Delta**2*a[0])
+    a.append(D**2*C1 + D*Delta*B1 + K(4)**-1*Delta**2*a[1])
     # D**(-5)*(A5*y**5 - 5*A4*x*y**4 + 10*A3*x**2*y**3 - 10*A2*x**3*y**2 + 5*A1*x**4*y - A0*x**5)
-    coeffs = tuple([K((-1)**i*binomial(5,i)*scale[5-i]*eval('A%d' %i)) for i in range(6)])
+    coeffs = tuple([K((-1)**i*binomial(5,i)*scale[5-i]*a[i]) for i in range(6)])
     if reduced:
         from sage.arith.misc import gcd
         return tuple([coeffs[i]/gcd(coeffs) for i in range(6)])
