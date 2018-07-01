@@ -188,16 +188,32 @@ def _lift2smallest_field(a):
     OUTPUT: the element b of the smallest subfield F of GF(q) for
     which F(b)=a.
 
+    .. NOTE::
+
+        This is now designed to work only with finite fields
+        with automatic names, built using ``GF(q)``.
+
     EXAMPLES::
 
         sage: from sage.coding.code_constructions import _lift2smallest_field
-        sage: FF.<z> = GF(3^4,"z")
+        sage: FF = GF(3^4)
+        sage: z = FF.gen()
         sage: a = z^10
         sage: _lift2smallest_field(a)
-        (2*z + 1, Finite Field in z of size 3^2)
+        (z2, Finite Field in z2 of size 3^2)
         sage: a = z^40
         sage: _lift2smallest_field(a)
         (2, Finite Field of size 3)
+
+    TESTS::
+
+        sage: F4 = GF(13^4)
+        sage: F2 = F4.subfields(2)[0][0]
+        sage: x = F4(F2.gen())
+        sage: _lift2smallest_field(x)
+        (z2, Finite Field in z2 of size 13^2)
+        sage: F2.gen()
+        z2
 
     AUTHORS:
 
@@ -207,14 +223,11 @@ def _lift2smallest_field(a):
     k = FF.degree()
     if k == 1:
         return a, FF
-    pol = a.minimal_polynomial()
-    d = pol.degree()
+    d = a.minimal_polynomial().degree()
     if d == k:
         return a, FF
-    p = FF.characteristic()
-    F = GF(p**d,"z")
-    b = pol.roots(F,multiplicities=False)[0]
-    return b, F
+    F = FF.subfields(d)[0][0]
+    return F(a), F
 
 
 def permutation_action(g,v):
@@ -359,7 +372,7 @@ def DuadicCodeEvenPair(F,S1,S2):
         raise TypeError("%s, %s must be a splitting of %s."%(S1,S2,n))
     q = F.order()
     k = Mod(q,n).multiplicative_order()
-    FF = GF(q**k,"z")
+    FF = GF(q**k)
     z = FF.gen()
     zeta = z**((q**k-1)/n)
     P1 = PolynomialRing(FF,"x")
@@ -406,7 +419,7 @@ def DuadicCodeOddPair(F,S1,S2):
         raise TypeError("%s, %s must be a splitting of %s."%(S1,S2,n))
     q = F.order()
     k = Mod(q,n).multiplicative_order()
-    FF = GF(q**k,"z")
+    FF = GF(q**k)
     z = FF.gen()
     zeta = z**((q**k-1)/n)
     P1 = PolynomialRing(FF,"x")
@@ -425,7 +438,6 @@ def DuadicCodeOddPair(F,S1,S2):
     C1 = CyclicCode(length = n, generator_pol = gg1)
     C2 = CyclicCode(length = n, generator_pol = gg2)
     return C1,C2
-
 
 
 def ExtendedQuadraticResidueCode(n,F):
