@@ -110,8 +110,7 @@ AUTHORS:
 #*****************************************************************************
 
 
-from sage.rings.all import QQ
-from sage.misc.functional import is_odd
+
 from sage.matrix.constructor import matrix
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
@@ -1057,6 +1056,7 @@ class QuadraticForm(AlgebraicForm):
             sage: quadratic.discriminant()
             4*a*b*c - c*d^2 - b*e^2 + d*e*f - a*f^2
         """
+        from sage.misc.functional import is_odd
         A = 2*self._matrix_()
         if is_odd(self._n):
             return A.det() / 2
@@ -2135,6 +2135,7 @@ class BinaryQuintic(AlgebraicForm):
             sage: f.canonical_form() == gf.canonical_form()
             True
         """
+        from sage.rings.all import QQ
         from sage.rings.invariants.reconstruction import binary_quintic_from_invariants
         clebsch = self.clebsch_invariants(as_tuple=True)
         K = self._ring.base_ring()

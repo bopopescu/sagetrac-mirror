@@ -298,7 +298,7 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
     a.append(-D*B1 - K(2)**-1*Delta*a[1])
     a.append(D**2*C0 + D*Delta*B0 + K(4)**-1*Delta**2*a[0])
     a.append(D**2*C1 + D*Delta*B1 + K(4)**-1*Delta**2*a[1])
-    # D**(-5)*(A5*y**5 - 5*A4*x*y**4 + 10*A3*x**2*y**3 - 10*A2*x**3*y**2 + 5*A1*x**4*y - A0*x**5)
+    # D**(-5)*(a5*y**5 - 5*a4*x*y**4 + 10*a3*x**2*y**3 - 10*a2*x**3*y**2 + 5*a1*x**4*y - a0*x**5)
     coeffs = tuple([K((-1)**i*binomial(5,i)*scale[5-i]*a[i]) for i in range(6)])
     if reduced:
         from sage.arith.misc import gcd
