@@ -379,12 +379,12 @@ class Function_arcsinh(GinacFunction):
             sage: asinh(x).operator()
             arcsinh
             sage: latex(asinh(x))
-            \operatorname{arsinh}\left(x\right)
+            \operatorname{arcsinh}\left(x\right)
             sage: asinh(x)._sympy_()
             asinh(x)
         """
         GinacFunction.__init__(self, "arcsinh",
-                latex_name=r"\operatorname{arsinh}",
+                latex_name=r"\operatorname{arcsinh}",
                 conversions=dict(maxima='asinh', sympy='asinh', fricas='asinh',
                                 giac='asinh'))
 
@@ -464,12 +464,12 @@ class Function_arccosh(GinacFunction):
             sage: acosh(x).operator()
             arccosh
             sage: latex(acosh(x))
-            \operatorname{arcosh}\left(x\right)
+            \operatorname{arccosh}\left(x\right)
             sage: acosh(x)._sympy_()
             acosh(x)
         """
         GinacFunction.__init__(self, "arccosh",
-                latex_name=r"\operatorname{arcosh}",
+                latex_name=r"\operatorname{arccosh}",
                 conversions=dict(maxima='acosh', sympy='acosh', fricas='acosh',
                                 giac='acosh'))
 
@@ -614,12 +614,12 @@ class Function_arcsech(GinacFunction):
             sage: diff(asech(x), x)
             -1/(sqrt(-x^2 + 1)*x)
             sage: latex(asech(x))
-            \operatorname{arsech}\left(x\right)
+            \operatorname{arcsech}\left(x\right)
             sage: asech(x)._sympy_()
             asech(x)
         """
         GinacFunction.__init__(self, "arcsech",
-                latex_name=r"\operatorname{arsech}",
+                latex_name=r"\operatorname{arcsech}",
                 conversions=dict(maxima='asech', sympy='asech', fricas='asech'))
 
     def _eval_numpy_(self, x):
