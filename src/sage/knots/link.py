@@ -1022,16 +1022,16 @@ class Link(object):
             for j, cr in enumerate(crossings):
                 n = nmax + j
                 if not v[j]: # For negative crossings, we go from undercrossings to the left
-                    G.add_edge((cr[3], cr[0], n), cr[0])
-                    G.add_edge((cr[3], cr[0], n), cr[3])
-                    G.add_edge((cr[1], cr[2], n), cr[2])
-                    G.add_edge((cr[1], cr[2], n), cr[1])
+                    G.add_edge((cr[3], cr[0], n), (cr[0],))
+                    G.add_edge((cr[3], cr[0], n), (cr[3],))
+                    G.add_edge((cr[1], cr[2], n), (cr[2],))
+                    G.add_edge((cr[1], cr[2], n), (cr[1],))
                 else: # positive crossings, from undercrossing to the right
-                    G.add_edge((cr[0], cr[1], n), cr[0])
-                    G.add_edge((cr[0], cr[1], n), cr[1])
-                    G.add_edge((cr[2], cr[3], n), cr[2])
-                    G.add_edge((cr[2], cr[3], n), cr[3])
-            sm = set(tuple(sorted(x for x in b if isinstance(x, tuple)))
+                    G.add_edge((cr[0], cr[1], n), (cr[0],))
+                    G.add_edge((cr[0], cr[1], n), (cr[1],))
+                    G.add_edge((cr[2], cr[3], n), (cr[2],))
+                    G.add_edge((cr[2], cr[3], n), (cr[3],))
+            sm = set(tuple(sorted(x for x in b if len(x) == 3))
                      for b in G.connected_components())
             iindex = (writhe - ncross + 2 * sum(v)) // 2
             jmin = writhe + iindex - len(sm)
