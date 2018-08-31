@@ -56,7 +56,8 @@ def binary_form_from_invariants(degree, invariants):
     if degree == 5:
         return binary_quintic_from_invariants(invariants)
     else:
-        raise NotImplementedError('No reconstruction for binary forms of degree %s implemented.' % degree)
+        raise NotImplementedError('No reconstruction for binary forms of \
+                                    degree %s implemented.' % degree)
 
 
 ######################################################################
@@ -111,27 +112,27 @@ def binary_cubic_from_invariants(discriminant):
         NotImplementedError: No distinction implemented for binary cubics with a double root.
     """
     if discriminant == 0:
-        raise NotImplementedError('No distinction implemented for binary cubics with a double root.')
+        raise NotImplementedError('No distinction implemented for binary \
+                                    cubics with a double root.')
     else:
         return (0, 1, 1, 0) # x * y * (x + y)
 
 def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=False):
     """
-    Reconstruct a binary quintic from the values of its (Clebsch) invariants.
+    Reconstruct a binary quintic from the values of its Clebsch invariants.
 
     INPUT:
 
     - ``invariants`` --  The values of the three or four invariants
       of the binary quintic.
 
-    - ``type`` -- The type of invariants given. By default the
-      given invariants are the invariants A, B, C (and R) as
-      described by Clebsch in [Cle1872]_.
-
     - ``K`` -- The field over which the quintic is defined.
 
     - ``scaled`` -- A boolean to determine wether the coefficients should
       be scaled so the result is independent of the scaling of the invariants.
+
+    - ``reduced`` -- A boolean to determine wether the coefficients should
+      reduced by dividing by their gcd.
 
     OUTPUT:
 
@@ -203,7 +204,7 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
         sage: invs = quintic.clebsch_invariants(as_tuple=True)
         sage: reconstructed = binary_quintic_from_invariants(invs)
         sage: reconstructed
-         (0, 1, 0, 0, 1, 0)
+        (0, 1, 0, 0, 1, 0)
 
     For fields of characteristic 2, 3 or 5, there is no reconstruction implemented::
 
@@ -221,7 +222,8 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
     if K is None:
         K = FractionField(A.parent())
     if K.characteristic() in [2, 3, 5]:
-        raise NotImplementedError('No reconstruction implemented for fields of characteristic 2, 3 or 5.')
+        raise NotImplementedError('No reconstruction implemented for fields \
+                                    of characteristic 2, 3 or 5.')
     M = 2*A*B - 3*C
     N = K(2)**-1 * (A*C-B**2)
     R2 = -K(2)**-1 * (A*N**2-2*B*M*N+C*M**2)
@@ -231,11 +233,14 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
         if R2.is_square():
             R = sqrt(R2)
         else:
-            # if R2 is not a square, we scale the invariants in a suitable way so that the 'new' R2 is a square
+            # if R2 is not a square, we scale the invariants in a suitable way
+            # so that the 'new' R2 is a square
             # r = R2.squarefree_part() # slow!
             invariants = [R2*A, R2**2*B, R2**3*C]
-            # we compute again with the new invariants, not reduced; else the scaling is undone
-            coeffs = binary_quintic_from_invariants(invariants, K, scaled, reduced=False)
+            # we compute again with the new invariants, not reduced
+            # (else the scaling is undone)
+            coeffs = binary_quintic_from_invariants(invariants, K, scaled, \
+                        reduced=False)
             if reduced:
                 from sage.arith.misc import gcd
                 return tuple([coeffs[i]/gcd(coeffs) for i in range(6)])
@@ -249,7 +254,8 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
     if M == 0:
         if N == 0:
             if A == 0:
-                raise NotImplementedError('No reconstruction implemented for quintics with a treefold linear factor.')
+                raise NotImplementedError('No reconstruction implemented for \
+                            quintics with a treefold linear factor.')
             else:
                 if B == 0:
                     return (1,0,0,0,0,1) # x**5 + y**5
@@ -261,7 +267,8 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
                 return (1,0,0,0,1,0) # x*(x**4+y**4)
             else:
                 if scaled:
-                    scale = [ A**-14*(R/A**3)**i for i in range(6) ] # subs = {y:(R/A**3)*y}
+                    # subs = {y:(R/A**3)*y}
+                    scale = [ A**-14*(R/A**3)**i for i in range(6) ]
                 D = -N
                 Delta = C
                 a = [0]
@@ -276,19 +283,23 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
             if A == 0:
                 return (1,0,10,0,-15,0) # x**5 + 10*x**3*y**2 - 15*x*y**4
             elif scaled:
-                scale = [ sqrt(A)**(i-18) for i in range(6) ] # subs = {x:x/A, y:y/sqrt(A)}
+                # subs = {x:x/A, y:y/sqrt(A)}
+                scale = [ sqrt(A)**(i-18) for i in range(6) ]
         else:
             if A == 0:
                 if B == 0:
                     return (1,0,0,1,0,0) # x**2*(x**3+y**3)
                 elif scaled:
-                    scale = [ R**-2*(R/B**2)**i for i in range(6) ] # subs = {y:(R/B**2)*y}
+                    # subs = {y:(R/B**2)*y}
+                    scale = [ R**-2*(R/B**2)**i for i in range(6) ]
             elif scaled:
-                scale = [ A**-9*(R/A**4)**i for i in range(6) ] # subs = {y:(R/A**4)*y}
+                # subs = {y:(R/A**4)*y}
+                scale = [ A**-9*(R/A**4)**i for i in range(6) ]
         D = -M
         Delta = A
         a = [0]
-        a.append((2*K(3)**-1*A**2-B)*(N*A-M*B)*K(2)**-1 - M*(N*K(2)**-1-M*A*K(3)**-1))
+        a.append((2*K(3)**-1*A**2-B)*(N*A-M*B)*K(2)**-1 \
+                    - M*(N*K(2)**-1-M*A*K(3)**-1))
         B0 = R
         B1 = K(2)**-1*(N*A-M*B)
         C0 = 0
@@ -298,7 +309,8 @@ def binary_quintic_from_invariants(invariants, K=None, scaled=False, reduced=Fal
     a.append(-D*B1 - K(2)**-1*Delta*a[1])
     a.append(D**2*C0 + D*Delta*B0 + K(4)**-1*Delta**2*a[0])
     a.append(D**2*C1 + D*Delta*B1 + K(4)**-1*Delta**2*a[1])
-    # D**(-5)*(a5*y**5 - 5*a4*x*y**4 + 10*a3*x**2*y**3 - 10*a2*x**3*y**2 + 5*a1*x**4*y - a0*x**5)
+    # D**(-5)*(a5*y**5 - 5*a4*x*y**4 + 10*a3*x**2*y**3 - 10*a2*x**3*y**2
+    #           + 5*a1*x**4*y - a0*x**5)
     coeffs = tuple([K((-1)**i*binomial(5,i)*scale[5-i]*a[i]) for i in range(6)])
     if reduced:
         from sage.arith.misc import gcd
