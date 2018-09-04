@@ -286,7 +286,7 @@ Sage example in ./polynomes.tex, line 1026::
 
 Sage example in ./polynomes.tex, line 1034::
 
-  sage: Qx(map(lift_sym, num))/Qx(map(lift_sym, den))
+  sage: Qx(list(map(lift_sym, num)))/Qx(list(map(lift_sym, den)))
   (-10*x^3 + 105*x)/(x^4 - 45*x^2 + 105)
 
 Sage example in ./polynomes.tex, line 1042::
@@ -294,7 +294,7 @@ Sage example in ./polynomes.tex, line 1042::
   sage: def mypade(pol, n, k):
   ....:     x = ZpZx.gen();
   ....:     n,d = ZpZx(pol).rational_reconstruct(x^n, k-1, n-k)
-  ....:     return Qx(map(lift_sym, n))/Qx(map(lift_sym, d))
+  ....:     return Qx(list(map(lift_sym, n)))/Qx(list(map(lift_sym, d)))
 
 Sage example in ./polynomes.tex, line 1109::
 

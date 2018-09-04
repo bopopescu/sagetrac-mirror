@@ -364,7 +364,7 @@ class SchemeMorphism_point_projective_ring(SchemeMorphism_point):
 
     def __hash__(self):
         """
-        Computes the hash value of this point.
+        Compute the hash value of this point.
 
         If the base ring has a fraction field, normalize the point in
         the fraction field and then hash so that equal points have
@@ -1477,9 +1477,9 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
 
     def __hash__(self):
         """
-        Computes the hash value of this point.
+        Compute the hash value of this point.
 
-        OUTPUT: Integer.
+        OUTPUT: Integer
 
         EXAMPLES::
 
@@ -1688,9 +1688,9 @@ class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projecti
 
     def __hash__(self):
         r"""
-        Returns the integer hash of this point.
+        Return the integer hash of this point.
 
-        OUTPUT: Integer.
+        OUTPUT: Integer
 
         EXAMPLES::
 
@@ -1719,9 +1719,9 @@ class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projecti
         """
         p = self.codomain().base_ring().order()
         N = self.codomain().ambient_space().dimension_relative()
-        return sum(hash(self[i])*p**i for i in range(N+1))
+        return int(sum(hash(self[i]) * p**i for i in range(N + 1)))
 
-    def orbit_structure(self,f):
+    def orbit_structure(self, f):
         r"""
         This function returns the pair `[m,n]` where `m` is the
         preperiod and `n` is the period of the point by the map ``f``.
