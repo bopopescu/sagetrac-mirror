@@ -1684,6 +1684,7 @@ class SchemeMorphism_point_projective_field(SchemeMorphism_point_projective_ring
             raise TypeError("this point must be a point on a projective subscheme")
         return self.codomain().multiplicity(self)
 
+
 class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projective_field):
 
     def __hash__(self):
@@ -1695,31 +1696,23 @@ class SchemeMorphism_point_projective_finite_field(SchemeMorphism_point_projecti
         EXAMPLES::
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(5), 2)
-            sage: hash(P(2, 1, 2))
-            41
-
-        ::
+            sage: H1 = hash(P(2, 1, 2))
 
             sage: P.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: X = P.subscheme(x^2 - y^2)
-            sage: hash(X(1, 1, 2))
-            81
-
-        ::
+            sage: H1 == hash(X(1, 1, 2))
+            False
 
             sage: P.<x,y> = ProjectiveSpace(GF(13), 1)
-            sage: hash(P(3, 4))
-            17
-
-        ::
+            sage: H1 == hash(P(3, 4))
+            False
 
             sage: P.<x,y> = ProjectiveSpace(GF(13^3,'t'), 1)
-            sage: hash(P(3, 4))
-            2201
+            sage: H1 == hash(P(3, 4))
+            False
         """
-        p = self.codomain().base_ring().order()
         N = self.codomain().ambient_space().dimension_relative()
-        return int(sum(hash(self[i]) * p**i for i in range(N + 1)))
+        return hash((self[i] for i in range(N + 1)))
 
     def orbit_structure(self, f):
         r"""
