@@ -657,7 +657,7 @@ class AlgebraicForm(FormsBase):
             sage: quartic._repr_()
             'Binary quartic with coefficients (1, 0, 0, 0, 1)'
 
-            sage: from sage.rings.invariant_theory import AlgebraicForm
+            sage: from sage.rings.invariants.invariant_theory import AlgebraicForm
             sage: form = AlgebraicForm(2, 5, x^5 + y^5)
             sage: form._repr_()
             'Binary quintic given by x^5 + y^5'
