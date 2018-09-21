@@ -182,8 +182,9 @@ def transvectant(f, g, h=1, scale='default'):
       the first transvectant is returned.
 
     - ``scale`` -- the scaling factor applied to the result. Possible values
-      are 'default' and 'none'. If it is not specified, the scaling factor is
-      the one that appears in the output example below.
+      are ``'default'`` and ``'none'``. The ``'default'`` scaling factor is
+      the one that appears in the output statement below, if the scaling
+      factor is ``'none'`` the quotient of factorials is left out.
 
     OUTPUT:
 
@@ -202,41 +203,61 @@ def transvectant(f, g, h=1, scale='default'):
         sage: from sage.rings.invariants.invariant_theory import AlgebraicForm, transvectant
         sage: R.<x,y> = QQ[]
         sage: f = AlgebraicForm(2, 5, x^5 + 5*x^4*y + 5*x*y^4 + y^5)
-        sage: transvectant(f, f, 4).form()
-        2*x^2 - 4*x*y + 2*y^2
-        sage: transvectant(f, f, 8).form()
-        0
+        sage: transvectant(f, f, 4)
+        Binary quadratic given by 2*x^2 - 4*x*y + 2*y^2
+        sage: transvectant(f, f, 8)
+        Binary form of degree -6 given by 0
 
     The default scaling will yield an error for fields of positive
     characteristic below `d_f!` or `d_g!` as the denominator of the scaling
-    factor will not be invertible in that case. The scale argument 'none'
-    can be used to compute the transvectant in this case.::
+    factor will not be invertible in that case. The scale argument ``'none'``
+    can be used to compute the transvectant in this case::
 
         sage: R.<a0,a1,a2,a3,a4,a5,x0,x1> = GF(5)[]
         sage: p = a0*x1^5 + a1*x1^4*x0 + a2*x1^3*x0^2 + a3*x1^2*x0^3 + a4*x1*x0^4 + a5*x0^5
         sage: f = AlgebraicForm(2, 5, p, x0, x1)
-        sage: transvectant(f, f, 4).form()
+        sage: transvectant(f, f, 4)
         Traceback (most recent call last):
         ...
         ZeroDivisionError
-        sage: transvectant(f, f, 4, scale='none').form()
-        -a3^2*x0^2 + a2*a4*x0^2 + a2*a3*x0*x1 - a1*a4*x0*x1 - a2^2*x1^2 + a1*a3*x1^2
+        sage: transvectant(f, f, 4, scale='none')
+        Binary quadratic given by -a3^2*x0^2 + a2*a4*x0^2 + a2*a3*x0*x1
+        - a1*a4*x0*x1 - a2^2*x1^2 + a1*a3*x1^2
 
-    The additional factors that appear when scale='none' is used can be seen
-    if we consider the same transvectant over the rationals and compare it to
-    the scaled version::
+    The additional factors that appear when ``scale='none'`` is used can be
+    seen if we consider the same transvectant over the rationals and compare
+    it to the scaled version::
 
         sage: R.<a0,a1,a2,a3,a4,a5,x0,x1> = QQ[]
         sage: p = a0*x1^5 + a1*x1^4*x0 + a2*x1^3*x0^2 + a3*x1^2*x0^3 + a4*x1*x0^4 + a5*x0^5
         sage: f = AlgebraicForm(2, 5, p, x0, x1)
-        sage: transvectant(f, f, 4).form()
-        3/50*a3^2*x0^2 - 4/25*a2*a4*x0^2 + 2/5*a1*a5*x0^2 + 1/25*a2*a3*x0*x1
-        - 6/25*a1*a4*x0*x1 + 2*a0*a5*x0*x1 + 3/50*a2^2*x1^2 - 4/25*a1*a3*x1^2
-        + 2/5*a0*a4*x1^2
-        sage: transvectant(f, f, 4, scale='none').form()
-        864*a3^2*x0^2 - 2304*a2*a4*x0^2 + 5760*a1*a5*x0^2 + 576*a2*a3*x0*x1
-        - 3456*a1*a4*x0*x1 + 28800*a0*a5*x0*x1 + 864*a2^2*x1^2
-        - 2304*a1*a3*x1^2 + 5760*a0*a4*x1^2
+        sage: transvectant(f, f, 4)
+        Binary quadratic given by 3/50*a3^2*x0^2 - 4/25*a2*a4*x0^2
+        + 2/5*a1*a5*x0^2 + 1/25*a2*a3*x0*x1 - 6/25*a1*a4*x0*x1 + 2*a0*a5*x0*x1
+        + 3/50*a2^2*x1^2 - 4/25*a1*a3*x1^2 + 2/5*a0*a4*x1^2
+        sage: transvectant(f, f, 4, scale='none')
+        Binary quadratic given by 864*a3^2*x0^2 - 2304*a2*a4*x0^2
+        + 5760*a1*a5*x0^2 + 576*a2*a3*x0*x1 - 3456*a1*a4*x0*x1
+        + 28800*a0*a5*x0*x1 + 864*a2^2*x1^2 - 2304*a1*a3*x1^2 + 5760*a0*a4*x1^2
+
+    If the forms are given as inhomogeneous polynomials, the homogenisation
+    might fail if the polynomial ring has multiple variables. You can
+    circumvent this by making sure the base ring of the polynomial has only
+    one variable::
+
+        sage: R.<x,y> = QQ[]
+        sage: quintic = invariant_theory.binary_quintic(x^5+x^3+2*x^2+y^5, x)
+        sage: transvectant(quintic, quintic, 2)
+        Traceback (most recent call last):
+        ...
+        ValueError: Polynomial is not homogeneous.
+        sage: R.<y> = QQ[]
+        sage: S.<x> = R[]
+        sage: quintic = invariant_theory.binary_quintic(x^5+x^3+2*x^2+y^5, x)
+        sage: transvectant(quintic, quintic, 2)
+        Binary sextic given by 1/5*x^6 + 6/5*x^5*h + (-3/25)*x^4*h^2
+        + (2*y^5 - 8/25)*x^3*h^3 + (-12/25)*x^2*h^4 + 3/5*y^5*x*h^5
+        + 2/5*y^5*h^6
     """
     f = f.homogenized()
     g = g.homogenized()
@@ -636,10 +657,10 @@ class AlgebraicForm(FormsBase):
             sage: quartic._repr_()
             'Binary quartic with coefficients (1, 0, 0, 0, 1)'
 
-            sage: from sage.rings.invariants.invariant_theory import AlgebraicForm
+            sage: from sage.rings.invariant_theory import AlgebraicForm
             sage: form = AlgebraicForm(2, 5, x^5 + y^5)
             sage: form._repr_()
-            'Binary quintic given by the form x^5 + y^5'
+            'Binary quintic given by x^5 + y^5'
         """
         s = ''
         ary = ['Unary', 'Binary', 'Ternary', 'Quaternary', 'Quinary',
@@ -647,19 +668,22 @@ class AlgebraicForm(FormsBase):
         try:
             s += ary[self._n-1]
         except IndexError:
-            s += 'algebraic'
-        ic = ['monic', 'quadratic', 'cubic', 'quartic', 'quintic',
+            s += 'Algebraic'
+        ic = ['constant form', 'monic', 'quadratic', 'cubic', 'quartic', 'quintic',
               'sextic', 'septimic', 'octavic', 'nonic', 'decimic',
               'undecimic', 'duodecimic']
         s += ' '
-        try:
-            s += ic[self._d-1]
-        except IndexError:
-            s += 'form'
+        if self._d < 0:
+            s += 'form of degree {}'.format(self._d)
+        else:
+            try:
+                s += ic[self._d]
+            except IndexError:
+                s += 'form'
         try:
             s += ' with coefficients ' + str(self.coeffs())
         except AttributeError:
-            s += ' given by the form ' + str(self.form())
+            s += ' given by ' + str(self.form())
         return s
 
 
@@ -718,6 +742,11 @@ class AlgebraicForm(FormsBase):
             sage: quadratic = invariant_theory.ternary_quadratic(x^2 + 1, [x,y])
             sage: quadratic.homogenized().form()
             x^2 + h^2
+
+            sage: R.<x> = QQ[]
+            sage: quintic = invariant_theory.binary_quintic(x^4 + 1, x)
+            sage: quintic.homogenized().form()
+            x^4*h + h^5
         """
         if self._homogeneous:
             return self
@@ -730,6 +759,9 @@ class AlgebraicForm(FormsBase):
             R = PolynomialRing(self._ring.base_ring(), [str(self._ring.gen(0)), str(var)])
             polynomial = R(self._polynomial).homogenize(var)
             variables = R.gens()
+        if polynomial.total_degree() < self._d:
+            k = self._d - polynomial.total_degree()
+            polynomial = polynomial * R(var)**k
         return self.__class__(self._n, self._d, polynomial, variables)
 
     def _extract_coefficients(self, monomials):
@@ -1570,6 +1602,9 @@ class BinaryQuintic(AlgebraicForm):
         """
         List the basis monomials of the form.
 
+        This functions lists a basis of monomials of the space of binary
+        quintics of which this form is an element.
+
         OUTPUT:
         A tuple of monomials. They are in the same order as
         :meth:`coeffs`.
@@ -1656,13 +1691,13 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``as_form`` -- if `as_form` is `False`, the result will be returned
-          as polynomial (default). If it is `True` the result is returned as
+        - ``as_form`` -- if ``as_form`` is ``False``, the result will be returned
+          as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
         OUTPUT:
 
-        The H-covariant of the binary quintic as polynomial or as binary form.
+        The `H`-covariant of the binary quintic as polynomial or as binary form.
 
         EXAMPLES::
 
@@ -1678,7 +1713,7 @@ class BinaryQuintic(AlgebraicForm):
             - 2/25*a1^2*x1^6 + 1/5*a0*a2*x1^6
 
             sage: quintic.H_covariant(as_form=True)
-            Binary sextic given by the form ...
+            Binary sextic given by ...
         """
         cov = transvectant(self, self, 2)
         if as_form:
@@ -1693,13 +1728,13 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``as_form`` -- if `as_form` is `False`, the result will be returned
-          as polynomial (default). If it is `True` the result is returned as
+        - ``as_form`` -- if ``as_form`` is ``False``, the result will be returned
+          as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
         OUTPUT:
 
-        The i-covariant of the binary quintic as polynomial or as binary form.
+        The `i`-covariant of the binary quintic as polynomial or as binary form.
 
         EXAMPLES::
 
@@ -1712,7 +1747,7 @@ class BinaryQuintic(AlgebraicForm):
             + 2/5*a0*a4*x1^2
 
             sage: quintic.i_covariant(as_form=True)
-            Binary quadratic given by the form ...
+            Binary quadratic given by ...
         """
         cov = transvectant(self, self, 4)
         if as_form:
@@ -1727,13 +1762,13 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``as_form`` -- if `as_form` is `False`, the result will be returned
-          as polynomial (default). If it is `True` the result is returned as
+        - ``as_form`` -- if ``as_form`` is ``False``, the result will be returned
+          as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
         OUTPUT:
 
-        The T-covariant of the binary quintic as polynomial or as binary form.
+        The `T`-covariant of the binary quintic as polynomial or as binary form.
 
         EXAMPLES::
 
@@ -1750,7 +1785,7 @@ class BinaryQuintic(AlgebraicForm):
             - 2/125*a1^3*x1^9 + 3/50*a0*a1*a2*x1^9 - 1/10*a0^2*a3*x1^9
 
             sage: quintic.T_covariant(as_form=True)
-            Binary nonic given by the form ...
+            Binary nonic given by ...
         """
         H = self.H_covariant(as_form=True)
         cov = transvectant(H, self, 1)
@@ -1766,13 +1801,13 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``as_form`` -- if `as_form` is `False`, the result will be returned
-          as polynomial (default). If it is `True` the result is returned as
+        - ``as_form`` -- if ``as_form`` is ``False``, the result will be returned
+          as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
         OUTPUT:
 
-        The j-covariant of the binary quintic as polynomial or as binary form.
+        The `j`-covariant of the binary quintic as polynomial or as binary form.
 
         EXAMPLES::
 
@@ -1790,7 +1825,7 @@ class BinaryQuintic(AlgebraicForm):
             + 3/25*a0*a2*a4*x1^3
 
             sage: quintic.j_covariant(as_form=True)
-            Binary cubic given by the form ...
+            Binary cubic given by ...
         """
         x0 = self._x
         x1 = self._y
@@ -1809,8 +1844,8 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``as_form`` -- if `as_form` is `False`, the result will be returned
-          as polynomial (default). If it is `True` the result is returned as
+        - ``as_form`` -- if ``as_form`` is ``False``, the result will be returned
+          as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
         OUTPUT:
@@ -1832,7 +1867,7 @@ class BinaryQuintic(AlgebraicForm):
             + 8/125*a0*a1^2*a2*a5^2*x1^2 - 2/25*a0^2*a2^2*a5^2*x1^2
 
             sage: quintic.tau_covariant(as_form=True)
-            Binary quadratic given by the form ...
+            Binary quadratic given by ...
         """
         j = self.j_covariant(as_form=True)
         cov = transvectant(j, j, 2)
@@ -1848,8 +1883,8 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``as_form`` -- if `as_form` is `False`, the result will be returned
-          as polynomial (default). If it is `True` the result is returned as
+        - ``as_form`` -- if ``as_form`` is ``False``, the result will be returned
+          as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
         OUTPUT:
@@ -1871,7 +1906,7 @@ class BinaryQuintic(AlgebraicForm):
             - 8/125*a0^2*a1^2*a2*a5^3*x1^2 + 2/25*a0^3*a2^2*a5^3*x1^2
 
             sage: quintic.theta_covariant(as_form=True)
-            Binary quadratic given by the form ...
+            Binary quadratic given by ...
         """
         i = self.i_covariant(as_form=True)
         tau = self.tau_covariant(as_form=True)
@@ -1888,8 +1923,8 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``as_form`` -- if `as_form` is `False`, the result will be returned
-          as polynomial (default). If it is `True` the result is returned as
+        - ``as_form`` -- if ``as_form`` is ``False``, the result will be returned
+          as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
         OUTPUT:
@@ -1911,7 +1946,7 @@ class BinaryQuintic(AlgebraicForm):
             - 4/25*a0^2*a3*a4*a5*x1 - 4/25*a0*a1^2*a5^2*x1 + 2/5*a0^2*a2*a5^2*x1
 
             sage: quintic.alpha_covariant(as_form=True)
-            Binary monic given by the form ...
+            Binary monic given by ...
         """
         i = self.i_covariant()
         x0 = self._x
@@ -1930,8 +1965,8 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``as_form`` -- if `as_form` is `False`, the result will be returned
-          as polynomial (default). If it is `True` the result is returned as
+        - ``as_form`` -- if ``as_form`` is ``False``, the result will be returned
+          as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
         OUTPUT:
@@ -1953,7 +1988,7 @@ class BinaryQuintic(AlgebraicForm):
             + 4/25*a0^2*a1^2*a5^3*x1 - 2/5*a0^3*a2*a5^3*x1
 
             sage: quintic.beta_covariant(as_form=True)
-            Binary monic given by the form ...
+            Binary monic given by ...
         """
         i = self.i_covariant(as_form=True)
         alpha = self.alpha_covariant(as_form=True)
@@ -1970,8 +2005,8 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``as_form`` -- if `as_form` is `False`, the result will be returned
-          as polynomial (default). If it is `True` the result is returned as
+        - ``as_form`` -- if ``as_form`` is ``False``, the result will be returned
+          as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
         OUTPUT:
@@ -1993,7 +2028,7 @@ class BinaryQuintic(AlgebraicForm):
             - 2/125*a0^4*a2^2*a3*a5^4*x1
 
             sage: quintic.gamma_covariant(as_form=True)
-            Binary monic given by the form ...
+            Binary monic given by ...
         """
         alpha = self.alpha_covariant(as_form=True)
         tau = self.tau_covariant(as_form=True)
@@ -2010,8 +2045,8 @@ class BinaryQuintic(AlgebraicForm):
 
         INPUT:
 
-        - ``as_form`` -- if `as_form` is `False`, the result will be returned
-          as polynomial (default). If it is `True` the result is returned as
+        - ``as_form`` -- if ``as_form`` is ``False``, the result will be returned
+          as polynomial (default). If it is ``True`` the result is returned as
           an object of the class :class:`AlgebraicForm`.
 
         OUTPUT:
@@ -2033,7 +2068,7 @@ class BinaryQuintic(AlgebraicForm):
             + 4/125*a0^5*a2^2*a3*a5^5*x1
 
             sage: quintic.delta_covariant(as_form=True)
-            Binary monic given by the form ...
+            Binary monic given by ...
         """
         alpha = self.alpha_covariant(as_form=True)
         theta = self.theta_covariant(as_form=True)
@@ -2050,7 +2085,7 @@ class BinaryQuintic(AlgebraicForm):
 
         OUTPUT:
 
-        The A-invariant of the binary quintic.
+        The `A`-invariant of the binary quintic.
 
         EXAMPLES::
 
@@ -2078,7 +2113,7 @@ class BinaryQuintic(AlgebraicForm):
 
         OUTPUT:
 
-        The B-invariant of the binary quintic.
+        The `B`-invariant of the binary quintic.
 
         EXAMPLES::
 
@@ -2110,7 +2145,7 @@ class BinaryQuintic(AlgebraicForm):
 
         OUTPUT:
 
-        The C-invariant of the binary quintic.
+        The `C`-invariant of the binary quintic.
 
         EXAMPLES::
 
@@ -2141,7 +2176,7 @@ class BinaryQuintic(AlgebraicForm):
 
         OUTPUT:
 
-        The R-invariant of the binary quintic.
+        The `R`-invariant of the binary quintic.
 
         EXAMPLES::
 
@@ -2212,7 +2247,7 @@ class BinaryQuintic(AlgebraicForm):
 
     @cached_method
     def arithmetic_invariants(self):
-        """
+        r"""
         Return a set of generating arithmetic invariants of a binary quintic.
 
         An arithmetic invariants is an invariant whose coefficients are
@@ -2226,7 +2261,7 @@ class BinaryQuintic(AlgebraicForm):
 
         .. MATH::
 
-           \begin{aligned}
+            \begin{aligned}
             I_4 & = 2^{-1} \cdot 5^4 \cdot A \\
             I_8 & = 5^5 \cdot (2^{-1} \cdot 47 \cdot A^2 - 2^2 \cdot B) \\
             I_{12} & = 5^{10} \cdot (2^{-1} \cdot 3 \cdot A^3
@@ -2269,40 +2304,6 @@ class BinaryQuintic(AlgebraicForm):
                                         -2**5*R(3)**-1*clebsch['C'])
         invariants['I18'] = 2**8*R(3)**-1*5**15 * clebsch['R']
         return invariants
-
-    def canonical_form(self):
-        r"""
-        Return a canonical representative of the `GL(2,K)`-orbit of
-        the quintic.
-
-        OUTPUT:
-
-        A canonical `GL(2,K)`-equivalent binary quintic.
-
-        EXAMPLES::
-
-            sage: R.<x0, x1> = QQ[]
-            sage: p = 2*x1^5 + 4*x1^4*x0 + 5*x1^3*x0^2 + 7*x1^2*x0^3 - 11*x1*x0^4 + x0^5
-            sage: f = invariant_theory.binary_quintic(p, x0, x1)
-            sage: g = matrix(QQ, [[11,5],[7,2]])
-            sage: gf = f.transformed(g)
-            sage: f.canonical_form() == gf.canonical_form()
-            True
-        """
-        from sage.rings.all import QQ
-        from sage.rings.invariants.reconstruction import binary_quintic_from_invariants
-        clebsch = self.clebsch_invariants(as_tuple=True)
-        K = self._ring.base_ring()
-        if K == QQ:
-            # Note this method works for any number field with class number 1, but
-            # the scaled method is a lot faster as computing the class number
-            # takes a lot of time.
-            coeffs = binary_quintic_from_invariants(clebsch, reduced=True)
-        else:
-            coeffs = binary_quintic_from_invariants(clebsch, scaled=True)
-        x, y = self._variables
-        form = sum([coeffs[i]*x**i*y**(5-i) for i in range(6)])
-        return invariant_theory.binary_quintic(form, x, y)
 
 ######################################################################
 def _covariant_conic(A_scaled_coeffs, B_scaled_coeffs, monomials):
@@ -4083,11 +4084,13 @@ can then be queried for invariant and covariants. For example,
 
         INPUT:
 
-        - ``quintic`` -- a polynomial of degree five in one or two variables.
+        - ``quintic`` -- a homogeneous polynomial of degree five in two
+          variables or a (possibly inhomogeneous) polynomial of degree at most
+          five in one variable.
 
         - ``*args`` -- the two homogeneous variables. If only one variable is
-          given, the quintic is assumed to be inhomogeneous. If no variables
-          are given, they are guessed.
+          given, the polynomial ``quintic`` is assumed to be univariate. If
+          no variables are given, they are guessed.
 
         REFERENCES:
 
@@ -4103,8 +4106,8 @@ can then be queried for invariant and covariants. For example,
             sage: quintic
             Binary quintic with coefficients (1, 0, 0, 0, 0, 1)
 
-        If only one variable is given, the quintic is assumed to be
-        inhomogeneous::
+        If only one variable is given, the quintic is the homogenisation of
+        the provided polynomial::
 
             sage: quintic = invariant_theory.binary_quintic(x^5+y^5, x)
             sage: quintic
