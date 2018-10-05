@@ -102,7 +102,7 @@ def sparse_2term_quotient_only_pm1(rels, n):
     # Special casing the rationals leads to a huge speedup,
     # actually.  (All the code above is slower than just this line
     # without this special case.)
-    mod = [(free_i, Rational(coef[i])) for i, free_i in enumerate(free)]
+    mod = [(fi, Rational(ci)) for fi, ci in zip(free, coef)]
 
     misc.verbose("finished", tm)
     return mod
