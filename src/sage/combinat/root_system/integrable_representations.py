@@ -724,8 +724,8 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
             sage: V = IntegrableRepresentation(Lambda[0]+Lambda[1]+Lambda[3])
             sage: mw = V.dominant_maximal_weights()[0]
             sage: F = V._freudenthal_roots_real(V.highest_weight() - mw)
-            sage: [V._freudenthal_accum(mw, al) for al in F]
-            [4, 4, 3, 4, 3, 3]
+            sage: sorted([V._freudenthal_accum(mw, al) for al in F])
+            [3, 3, 3, 4, 4, 4]
         """
         ret = 0
         n = list(self._from_weight_helper(self._Lam - nu))
@@ -910,13 +910,13 @@ class IntegrableRepresentation(UniqueRepresentation, CategoryObject):
         EXAMPLES::
 
             sage: Lambda = RootSystem(['C',3,1]).weight_lattice(extended=true).fundamental_weights()
-            sage: IntegrableRepresentation(2*Lambda[0]).dominant_maximal_weights()
-            (2*Lambda[0],
-             Lambda[0] + Lambda[2] - delta,
+            sage: sorted(IntegrableRepresentation(2*Lambda[0]).dominant_maximal_weights(), key=str)
+            [2*Lambda[0],
              2*Lambda[1] - delta,
-             Lambda[1] + Lambda[3] - 2*delta,
              2*Lambda[2] - 2*delta,
-             2*Lambda[3] - 3*delta)
+             2*Lambda[3] - 3*delta,
+             Lambda[2] + Lambda[0] - delta,
+             Lambda[3] + Lambda[1] - 2*delta]
         """
         k = self.level()
         Lambda = self._P.fundamental_weights()
