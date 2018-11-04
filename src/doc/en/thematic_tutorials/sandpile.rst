@@ -4672,14 +4672,12 @@ OUTPUT:
 
 list of integers
 
-boolean
-
 EXAMPLES::
 
     sage: S = Sandpile({'a':[1,'b'], 'b':[1,'a'], 1:['a']},'a')
     sage: D = SandpileDivisor(S, {'a':0, 'b':1, 1:2})
     sage: D
-    {'a': 0, 1: 2, 'b': 1}
+    {1: 2, 'a': 0, 'b': 1}
     sage: D.values()
     [2, 0, 1]
     sage: S.vertices()
