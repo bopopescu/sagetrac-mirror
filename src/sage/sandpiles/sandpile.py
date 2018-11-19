@@ -613,10 +613,10 @@ class Sandpile(DiGraph):
                 h = g.to_dictionary(multiple_edges=True)
                 g = {i: dict(Counter(h[i])) for i in h}
             else:
-                vi = {v: g.vertices().index(v) for v in g.vertices()}
+                vi = {v: i for i, v in enumerate(g.vertex_iterator())}
                 ad = g.weighted_adjacency_matrix()
                 g = {v: {w: ad[vi[v], vi[w]] for w in g.neighbors(v)}
-                     for v in g.vertices()}
+                     for v in g.vertex_iterator()}
         else:
             raise SyntaxError(g)
 
@@ -624,16 +624,17 @@ class Sandpile(DiGraph):
         DiGraph.__init__(self, g, weighted=True)
         self._dict = deepcopy(g)
         if sink is None:
-            sink = self.vertices()[0]
+            sink = list(self)[0]
         self._sink = sink  # key for sink
-        self._sink_ind = self.vertices().index(sink)
-        self._nonsink_vertices = deepcopy(self.vertices())
+        L = list(self)
+        self._sink_ind = L.index(sink)
+        self._nonsink_vertices = deepcopy(L)
         del self._nonsink_vertices[self._sink_ind]
         # compute Laplacians:
         self._laplacian = self.laplacian_matrix(indegree=False)
         temp = list(range(self.num_verts()))
         del temp[self._sink_ind]
-        self._reduced_laplacian = self._laplacian[temp,temp]
+        self._reduced_laplacian = self._laplacian[temp, temp]
 
     def __copy__(self):
         """
@@ -970,7 +971,7 @@ class Sandpile(DiGraph):
             sage: '_max_stable_div' in S.__dict__
             True
         """
-        m = {v:self.out_degree(v)-1 for v in self.vertices()}
+        m = {v:self.out_degree(v)-1 for v in self.vertex_iterator()}
         self._max_stable_div = SandpileDivisor(self,m)
 
     def max_stable_div(self):
@@ -1002,8 +1003,8 @@ class Sandpile(DiGraph):
             sage: '_out_degrees' in s.__dict__
             True
         """
-        self._out_degrees = {v:0 for v in self.vertices()}
-        for v in self.vertices():
+        self._out_degrees = {v:0 for v in self.vertex_iterator()}
+        for v in self.vertex_iterator():
             for e in self.edges_incident(v):
                 self._out_degrees[v] += e[2]
 
@@ -1043,7 +1044,7 @@ class Sandpile(DiGraph):
             sage: '_in_degrees' in s.__dict__
             True
         """
-        self._in_degrees = {v:0 for v in self.vertices()}
+        self._in_degrees = {v:0 for v in self.vertex_iterator()}
         for e in self.edges():
             self._in_degrees[e[1]] += e[2]
 
@@ -1225,7 +1226,7 @@ class Sandpile(DiGraph):
         EXAMPLES::
 
             sage: s = sandpiles.Grid(2,3)
-            sage: s.nonsink_vertices()
+            sage: sorted(s.nonsink_vertices())
             [(1, 1), (1, 2), (1, 3), (2, 1), (2, 2), (2, 3)]
         """
         return self._nonsink_vertices
@@ -1986,7 +1987,7 @@ class Sandpile(DiGraph):
         """
 
         # first order the vertices according to their distance from the sink
-        verts = sorted(self.vertices(),
+        verts = sorted(self.vertex_iterator(),
                        key=lambda v: self.distance(v, self._sink), reverse=True)
         perm = {}
         for i in range(len(verts)):
@@ -2250,7 +2251,7 @@ class Sandpile(DiGraph):
         - [Lev2014]_
         """
         st = deepcopy(state)
-        V = self.vertices()
+        V = list(self)
         n = len(V)
         if isinstance(st,list):
             if len(st)==self.num_verts()-1:
@@ -2393,7 +2394,7 @@ class Sandpile(DiGraph):
             True
         """
         results = []
-        verts = self.vertices()
+        verts = list(self)
         r = self.recurrents()
         for D in r:
             d = D.deg()
@@ -2466,11 +2467,12 @@ class Sandpile(DiGraph):
             True
         """
         # first order the vertices according to their distance from the sink
-        verts = sorted(self.vertices(),
+        verts = sorted(self.vertex_iterator(),
                        key=lambda v: self.distance(v, self._sink))
 
-        # variable i refers to the i-th vertex in self.vertices()
-        names = [self.vertices().index(v) for v in reversed(verts)]
+        # variable i refers to the i-th vertex in list(self)
+        L = list(self)
+        names = [L.index(v) for v in reversed(verts)]
 
         vars = ''
         for i in names:
@@ -2481,11 +2483,11 @@ class Sandpile(DiGraph):
         # create the ideal
         gens = []
         for i in self.nonsink_vertices():
-            new_gen = 'x' + str(self.vertices().index(i))
+            new_gen = 'x' + str(L.index(i))
             new_gen += '^' + str(self.out_degree(i))
             new_gen += '-'
             for j in self._dict[i]:
-                new_gen += 'x' + str(self.vertices().index(j))
+                new_gen += 'x' + str(L.index(j))
                 new_gen += '^' + str(self._dict[i][j]) + '*'
             new_gen = new_gen[:-1]
             gens.append(new_gen)
@@ -2955,7 +2957,7 @@ class SandpileConfig(dict):
             elif isinstance(c, list):
                 c.reverse()
                 config = {}
-                for v in S.vertices():
+                for v in S.vertex_iterator():
                     if v!=S.sink():
                         config[v] = c.pop()
                 dict.__init__(self,config)
@@ -3468,8 +3470,9 @@ class SandpileConfig(dict):
 
     def values(self):
         r"""
-        The values of the configuration as a list.  The list is sorted in the
-        order of the vertices.
+        The values of the configuration as a list.
+
+        The list is sorted in the order of the vertices.
 
         OUTPUT:
 
@@ -3484,9 +3487,9 @@ class SandpileConfig(dict):
             sage: c
             {1: 2, 'b': 1}
             sage: c.values()
-            [2, 1]
+            [1, 2]
             sage: S.nonsink_vertices()
-            [1, 'b']
+            ['b', 1]
         """
         return [self[v] for v in self._vertices]
 
@@ -3787,7 +3790,7 @@ class SandpileConfig(dict):
             c[V[X.get_random_element()]] += 1
         else: # prob. dist. on all the vertices
             X = GeneralDiscreteDistribution(distrib)
-            V = self._sandpile.vertices()
+            V = self._sandpile.vertex_iterator()
             i = X.get_random_element()
             if i!=self._sandpile._sink_ind:  # not the sink
                 c[V[i]] += 1
@@ -4155,7 +4158,7 @@ class SandpileConfig(dict):
             T.delete_vertex(self.sandpile().sink())
         if heights:
             a = {}
-            for i in T.vertices():
+            for i in T.vertex_iterator():
                 if i==self.sandpile().sink():
                     a[i] = str(i)
                 else:
@@ -4267,14 +4270,15 @@ class SandpileDivisor(dict):
                 dict.__init__(self,dict(D))
             elif isinstance(D, list):
                 div = {}
+                L = list(S)
                 for i in range(S.num_verts()):
-                    div[S.vertices()[i]] = D[i]
-                    dict.__init__(self,div)
+                    div[L[i]] = D[i]
+                    dict.__init__(self, div)
         else:
             raise SyntaxError(D)
 
         self._sandpile = S
-        self._vertices = S.vertices()
+        self._vertices = list(S)
         self._weierstrass_rank_seq = {}
 
     def __deepcopy__(self, memo):
@@ -4754,9 +4758,9 @@ class SandpileDivisor(dict):
             sage: D
             {'a': 0, 1: 2, 'b': 1}
             sage: D.values()
-            [2, 0, 1]
-            sage: S.vertices()
-            [1, 'a', 'b']
+            [0, 1, 2]
+            sage: list(S)
+            ['a', 'b', 1]
         """
         return [self[v] for v in self._vertices]
 
@@ -5069,7 +5073,7 @@ class SandpileDivisor(dict):
         """
         E = deepcopy(self)
         S = E.sandpile()
-        V = S.vertices()
+        V = list(S)
         n = S.num_verts()
         if distrib is None:  # default = uniform distribution
             distrib = [QQ.one() / n] * n
@@ -5191,7 +5195,7 @@ class SandpileDivisor(dict):
         """
         S = self.sandpile()
         myL = S.laplacian().transpose().delete_columns([S._sink_ind])
-        my_ieqs = [[self[v]] + list(-myL[i]) for i,v in enumerate(S.vertices())]
+        my_ieqs = [[self[v]] + list(-myL[i]) for i,v in enumerate(S.vertex_iterator())]
         self._polytope = Polyhedron(ieqs=my_ieqs)
 
     def polytope(self):
@@ -5570,10 +5574,10 @@ class SandpileDivisor(dict):
             seq = self._weierstrass_rank_seq[v]
         except Exception:
             D = deepcopy(self)
-            verts = s.vertices()
+            verts = list(s)
             Ei = s.zero_div()
-            Ei[verts.index(v)]=1
-            Ei = SandpileDivisor(s,Ei)
+            Ei[verts.index(v)] = 1
+            Ei = SandpileDivisor(s, Ei)
             r = D.rank()
             seq = [r]
             while r !=-1:
@@ -5673,7 +5677,8 @@ class SandpileDivisor(dict):
             sage: '_weierstrass_pts' in D.__dict__
             True
         """
-        self._weierstrass_pts = tuple([v for v in self.sandpile().vertices() if self.is_weierstrass_pt(v)])
+        self._weierstrass_pts = tuple(v for v in self.sandpile()
+                                      if self.is_weierstrass_pt(v))
 
     def weierstrass_pts(self, with_rank_seq=False):
         r"""
@@ -5738,7 +5743,7 @@ class SandpileDivisor(dict):
             {0: 9, 1: 9, 2: 9, 3: 9, 4: 9}
         """
         s = self.sandpile()
-        D = [self.weierstrass_gap_seq(v, True)[1] for v in s.vertices()]
+        D = [self.weierstrass_gap_seq(v, True)[1] for v in s]
         D = SandpileDivisor(s, D)
         if verbose:
             return D
@@ -5762,7 +5767,7 @@ class SandpileDivisor(dict):
             sage: S.vertices()
             [0, 1, 2, 3]
         """
-        return [i for i in self if self[i] !=0]
+        return [i for i in self if self[i] != 0]
 
     def _set_Dcomplex(self):
         r"""
@@ -5875,7 +5880,7 @@ class SandpileDivisor(dict):
         """
         D = deepcopy(self)
         S = self.sandpile()
-        V = S.vertices()
+        V = list(S)
         if distrib is None:  # default = uniform distribution
             n = S.num_verts()
             distrib = [QQ.one() / n] * n
@@ -6048,7 +6053,7 @@ class SandpileDivisor(dict):
 
         if heights:
             a = {}
-            for i in T.vertices():
+            for i in T:
                 a[i] = str(i) + ":" + str(T[i])
             T.relabel(a)
         T.show(**kwds)
@@ -6190,7 +6195,8 @@ def triangle_sandpile(n):
             d = len(T[(i,j)])
             if d<6:
                 T[(i,j)]['sink'] = 6-d
-    T = Sandpile(T,'sink')
+    T = Sandpile(T, 'sink')
+
     pos = {}
     for x in T.nonsink_vertices():
         coords = list(x)
@@ -6449,7 +6455,7 @@ def firing_graph(S, eff):
     """
     g = DiGraph()
     g.add_vertices(range(len(eff)))
-    for i in g.vertices():
+    for i in g:
         for v in eff[i]:
             if eff[i][v]>=S.out_degree(v):
                 new_div = deepcopy(eff[i])
@@ -6459,6 +6465,7 @@ def firing_graph(S, eff):
                 if new_div in eff:
                     g.add_edge((i,eff.index(new_div)))
     return g
+
 
 def parallel_firing_graph(S, eff):
     r"""
@@ -6484,7 +6491,7 @@ def parallel_firing_graph(S, eff):
     """
     g = DiGraph()
     g.add_vertices(range(len(eff)))
-    for i in g.vertices():
+    for i in g:
         new_edge = False
         new_div = deepcopy(eff[i])
         for v in eff[i]:
@@ -6496,6 +6503,7 @@ def parallel_firing_graph(S, eff):
         if new_edge and (new_div in eff):
             g.add_edge((i,eff.index(new_div)))
     return g
+
 
 def admissible_partitions(S, k):
     r"""
@@ -6543,7 +6551,7 @@ def admissible_partitions(S, k):
         ------------------------------
         total:     1     6     8     3
     """
-    v = S.vertices()
+    v = list(S)
     if S.is_directed():
         G = DiGraph(S)
     else:
@@ -6592,13 +6600,13 @@ def partition_sandpile(S, p):
     from sage.combinat.combination import Combinations
     g = Graph()
     g.add_vertices([tuple(i) for i in p])
-    for u,v in Combinations(g.vertices(), 2):
+    for u,v in Combinations(list(g), 2):
         for i in u:
             for j in v:
                 if (i,j,1) in S.edges():
                     g.add_edge((u, v))
                     break
-    for i in g.vertices():
+    for i in list(g):
         if S.sink() in i:
             return Sandpile(g,i)
 
@@ -6626,6 +6634,7 @@ def min_cycles(G, v):
     pr = G.neighbors_in(v)
     sp = G.shortest_paths(v)
     return [sp[i] for i in pr if i in sp]
+
 
 def wilmes_algorithm(M):
     r"""
