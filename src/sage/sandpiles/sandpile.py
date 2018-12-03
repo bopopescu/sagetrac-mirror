@@ -4277,6 +4277,22 @@ class SandpileDivisor(dict):
         self._vertices = S.vertices()
         self._weierstrass_rank_seq = {}
 
+    def __repr__(self):
+        """
+        Return a string representation of ``self``.
+
+        This is useful for python 3 compatibility.
+
+        EXAMPLES::
+
+            sage: s = sandpiles.Complete(4)
+            sage: D = SandpileDivisor(s,[2,-3,2,0])
+            sage: D.q_reduced()
+            {0: -2, 1: 1, 2: 2, 3: 0}
+        """
+        from pprint import pformat
+        return pformat(dict(self))
+
     def __deepcopy__(self, memo):
         r"""
         Overrides the deepcopy method for dict.
@@ -4738,21 +4754,20 @@ class SandpileDivisor(dict):
 
     def values(self):
         r"""
-        The values of the divisor as a list.  The list is sorted in the order of
-        the vertices.
+        The values of the divisor as a list.
+
+        The list is sorted in the order of the vertices.
 
         OUTPUT:
 
         list of integers
-
-        boolean
 
         EXAMPLES::
 
             sage: S = Sandpile({'a':[1,'b'], 'b':[1,'a'], 1:['a']},'a')
             sage: D = SandpileDivisor(S, {'a':0, 'b':1, 1:2})
             sage: D
-            {'a': 0, 1: 2, 'b': 1}
+            {1: 2, 'a': 0, 'b': 1}
             sage: D.values()
             [2, 0, 1]
             sage: S.vertices()
