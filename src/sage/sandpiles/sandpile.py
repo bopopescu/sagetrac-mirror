@@ -763,7 +763,7 @@ class Sandpile(DiGraph):
 
     def _repr_(self):
         r"""
-        String representation of self.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -4290,8 +4290,10 @@ class SandpileDivisor(dict):
             sage: D.q_reduced()
             {0: -2, 1: 1, 2: 2, 3: 0}
         """
-        from pprint import pformat
-        return pformat(dict(self))
+        from sage.repl.rich_output.backend_base import BackendBase
+        from sage.repl.display.pretty_print import SagePrettyPrinter
+        backend = BackendBase()
+        return backend._apply_pretty_printer(SagePrettyPrinter, dict(self))
 
     def __deepcopy__(self, memo):
         r"""

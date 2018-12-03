@@ -84,6 +84,8 @@ class SagePrettyPrinter(PrettyPrinter):
             {1, 2, 3}
             sage: dict(zzz=123, aaa=99, xab=10)    # sorted by keys
             {'aaa': 99, 'xab': 10, 'zzz': 123}
+            sage: {'zzz':123, 99:'aaa'}    # sorted by keys
+            {'zzz': 123, 99: 'aaa'}
     
         These are overridden in IPython in a way that we feel is somewhat
         confusing, and we prefer to print them like plain Python which is
