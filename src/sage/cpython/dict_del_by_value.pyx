@@ -20,7 +20,7 @@ AUTHORS:
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 ########################################################################
 from __future__ import print_function, absolute_import
 
@@ -432,12 +432,11 @@ def test_del_dictitem_by_exact_value(D, value, h):
     exist in the dictionary::
 
         sage: D = {1: ZZ}
-        sage: test_del_dictitem_by_exact_value(D, ZZ, 2)
+        sage: test_del_dictitem_by_exact_value(D, ZZ, int(2))
         sage: D
         {1: Integer Ring}
-        sage: test_del_dictitem_by_exact_value(D, QQ, 1)
+        sage: test_del_dictitem_by_exact_value(D, QQ, int(1))
         sage: D
         {1: Integer Ring}
-
     """
     return del_dictitem_by_exact_value(<PyDictObject *>D, <PyObject *>value, h)
