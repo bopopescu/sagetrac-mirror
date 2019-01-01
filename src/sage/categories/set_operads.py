@@ -1,18 +1,16 @@
 r"""
 Set Operads
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008 Teresa Gomez-Diaz (CNRS) <Teresa.Gomez-Diaz@univ-mlv.fr>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#******************************************************************************
+#                  https://www.gnu.org/licenses/
+# *****************************************************************************
 from six.moves import range
 
-from category_types import Category
 from sage.categories.sets_cat import Sets
 from sage.misc.cachefunc import cached_method
-from sage.categories.cartesian_product import cartesian_product
 from sage.misc.abstract_method import abstract_method
 from sage.categories.category_singleton import Category_singleton
 

@@ -1,14 +1,13 @@
 r"""
 Examples of set operads
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method
-from sage.sets.family import Family
 from sage.categories.all import SetOperads
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.element_wrapper import ElementWrapper
@@ -91,27 +90,8 @@ class AssociativeOperad(UniqueRepresentation, Parent):
             sage: A.composition(A("acb"), A("de"),"c")
             'adeb'
         """
-        if x.value[0] == i:
-            return self(y.value + x.value[1:])
-        return self(x.value[:1] + self.composition(self(x.value[1:]), y, i).value)
-
-    def composition(self, x, y, i):
-        """
-        Insert a word y at position i in a word x and return a word.
-
-        This is the composition of the set-theoretic Associative operad.
-
-        EXAMPLES::
-
-            sage: A = SetOperads().example()
-            sage: A.composition(A("acb"), A("de"),"c")
-            'adeb'
-        """
         pos = x.value.index(i)
         return self(x.value[:pos] + y.value + x.value[pos + 1:])
-        # if x.value[0] == i:
-        #     return self(y.value + x.value[1:])
-        # return self(x.value[:1] + self.composition(self(x.value[1:]), y, i).value)
 
     def composition_with_numbers(self, x, y, i):
         """
@@ -130,7 +110,6 @@ class AssociativeOperad(UniqueRepresentation, Parent):
             '2134'
         """
         pos = x.value.index(str(i))
-        m = len(x.value)
         n = len(y.value)
         k = int(x.value[pos])
 

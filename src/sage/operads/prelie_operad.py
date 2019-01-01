@@ -6,22 +6,20 @@ AUTHORS:
 
 - Florent Hivert, Frédéric Chapoton (2011-2016)
 """
-#*****************************************************************************
+# ****************************************************************************
 #       Copyright (C) 2010 Florent Hivert <Florent.Hivert@lri.fr>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method
 from sage.functions.other import factorial
-from sage.categories.all import (OperadsWithBasis,
-                                 GradedHopfAlgebrasWithBasis, tensor)
+from sage.categories.all import OperadsWithBasis,
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.rooted_tree import LabelledRootedTrees
 from sage.categories.cartesian_product import cartesian_product
-from sage.combinat.set_partition_ordered import OrderedSetPartitions
 
 # PreLie operad : rooted trees
 

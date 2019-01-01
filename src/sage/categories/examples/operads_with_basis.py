@@ -1,14 +1,13 @@
 r"""
 Examples of operads with basis
 """
-#*****************************************************************************
+# ****************************************************************************
 #  Copyright (C) 2008-2009 Nicolas M. Thiery <nthiery at users.sf.net>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ****************************************************************************
 from sage.misc.cachefunc import cached_method
-from sage.sets.family import Family
 from sage.categories.all import OperadsWithBasis
 from sage.combinat.free_module import CombinatorialFreeModule
 from sage.combinat.words.words import Words
