@@ -29,6 +29,9 @@ Includes two databases:
 
 == Changelog ==
 
+=== elliptic_curves-0.9 (Frédéric Chapoton, 2019-03-01) ===
+ * #20717: remove macOS hidden files
+
 === elliptic_curves-0.8 (Simon Spicer, 2014-10-24) ===
  * #16773: add more examples of high rank curves
 
