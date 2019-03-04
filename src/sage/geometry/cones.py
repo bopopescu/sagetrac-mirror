@@ -21,14 +21,14 @@ the ambient space.
 
 Here are some typical usage examples::
 
-    sage: cones.nonnegative_orthant(2).rays()
+    sage: cones.NonnegativeOrthant(2).rays()
     N(1, 0),
     N(0, 1)
     in 2-d lattice N
 
 ::
 
-    sage: cones.rearrangement(2,2).rays()
+    sage: cones.Rearrangement(2,2).rays()
     N( 1,  0),
     N( 1, -1),
     N(-1,  1)
@@ -36,21 +36,21 @@ Here are some typical usage examples::
 
 ::
 
-    sage: cones.schur(3).rays()
+    sage: cones.Schur(3).rays()
     N(1, -1,  0),
     N(0,  1, -1)
     in 3-d lattice N
 
 ::
 
-    sage: cones.trivial(3).rays()
+    sage: cones.Trivial(3).rays()
     Empty collection
     in 3-d lattice N
 
 To specify some other lattice, pass it as an argument to the method::
 
-    sage: K = cones.nonnegative_orthant(3)
-    sage: cones.schur(lattice=K.dual().lattice())
+    sage: K = cones.NonnegativeOrthant(3)
+    sage: cones.Schur(lattice=K.dual().lattice())
     2-d cone in 3-d lattice M
 
 For more information about these cones, see the documentation for the
@@ -104,7 +104,7 @@ class ConvexRationalPolyhedralConeFactory:
         return (ambient_dim, lattice)
 
 
-    def nonnegative_orthant(self, ambient_dim=None, lattice=None):
+    def NonnegativeOrthant(self, ambient_dim=None, lattice=None):
         r"""
         The nonnegative orthant in ``ambient_dim`` dimensions, or living
         in ``lattice``.
@@ -146,7 +146,7 @@ class ConvexRationalPolyhedralConeFactory:
 
         EXAMPLES::
 
-            sage: cones.nonnegative_orthant(3).rays()
+            sage: cones.NonnegativeOrthant(3).rays()
             N(1, 0, 0),
             N(0, 1, 0),
             N(0, 0, 1)
@@ -157,34 +157,34 @@ class ConvexRationalPolyhedralConeFactory:
         We can construct the trivial cone as the nonnegative orthant in a
         trivial vector space::
 
-            sage: cones.nonnegative_orthant(0)
+            sage: cones.NonnegativeOrthant(0)
             0-d cone in 0-d lattice N
 
         The nonnegative orthant is a proper cone::
 
             sage: set_random_seed()
             sage: ambient_dim = ZZ.random_element(10)
-            sage: K = cones.nonnegative_orthant(ambient_dim)
+            sage: K = cones.NonnegativeOrthant(ambient_dim)
             sage: K.is_proper()
             True
 
         If a ``lattice`` was given, it is actually used::
 
             sage: L = ToricLattice(3, 'M')
-            sage: cones.nonnegative_orthant(lattice=L)
+            sage: cones.NonnegativeOrthant(lattice=L)
             3-d cone in 3-d lattice M
 
         Unless the rank of the lattice disagrees with ``ambient_dim``::
 
             sage: L = ToricLattice(1, 'M')
-            sage: cones.nonnegative_orthant(3, lattice=L)
+            sage: cones.NonnegativeOrthant(3, lattice=L)
             Traceback (most recent call last):
             ...
             ValueError: lattice rank=1 and ambient_dim=3 are incompatible
 
         We also get an error if no arguments are given::
 
-            sage: cones.nonnegative_orthant()
+            sage: cones.NonnegativeOrthant()
             Traceback (most recent call last):
             ...
             ValueError: either the ambient dimension or the lattice must
@@ -197,7 +197,7 @@ class ConvexRationalPolyhedralConeFactory:
         return Cone(I.rows(), lattice)
 
 
-    def rearrangement(self, p, ambient_dim=None, lattice=None):
+    def Rearrangement(self, p, ambient_dim=None, lattice=None):
         r"""
         The rearrangement cone of order ``p`` in ``ambient_dim``
         dimensions, or living in ``lattice``.
@@ -267,8 +267,8 @@ class ConvexRationalPolyhedralConeFactory:
 
         The rearrangement cones of order one are nonnegative orthants::
 
-            sage: orthant = cones.nonnegative_orthant(6)
-            sage: cones.rearrangement(1,6).is_equivalent(orthant)
+            sage: orthant = cones.NonnegativeOrthant(6)
+            sage: cones.Rearrangement(1,6).is_equivalent(orthant)
             True
 
         When ``p`` and ``ambient_dim`` are equal, the rearrangement cone
@@ -276,13 +276,13 @@ class ConvexRationalPolyhedralConeFactory:
         ``ambient_dim`` because it will contain a hyperplane but is not
         the entire space::
 
-            sage: cones.rearrangement(5,5).lineality()
+            sage: cones.Rearrangement(5,5).lineality()
             4
 
         Jeong's Proposition 5.2.1 [Jeong2017]_ states that all rearrangement
         cones are proper when ``p`` is less than ``ambient_dim``::
 
-            sage: all( cones.rearrangement(p,ambient_dim).is_proper()
+            sage: all( cones.Rearrangement(p,ambient_dim).is_proper()
             ....:              for ambient_dim in range(10)
             ....:              for p in range(1, ambient_dim) )
             True
@@ -293,13 +293,13 @@ class ConvexRationalPolyhedralConeFactory:
         ``ambient_dim``. Moreover for all other values of ``p``, its
         Lyapunov rank is one::
 
-            sage: all( cones.rearrangement(p,ambient_dim).lyapunov_rank()
+            sage: all( cones.Rearrangement(p,ambient_dim).lyapunov_rank()
             ....:      ==
             ....:      ambient_dim
             ....:              for ambient_dim in range(2, 10)
             ....:              for p in [1, ambient_dim-1] )
             True
-            sage: all( cones.rearrangement(p,ambient_dim).lyapunov_rank() == 1
+            sage: all( cones.Rearrangement(p,ambient_dim).lyapunov_rank() == 1
             ....:              for ambient_dim in range(3, 10)
             ....:              for p in range(2, ambient_dim-1) )
             True
@@ -311,7 +311,7 @@ class ConvexRationalPolyhedralConeFactory:
 
             sage: ambient_dim = ZZ.random_element(2,10).abs()
             sage: p = ZZ.random_element(1,ambient_dim)
-            sage: K = cones.rearrangement(p,ambient_dim)
+            sage: K = cones.Rearrangement(p,ambient_dim)
             sage: P = SymmetricGroup(ambient_dim).random_element().matrix()
             sage: all( K.contains(P*r) for r in K )
             True
@@ -324,7 +324,7 @@ class ConvexRationalPolyhedralConeFactory:
             sage: def _has_rearrangement_property(v,p):
             ....:     return sum( sorted(v)[0:p] ) >= 0
             sage: all( _has_rearrangement_property(
-            ....:      cones.rearrangement(p,ambient_dim).random_element(),
+            ....:      cones.Rearrangement(p,ambient_dim).random_element(),
             ....:      p
             ....:    )
             ....:    for ambient_dim in range(2, 10)
@@ -339,8 +339,8 @@ class ConvexRationalPolyhedralConeFactory:
             sage: set_random_seed()
             sage: ambient_dim = ZZ.random_element(2,10)
             sage: p = ZZ.random_element(1,ambient_dim)
-            sage: K1 = cones.rearrangement(p,ambient_dim)
-            sage: K2 = cones.rearrangement(p+1,ambient_dim)
+            sage: K1 = cones.Rearrangement(p,ambient_dim)
+            sage: K2 = cones.Rearrangement(p+1,ambient_dim)
             sage: all( x in K2 for x in K1 )
             True
 
@@ -352,8 +352,8 @@ class ConvexRationalPolyhedralConeFactory:
             sage: set_random_seed()
             sage: ambient_dim = ZZ.random_element(2,10)
             sage: p = ZZ.random_element(1,ambient_dim)
-            sage: K1 = cones.rearrangement(p,ambient_dim)
-            sage: K2 = cones.rearrangement(ambient_dim-p, ambient_dim)
+            sage: K1 = cones.Rearrangement(p,ambient_dim)
+            sage: K2 = cones.Rearrangement(ambient_dim-p, ambient_dim)
             sage: Mp = ((1/p)*matrix.ones(QQ,ambient_dim)
             ....:    - matrix.identity(QQ,ambient_dim))
             sage: Cone( (Mp*K2.rays()).columns() ).is_equivalent(K1)
@@ -362,12 +362,12 @@ class ConvexRationalPolyhedralConeFactory:
         The order ``p`` should be between ``1`` and ``ambient_dim``,
         inclusive::
 
-            sage: cones.rearrangement(0,3)
+            sage: cones.Rearrangement(0,3)
             Traceback (most recent call last):
             ...
             ValueError: order p=0 should be between 1 and ambient_dim=3,
             inclusive
-            sage: cones.rearrangement(5,3)
+            sage: cones.Rearrangement(5,3)
             Traceback (most recent call last):
             ...
             ValueError: order p=5 should be between 1 and ambient_dim=3,
@@ -376,13 +376,13 @@ class ConvexRationalPolyhedralConeFactory:
         If a ``lattice`` was given, it is actually used::
 
             sage: L = ToricLattice(3, 'M')
-            sage: cones.rearrangement(2, 3, lattice=L)
+            sage: cones.Rearrangement(2, 3, lattice=L)
             3-d cone in 3-d lattice M
 
         Unless the rank of the lattice disagrees with ``ambient_dim``::
 
             sage: L = ToricLattice(1, 'M')
-            sage: cones.rearrangement(2, 3, lattice=L)
+            sage: cones.Rearrangement(2, 3, lattice=L)
             Traceback (most recent call last):
             ...
             ValueError: lattice rank=1 and ambient_dim=3 are incompatible
@@ -390,7 +390,7 @@ class ConvexRationalPolyhedralConeFactory:
         We also get an error if neither the ambient dimension nor lattice
         are specified::
 
-            sage: cones.rearrangement(3)
+            sage: cones.Rearrangement(3)
             Traceback (most recent call last):
             ...
             ValueError: either the ambient dimension or the lattice must
@@ -409,7 +409,7 @@ class ConvexRationalPolyhedralConeFactory:
         return Cone(G, lattice=lattice)
 
 
-    def schur(self, ambient_dim=None, lattice=None):
+    def Schur(self, ambient_dim=None, lattice=None):
         r"""
         The Schur cone in ``ambient_dim`` dimensions, or living
         in ``lattice``.
@@ -458,8 +458,8 @@ class ConvexRationalPolyhedralConeFactory:
         generators of the Schur cone and the nonnegative orthant in
         dimension five is `\left(3/4\right)\pi`::
 
-            sage: P = cones.schur(5)
-            sage: Q = cones.nonnegative_orthant(5)
+            sage: P = cones.Schur(5)
+            sage: Q = cones.NonnegativeOrthant(5)
             sage: G = ( g.change_ring(QQbar).normalized() for g in P )
             sage: H = ( h.change_ring(QQbar).normalized() for h in Q )
             sage: actual = max(arccos(u.inner_product(v)) for u in G for v in H)
@@ -472,7 +472,7 @@ class ConvexRationalPolyhedralConeFactory:
 
             sage: set_random_seed()
             sage: ambient_dim = ZZ.random_element(10)
-            sage: K = cones.schur(ambient_dim).dual()
+            sage: K = cones.Schur(ambient_dim).dual()
             sage: x = K.random_element()
             sage: all( x[i] >= x[i+1] for i in range(ambient_dim-1) )
             True
@@ -481,7 +481,7 @@ class ConvexRationalPolyhedralConeFactory:
 
         We get the trivial cone when ``ambient_dim`` is zero::
 
-            sage: cones.schur(0).is_trivial()
+            sage: cones.Schur(0).is_trivial()
             True
 
         The Schur cone induces the majorization ordering, as in Iusem
@@ -494,7 +494,7 @@ class ConvexRationalPolyhedralConeFactory:
             ....:             and sum(x) == sum(y))
             sage: ambient_dim = ZZ.random_element(10)
             sage: V = VectorSpace(QQ, ambient_dim)
-            sage: S = cones.schur(ambient_dim)
+            sage: S = cones.Schur(ambient_dim)
             sage: majorized_by(V.zero(), S.random_element())
             True
             sage: x = V.random_element()
@@ -505,20 +505,20 @@ class ConvexRationalPolyhedralConeFactory:
         If a ``lattice`` was given, it is actually used::
 
             sage: L = ToricLattice(3, 'M')
-            sage: cones.schur(3, lattice=L)
+            sage: cones.Schur(3, lattice=L)
             2-d cone in 3-d lattice M
 
         Unless the rank of the lattice disagrees with ``ambient_dim``::
 
             sage: L = ToricLattice(1, 'M')
-            sage: cones.schur(3, lattice=L)
+            sage: cones.Schur(3, lattice=L)
             Traceback (most recent call last):
             ...
             ValueError: lattice rank=1 and ambient_dim=3 are incompatible
 
         We also get an error if no arguments are given::
 
-            sage: cones.schur()
+            sage: cones.Schur()
             Traceback (most recent call last):
             ...
             ValueError: either the ambient dimension or the lattice must
@@ -541,7 +541,7 @@ class ConvexRationalPolyhedralConeFactory:
         return Cone(S.rows(), lattice)
 
 
-    def trivial(self, ambient_dim=None, lattice=None):
+    def Trivial(self, ambient_dim=None, lattice=None):
         r"""
         The trivial cone with no nonzero generators in ``ambient_dim``
         dimensions, or living in ``lattice``.
@@ -581,35 +581,35 @@ class ConvexRationalPolyhedralConeFactory:
         Construct the trivial cone, containing only the origin, in three
         dimensions::
 
-            sage: cones.trivial(3)
+            sage: cones.Trivial(3)
             0-d cone in 3-d lattice N
 
         If a ``lattice`` is given, the trivial cone will live in that
         lattice::
 
             sage: L = ToricLattice(3, 'M')
-            sage: cones.trivial(3, lattice=L)
+            sage: cones.Trivial(3, lattice=L)
             0-d cone in 3-d lattice M
 
         TESTS:
 
         We can construct the trivial cone in a trivial ambient space::
 
-            sage: cones.trivial(0)
+            sage: cones.Trivial(0)
             0-d cone in 0-d lattice N
 
         An error is raised if the rank of the lattice disagrees with
         ``ambient_dim``::
 
             sage: L = ToricLattice(1, 'M')
-            sage: cones.trivial(3, lattice=L)
+            sage: cones.Trivial(3, lattice=L)
             Traceback (most recent call last):
             ...
             ValueError: lattice rank=1 and ambient_dim=3 are incompatible
 
         We also get an error if no arguments are given::
 
-            sage: cones.trivial()
+            sage: cones.Trivial()
             Traceback (most recent call last):
             ...
             ValueError: either the ambient dimension or the lattice must
