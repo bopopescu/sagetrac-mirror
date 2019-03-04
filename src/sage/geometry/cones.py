@@ -80,6 +80,30 @@ class ConvexRationalPolyhedralConeFactory:
 
     """
 
+    def _preprocess_args(self, ambient_dim, lattice):
+        r"""
+        Each shortcut method performs some preprocessing on its
+        ``ambient_dim`` and ``lattice`` arguments to ensure that they
+        both wind up defined and compatible with one another. Since each
+        method performs exactly the same steps, we collect them here.
+        """
+        if ambient_dim is None and lattice is None:
+            raise ValueError('either the ambient dimension or the lattice '
+                             'must be specified')
+
+        if ambient_dim is None:
+            ambient_dim = lattice.rank()
+
+        if lattice is None:
+            lattice = ToricLattice(ambient_dim)
+
+        if lattice.rank() != ambient_dim:
+            raise ValueError('lattice rank=%d and ambient_dim=%d '
+                             'are incompatible' % (lattice.rank(), ambient_dim))
+
+        return (ambient_dim, lattice)
+
+
     def nonnegative_orthant(self, ambient_dim=None, lattice=None):
         r"""
         The nonnegative orthant in ``ambient_dim`` dimensions, or living
@@ -167,19 +191,7 @@ class ConvexRationalPolyhedralConeFactory:
             be specified
 
         """
-        if ambient_dim is None and lattice is None:
-            raise ValueError('either the ambient dimension or the lattice '
-                             'must be specified')
-
-        if ambient_dim is None:
-            ambient_dim = lattice.rank()
-
-        if lattice is None:
-            lattice = ToricLattice(ambient_dim)
-
-        if lattice.rank() != ambient_dim:
-            raise ValueError('lattice rank=%d and ambient_dim=%d '
-                             'are incompatible' % (lattice.rank(), ambient_dim))
+        (ambient_dim, lattice) = self._preprocess_args(ambient_dim, lattice)
 
         I = matrix.identity(ZZ,ambient_dim)
         return Cone(I.rows(), lattice)
@@ -385,19 +397,7 @@ class ConvexRationalPolyhedralConeFactory:
             be specified
 
         """
-        if ambient_dim is None and lattice is None:
-            raise ValueError('either the ambient dimension or the lattice '
-                             'must be specified')
-
-        if ambient_dim is None:
-            ambient_dim = lattice.rank()
-
-        if lattice is None:
-            lattice = ToricLattice(ambient_dim)
-
-        if lattice.rank() != ambient_dim:
-            raise ValueError('lattice rank=%d and ambient_dim=%d '
-                             'are incompatible' % (lattice.rank(), ambient_dim))
+        (ambient_dim, lattice) = self._preprocess_args(ambient_dim, lattice)
 
         if p < 1 or p > ambient_dim:
             raise ValueError('order p=%d should be between 1 '
@@ -525,19 +525,7 @@ class ConvexRationalPolyhedralConeFactory:
             be specified
 
         """
-        if ambient_dim is None and lattice is None:
-            raise ValueError('either the ambient dimension or the lattice '
-                             'must be specified')
-
-        if ambient_dim is None:
-            ambient_dim = lattice.rank()
-
-        if lattice is None:
-            lattice = ToricLattice(ambient_dim)
-
-        if lattice.rank() != ambient_dim:
-            raise ValueError('lattice rank=%d and ambient_dim=%d '
-                             'are incompatible' % (lattice.rank(), ambient_dim))
+        (ambient_dim, lattice) = self._preprocess_args(ambient_dim, lattice)
 
         def _f(i,j):
             if i == j:
@@ -628,19 +616,7 @@ class ConvexRationalPolyhedralConeFactory:
             be specified
 
         """
-        if ambient_dim is None and lattice is None:
-            raise ValueError('either the ambient dimension or the lattice '
-                             'must be specified')
-
-        if ambient_dim is None:
-            ambient_dim = lattice.rank()
-
-        if lattice is None:
-            lattice = ToricLattice(ambient_dim)
-
-        if lattice.rank() != ambient_dim:
-            raise ValueError('lattice rank=%d and ambient_dim=%d '
-                             'are incompatible' % (lattice.rank(), ambient_dim))
+        (ambient_dim, lattice) = self._preprocess_args(ambient_dim, lattice)
 
         return Cone([], lattice)
 
