@@ -24,7 +24,6 @@ AUTHORS:
   ``UniqueFactory``
 
 """
-from __future__ import absolute_import
 #*****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2011 Maarten Derickx <m.derickx.student@gmail.com>
@@ -35,7 +34,6 @@ from __future__ import absolute_import
 #  the License, or (at your option) any later version.
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
-
 from sage.structure.factory import UniqueFactory
 
 class FunctionFieldFactory(UniqueFactory):
@@ -87,7 +85,7 @@ class FunctionFieldFactory(UniqueFactory):
             names=(names,)
         return (F, names)
 
-    def create_object(self, version, key,**extra_args):
+    def create_object(self, version, key, **extra_args):
         """
         Create the object from the key and extra arguments. This is only
         called if the object was not found in the cache.
@@ -166,9 +164,9 @@ class FunctionFieldExtensionFactory(UniqueFactory):
             names=polynomial.variable_name()
         if not isinstance(names,tuple):
             names=(names,)
-        return (polynomial,names,polynomial.base_ring())
+        return (polynomial, names, polynomial.base_ring())
 
-    def create_object(self,version,key,**extra_args):
+    def create_object(self, version, key, **extra_args):
         """
         Create the object from the key and extra arguments. This is only
         called if the object was not found in the cache.
@@ -194,10 +192,10 @@ class FunctionFieldExtensionFactory(UniqueFactory):
                 if f.is_irreducible() and not all([e % k.characteristic() == 0 for e in f.exponents()]):
                     # monic and integral
                     if f.is_monic() and all(e in base_field.maximal_order() for e in f.coefficients()):
-                        return function_field.FunctionField_global_integral(f, names)
+                        return function_field.FunctionField_global_integral(base_field, f, names)
                     else:
-                        return function_field.FunctionField_global(f, names)
-        return function_field.FunctionField_polymod(f, names)
+                        return function_field.FunctionField_global(base_field, f, names)
+        return function_field.FunctionField_polymod(base_field, f, names)
 
 FunctionFieldExtension=FunctionFieldExtensionFactory(
     "sage.rings.function_field.constructor.FunctionFieldExtension")

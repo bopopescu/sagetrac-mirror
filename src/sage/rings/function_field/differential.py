@@ -158,6 +158,21 @@ class FunctionFieldDifferential(ModuleElement):
 
         return '\\left(' + latex(self._f) + '\\right)\\,' + r
 
+    def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: K.<x>=FunctionField(GF(2)); _.<Y> = K[]
+            sage: L.<y>=K.extension(Y^3 + x + x^3*Y)
+            sage: {x.differential(): 1}
+            {d(x): 1}
+            sage: {y.differential(): 1}
+            {(x*y^2 + 1/x*y) d(x): 1}
+        """
+        return hash((self.parent(), self._f))
+
     def _richcmp_(self, other, op):
         """
         Compare the differential and the other differential with respect to the

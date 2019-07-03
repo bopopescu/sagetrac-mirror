@@ -157,7 +157,6 @@ AUTHORS:
 - Kwankyu Lee (2017-04-30): added global function fields
 
 """
-from __future__ import absolute_import
 # ****************************************************************************
 #       Copyright (C) 2010 William Stein <wstein@gmail.com>
 #       Copyright (C) 2010 Robert Bradshaw <robertwb@math.washington.edu>
@@ -170,6 +169,8 @@ from __future__ import absolute_import
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from sage.misc.cachefunc import cached_method
+
+from sage.structure.unique_representation import UniqueRepresentation
 
 from sage.interfaces.all import singular
 
@@ -220,7 +221,7 @@ def is_RationalFunctionField(x):
     """
     return isinstance(x, RationalFunctionField)
 
-class FunctionField(Field):
+class FunctionField(Field, UniqueRepresentation):
     """
     Abstract base class for all function fields.
 
@@ -238,7 +239,7 @@ class FunctionField(Field):
     """
     _differentials_space = DifferentialsSpace
 
-    def __init__(self, base_field, names, category=FunctionFields()):
+    def __init__(self, base_field, names, category=None):
         """
         Initialize.
 
@@ -247,7 +248,7 @@ class FunctionField(Field):
             sage: K.<x> = FunctionField(QQ)
             sage: TestSuite(K).run()
         """
-        Field.__init__(self, base_field, names=names, category=category)
+        Field.__init__(self, base_field, names=names, category=FunctionFields().or_subcategory(category))
 
         # allow conversion into the constant base field
         from .maps import FunctionFieldConversionToConstantBaseField
@@ -1016,7 +1017,7 @@ class FunctionField_polymod(FunctionField):
     """
     Element = FunctionFieldElement_polymod
 
-    def __init__(self, polynomial, names, category=None):
+    def __init__(self, base_field, polynomial, names, category=None):
         """
         Create a function field defined as an extension of another function
         field by adjoining a root of a univariate polynomial.
@@ -1053,15 +1054,20 @@ class FunctionField_polymod(FunctionField):
             Polynomial Ring in t over Rational Field
         """
         from sage.rings.polynomial.polynomial_element import is_Polynomial
-        if polynomial.parent().ngens()>1 or not is_Polynomial(polynomial):
+
+        if polynomial.parent().ngens() > 1 or not is_Polynomial(polynomial):
             raise TypeError("polynomial must be univariate a polynomial")
+
         if names is None:
-            names = (polynomial.variable_name(), )
+            names = (polynomial.variable_name(),)
         elif names != polynomial.variable_name():
             polynomial = polynomial.change_variable_name(names)
+
         if polynomial.degree() <= 0:
             raise ValueError("polynomial must have positive degree")
-        base_field = polynomial.base_ring()
+
+        assert polynomial.base_ring() == base_field
+
         if not isinstance(base_field, FunctionField):
             raise TypeError("polynomial must be over a FunctionField")
 
@@ -2603,7 +2609,7 @@ class FunctionField_global(FunctionField_polymod):
     Element = FunctionFieldElement_global
     _differentials_space = DifferentialsSpace_global
 
-    def __init__(self, polynomial, names):
+    def __init__(self, base_field, polynomial, names):
         """
         Initialize.
 
@@ -2615,7 +2621,7 @@ class FunctionField_global(FunctionField_polymod):
         """
         from .place import FunctionFieldPlace_global
 
-        FunctionField_polymod.__init__(self, polynomial, names)
+        FunctionField_polymod.__init__(self, base_field, polynomial, names)
 
         self._place_class = FunctionFieldPlace_global
 
@@ -3017,6 +3023,7 @@ class FunctionField_global(FunctionField_polymod):
 
         return k_ext, embedding
 
+    @cached_method(do_pickle=True)
     def genus(self):
         """
         Return the genus of the function field.
@@ -3037,6 +3044,7 @@ class FunctionField_global(FunctionField_polymod):
         different_degree = self.different().degree() # must be even
         return different_degree // 2 - self.degree() / k.degree() + 1
 
+    @cached_method(do_pickle=True)
     def gaps(self):
         """
         Return the gaps of the function field.
@@ -3053,6 +3061,7 @@ class FunctionField_global(FunctionField_polymod):
         """
         return self._weierstrass_places()[1]
 
+    @cached_method(do_pickle=True)
     def weierstrass_places(self):
         """
         Return all Weierstrass places of the function field.
@@ -3480,22 +3489,6 @@ class RationalFunctionField(FunctionField):
         R.register_conversion(SetMorphism(self.Hom(R, SetsWithPartialMaps()), self._to_polynomial))
 
         self._gen = self(R.gen())
-
-    def __reduce__(self):
-        """
-        Return the arguments which were used to create this instance. The
-        rationale for this is explained in the documentation of
-        :class:`UniqueRepresentation`.
-
-        EXAMPLES::
-
-            sage: K.<x> = FunctionField(QQ)
-            sage: clazz,args = K.__reduce__()
-            sage: clazz(*args)
-            Rational function field in x over Rational Field
-        """
-        from .constructor import FunctionField
-        return FunctionField, (self._constant_field, self._names)
 
     def __hash__(self):
         """

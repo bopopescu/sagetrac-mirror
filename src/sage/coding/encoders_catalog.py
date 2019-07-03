@@ -8,7 +8,7 @@ The ``codes.encoders`` object may be used to access the encoders that Sage can b
 - :class:`cyclic_code.CyclicCodePolynomialEncoder <sage.coding.cyclic_code.CyclicCodePolynomialEncoder>`
 - :class:`cyclic_code.CyclicCodeVectorEncoder <sage.coding.cyclic_code.CyclicCodeVectorEncoder>`
 
-**Extended code encoders**
+**Extended code encoder**
 
 - :class:`extended_code.ExtendedCodeExtendedMatrixEncoder <sage.coding.extended_code.ExtendedCodeExtendedMatrixEncoder>`
 
@@ -19,12 +19,17 @@ The ``codes.encoders`` object may be used to access the encoders that Sage can b
 
 **Generalized Reed-Solomon code encoders**
 
-- :class:`grs.GRSEvaluationVectorEncoder <sage.coding.grs.GRSEvaluationVectorEncoder>`
-- :class:`grs.GRSEvaluationPolynomialEncoder <sage.coding.grs.GRSEvaluationPolynomialEncoder>`
+- :class:`grs_code.GRSEvaluationVectorEncoder <sage.coding.grs_code.GRSEvaluationVectorEncoder>`
+- :class:`grs_code.GRSEvaluationPolynomialEncoder <sage.coding.grs_code.GRSEvaluationPolynomialEncoder>`
 
-**Punctured codes encoders**
+**Punctured code encoder**
 
 - :class:`punctured_code.PuncturedCodePuncturedMatrixEncoder <sage.coding.punctured_code.PuncturedCodePuncturedMatrixEncoder>`
+
+**Evaluation and differential AG code encoders**
+
+- :class:`ag_code_decoders.EvaluationAGCodeEncoder <sage.coding.ag_code_decoders.EvaluationAGCodeEncoder>`
+- :class:`ag_code_decoders.DifferentialAGCodeEncoder <sage.coding.ag_code_decoders.DifferentialAGCodeEncoder>`
 
 .. NOTE::
 
@@ -43,15 +48,22 @@ The ``codes.encoders`` object may be used to access the encoders that Sage can b
 #                  http://www.gnu.org/licenses/
 #*****************************************************************************
 
-from sage.misc.lazy_import import lazy_import as _lazy_import
+from sage.misc.lazy_import import lazy_import
 
-_lazy_import('sage.coding.cyclic_code', ['CyclicCodePolynomialEncoder',
-                                         'CyclicCodeVectorEncoder'])
-_lazy_import('sage.coding.extended_code', 'ExtendedCodeExtendedMatrixEncoder')
-_lazy_import('sage.coding.grs', ['GRSEvaluationVectorEncoder', 'GRSEvaluationPolynomialEncoder'])
-_lazy_import('sage.coding.linear_code', ['LinearCodeGeneratorMatrixEncoder',
+lazy_import('sage.coding.cyclic_code', ['CyclicCodePolynomialEncoder',
+                                        'CyclicCodeVectorEncoder'])
+lazy_import('sage.coding.extended_code', 'ExtendedCodeExtendedMatrixEncoder')
+lazy_import('sage.coding.grs_code', ['GRSEvaluationVectorEncoder',
+                                     'GRSEvaluationPolynomialEncoder'])
+lazy_import('sage.coding.linear_code', ['LinearCodeGeneratorMatrixEncoder',
                                          'LinearCodeSystematicEncoder'])
-_lazy_import('sage.coding.punctured_code', 'PuncturedCodePuncturedMatrixEncoder')
-_lazy_import('sage.coding.reed_muller_code', ['ReedMullerVectorEncoder', 'ReedMullerPolynomialEncoder'])
-_lazy_import('sage.coding.subfield_subcode', 'SubfieldSubcodeParityCheckEncoder')
-_lazy_import('sage.coding.parity_check_code', ['ParityCheckCodeGeneratorMatrixEncoder','ParityCheckCodeStraightforwardEncoder'])
+lazy_import('sage.coding.punctured_code', 'PuncturedCodePuncturedMatrixEncoder')
+lazy_import('sage.coding.reed_muller_code', ['ReedMullerVectorEncoder',
+                                             'ReedMullerPolynomialEncoder'])
+lazy_import('sage.coding.subfield_subcode', 'SubfieldSubcodeParityCheckEncoder')
+lazy_import('sage.coding.parity_check_code', ['ParityCheckCodeGeneratorMatrixEncoder',
+                                              'ParityCheckCodeStraightforwardEncoder'])
+lazy_import('sage.coding.ag_code_decoders', ['EvaluationAGCodeEncoder',
+                                             'DifferentialAGCodeEncoder'])
+
+del lazy_import

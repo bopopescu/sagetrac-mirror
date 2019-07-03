@@ -936,6 +936,9 @@ REFERENCES:
 .. [Can1990] \J. Canny. Generalised characteristic polynomials.
              J. Symbolic Comput. Vol. 9, No. 3, 1990, 241--250.
 
+.. [Cam2006] Antonio Campillo. *Algebroid curves in positive characteristics*,
+             Vol. 813. Springer, 2006.
+
 .. [Car1972] \R. W. Carter. *Simple groups of Lie type*, volume 28 of
              Pure and Applied Mathematics. John Wiley and Sons, 1972.
 
@@ -2495,7 +2498,7 @@ REFERENCES:
              Compositio Mathematica, **149** (2013), no. 10.
              :arxiv:`1111.3660`.
 
-.. [Kly1990] Klyachko, Aleksandr Anatolevich. 
+.. [Kly1990] Klyachko, Aleksandr Anatolevich.
              Equivariant Bundles on Toral Varieties,
              Math USSR Izv. 35 (1990), 337-375.
              http://iopscience.iop.org/0025-5726/35/2/A04/pdf/0025-5726_35_2_A04.pdf
@@ -2729,6 +2732,10 @@ REFERENCES:
              Positivity for Vector Bundles, and Multiplier Ideals,
              Modern Surveys in Mathematics volume 49 (2004).
 
+.. [LBO2014] Kwankyu Lee, Maria Bras-Amorós, and Michael E. O'Sullivan,
+             *Unique decoding of general AG codes*, IEEE Transactions on
+             Information Theory, vol 60, no. 4 (2014), pp. 2038--2053.
+
 .. [LB1988] Lee, P.J., Brickell, E.F. An observation on the security of
             McEliece's public-key cryptosystem. EuroCrypt 1988. LNCS, vol. 330, pp.
             275–280.
@@ -2736,6 +2743,9 @@ REFERENCES:
 .. [LdB1982] \A. Liberato de Brito, 'FORTRAN program for the integral
              of three spherical harmonics', Comput. Phys. Commun.,
              Volume 25, pp. 81-85 (1982)
+
+.. [Lee2016] Kwankyu Lee, *Decoding of differential AG codes*, Advances in
+             Mathematics of Communications, vol. 10, no. 2 (2016), pp. 307-–319.
 
 .. [Lee1996] Marc van Leeuwen.  *The Robinson-Schensted and
              Sch\"utzenberger algorithms, an elementary approach*.
