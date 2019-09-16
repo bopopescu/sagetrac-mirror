@@ -2533,10 +2533,12 @@ cdef class Polynomial(CommutativeAlgebraElement):
             x + 0
 
         """
-        s = " "
-        m = self.degree() + 1
         if name is None:
             name = self._parent.variable_name()
+            if self._is_gen:
+                return name
+        s = " "
+        m = self.degree() + 1
         atomic_repr = self._parent.base_ring()._repr_option('element_is_atomic')
         coeffs = self.list(copy=False)
         for n in reversed(xrange(m)):
