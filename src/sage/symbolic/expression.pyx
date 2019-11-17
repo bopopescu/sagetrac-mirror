@@ -1380,6 +1380,11 @@ cdef class Expression(CommutativeRingElement):
             Traceback (most recent call last):
             ...
             TypeError: unable to convert x to a RealBall
+
+        TESTS::
+
+            sage: CBF(gamma(15/2, 1)).identical(CBF(15/2).gamma(1))
+            True
         """
         # Note that we deliberately don't use _eval_self and don't try going
         # through RIF/CIF in order to avoid unsafe conversions.
@@ -1392,7 +1397,8 @@ cdef class Expression(CommutativeRingElement):
                 pass
         else:
             # Intended for BuiltinFunctions with a well-defined main argument
-            args = self.operands()
+            args = [a.pyobject() if a.is_numeric() else a
+                    for a in self.operands()]
             try:
                 args = operator._method_arguments(*args)
                 method = getattr(R(args[0]), operator.name())
