@@ -906,14 +906,17 @@ class GraphGenerators():
 
         TESTS:
 
-        Wrong input, ``"-c3"`` instead of ``"-c 3"`` (:trac:`14068`)::
+        Wrong input, ``"-c3"`` instead of ``"-c 3"`` (:trac:`14068`).
+        We do a fuzzy match on the usage string because the geng
+        program gained some additional optional arguments between
+        v2.6 and v2.7::
 
             sage: list(graphs.nauty_geng("-c3", debug=False))
             Traceback (most recent call last):
             ...
             ValueError: wrong format of parameter option
             sage: list(graphs.nauty_geng("-c3", debug=True))
-            ['>E Usage: geng [-cCmtfbd#D#] [-uygsnh] [-lvq] \n']
+            ['>E Usage: geng [-cCmtfbd#D#] [-uygsnh] [-lvq]...
             sage: list(graphs.nauty_geng("-c 3", debug=True))
             ['>A geng -cd1D2 n=3 e=2-3\n', Graph on 3 vertices, Graph on 3 vertices]
         """
