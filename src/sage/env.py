@@ -188,6 +188,11 @@ var('SINGULARPATH',                  join(SAGE_SHARE, 'singular'))
 var('PPLPY_DOCS',                    join(SAGE_SHARE, 'doc', 'pplpy'))
 var('MAXIMA_FAS')
 
+var('DIRECTG_PATH')
+var('GENTOURNG_PATH')
+var('GENG_PATH')
+var('GENBG_PATH')
+
 # misc
 var('SAGE_BANNER', '')
 var('SAGE_IMPORTALL', 'yes')

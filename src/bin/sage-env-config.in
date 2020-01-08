@@ -109,3 +109,8 @@ if [ -n "$SAGE_PKG_CONFIG_PATH" ]; then
     # (Sage's pkgconf spkg takes care of this, if installed)
     export PKG_CONFIG_PATH="$SAGE_PKG_CONFIG_PATH${PKG_CONFIG_PATH:+:$PKG_CONFIG_PATH}"
 fi
+
+export DIRECTG_PATH="@DIRECTG_PATH@"
+export GENTOURNG_PATH="@GENTOURNG_PATH@"
+export GENG_PATH="@GENG_PATH@"
+export GENBG_PATH="@GENBG_PATH@"
