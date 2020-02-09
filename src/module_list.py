@@ -535,6 +535,10 @@ ext_modules = [
               sources = ["sage/libs/flint/arith.pyx"],
               extra_compile_args = ["-D_XPG6"]),
 
+    Extension('sage.libs.giac.giac',
+              sources = ["sage/libs/giac/giac.pyx"],
+              libraries = ["giac"]),
+
     Extension("sage.libs.glpk.error",
              ["sage/libs/glpk/error.pyx"]),
 
