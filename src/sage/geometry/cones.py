@@ -59,9 +59,6 @@ class and the references therein.
 
 """
 
-from __future__ import print_function
-from six.moves import range
-
 from sage.geometry.cone import Cone
 from sage.geometry.toric_lattice import ToricLattice
 from sage.matrix.all import matrix
