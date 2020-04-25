@@ -1,0 +1,3 @@
+pandoc        # to convert Jupyter notebooks to pdf
+imagemagick   # to manipulate images and produce animations
+ffmpeg        # to produce animations
