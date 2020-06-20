@@ -1,4 +1,4 @@
-name: Test optional packages with tox
+name: Test experimental packages with tox
 
 ## This GitHub Actions workflow runs SAGE_ROOT/tox.ini with select environments,
 ## whenever a GitHub pull request is opened or synchronized in a repository
@@ -27,8 +27,7 @@ on:
 env:
   TARGETS_PRE: build/make/Makefile
   TARGETS:     build/make/Makefile
-  # Test all optional packages, but do not test huge packages
-  TARGETS_OPTIONAL: "$(echo $(PATH=build/bin:$PATH build/bin/sage-package list :optional: | grep -v  database_stein_watkins\\$ | grep -v polytopes_db_4d))"
+  TARGETS_OPTIONAL: $(echo $(PATH=build/bin:$PATH build/bin/sage-package list :experimental:))
 
 jobs:
   docker:
