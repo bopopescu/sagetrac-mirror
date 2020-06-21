@@ -64,7 +64,7 @@ print("Discovering Python/Cython source code....")
 t = time.time()
 from sage_setup.find import find_python_sources
 python_packages, python_modules = find_python_sources(
-    SAGE_SRC, ['sage', 'sage_setup'])
+    SAGE_SRC, ['sage'])
 
 log.debug('python_packages = {0}'.format(python_packages))
 
