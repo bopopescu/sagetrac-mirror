@@ -27,7 +27,7 @@ import sage.modules.free_module as free_module
 import sage.matrix.matrix_space as matrix_space
 from   sage.modules.free_module_element  import is_FreeModuleElement
 from sage.modules.free_module import EchelonMatrixKey
-from sage.misc.all import verbose, prod
+from sage.misc.all import prod
 import sage.modular.hecke.all as hecke
 import sage.arith.all as arith
 import sage.rings.fast_arith as fast_arith
@@ -1365,6 +1365,7 @@ class ModularSymbolsSpace(hecke.HeckeModule_free_module):
             sage: ModularSymbols(37, 2).cuspidal_submodule()._q_expansion_basis_hecke_dual(2)
             [q + O(q^2)]
         """
+        from sage.misc.verbose import verbose
         d = self.dimension_of_associated_cuspform_space()
         prec = Integer(prec)
         if prec < 1:
