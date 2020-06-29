@@ -22,6 +22,8 @@ Test for deprecations of imports into global namespace::
 from __future__ import absolute_import
 from sage.misc.lazy_import import lazy_import
 
+from .all__sage_categories import *
+
 # Ring base classes
 from .ring import (Ring, Field, CommutativeRing, IntegralDomain,
     DedekindDomain, PrincipalIdealDomain, EuclideanDomain)
