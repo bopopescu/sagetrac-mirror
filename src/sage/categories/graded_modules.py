@@ -128,5 +128,17 @@ class GradedModules(GradedModulesCategory):
         pass
 
     class ElementMethods:
-        pass
+        @abstract_method
+        def degree(self):
+            r"""
+            Return the degree of ``self``.
+
+            EXAMPLES::
+
+                sage: Vir = lie_conformal_algebras.Virasoro(QQ); L = Vir.0
+                sage: L.degree()
+                2
+                sage: L.T(3).degree()
+                5
+            """
 
